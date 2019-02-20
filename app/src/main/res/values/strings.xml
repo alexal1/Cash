@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Cash</string>
+    <string name="loss">+ Loss</string>
+    <string name="gain">+ Gain</string>
 </resources>

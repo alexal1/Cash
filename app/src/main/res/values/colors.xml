@@ -2,4 +2,13 @@
 <resources>
     <color name="nightBlack">#0D0D13</color>
     <color name="deepDark">#12121E</color>
+    <color name="white">#FFFFFF</color>
+    <color name="red">#ED1652</color>
+    <color name="green">#00AE8E</color>
+
+    <color name="redGradColor1">#ED167b</color>
+    <color name="redGradColor2">@color/red</color>
+
+    <color name="greenGradColor1">#00AEAC</color>
+    <color name="greenGradColor2">@color/green</color>
 </resources>
