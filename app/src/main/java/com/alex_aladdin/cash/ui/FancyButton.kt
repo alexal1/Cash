@@ -1,4 +1,4 @@
-package com.alex_aladdin.cash
+package com.alex_aladdin.cash.ui
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -12,6 +12,7 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 import androidx.core.graphics.contains
+import com.alex_aladdin.cash.R
 import org.jetbrains.anko.*
 
 class FancyButton(context: Context) : _FrameLayout(context) {

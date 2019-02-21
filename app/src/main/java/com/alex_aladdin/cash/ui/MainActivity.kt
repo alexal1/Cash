@@ -1,10 +1,16 @@
-package com.alex_aladdin.cash
+package com.alex_aladdin.cash.ui
 
 import android.os.Bundle
 import android.support.constraint.ConstraintSet.PARENT_ID
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import com.alex_aladdin.cash.R
+import com.alex_aladdin.cash.ui.dates.DatesAdapter
+import com.alex_aladdin.cash.ui.dates.DatesLayoutManager
+import com.alex_aladdin.cash.ui.dates.DatesSnapHelper
+import com.alex_aladdin.cash.utils.currentLocale
+import com.alex_aladdin.cash.utils.fancyButton
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.constraint.layout.constraintLayout
@@ -20,6 +26,9 @@ class MainActivity : AppCompatActivity() {
         constraintLayout {
             val datesRecyclerView = recyclerView {
                 id = View.generateViewId()
+                layoutManager = DatesLayoutManager(this@MainActivity)
+                adapter = DatesAdapter(currentLocale())
+                DatesSnapHelper().attachToRecyclerView(this)
             }.lparams(0, 0)
 
             val buttonGain = fancyButton {
