@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.support.annotation.StringRes
 import android.view.Gravity.CENTER
 import android.view.MotionEvent
+import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
@@ -109,7 +110,8 @@ class FancyButton(context: Context) : _FrameLayout(context) {
         }
     }
 
-    private fun getGlowDrawable(glowColor: Int) = FancyDrawable(
+    private fun View.getGlowDrawable(glowColor: Int) = FancyDrawable(
+        this,
         isGlow = true,
         glowSize = dimen(R.dimen.glow_size).toFloat(),
         glowColor = glowColor,
@@ -117,7 +119,8 @@ class FancyButton(context: Context) : _FrameLayout(context) {
         gradienEndColor = null
     ).apply { alpha = 0 }
 
-    private fun getFillDrawable(gradStartColor: Int, gradEndColor: Int) = FancyDrawable(
+    private fun View.getFillDrawable(gradStartColor: Int, gradEndColor: Int) = FancyDrawable(
+        this,
         isGlow = false,
         glowSize = dimen(R.dimen.glow_size).toFloat(),
         glowColor = null,
@@ -131,6 +134,7 @@ class FancyButton(context: Context) : _FrameLayout(context) {
 
 
     private class FancyDrawable(
+        parent: View,
         private val isGlow: Boolean,
         private val glowSize: Float,
         private val glowColor: Int?,
@@ -146,6 +150,7 @@ class FancyButton(context: Context) : _FrameLayout(context) {
             if (isGlow) {
                 setShadowLayer(glowSize, 0f, 0f, glowColor!!)
             }
+            parent.setLayerType(LAYER_TYPE_SOFTWARE, this)
         }
 
 
