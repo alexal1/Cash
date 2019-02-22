@@ -16,7 +16,7 @@ class DatesLayoutManager(context: Context) : LinearLayoutManager(context) {
         private const val MAX_SCALE = 1.0f
 
         private const val MIN_ALPHA = 0.2f
-        private const val MAX_ALPHA = 1.0f
+        private const val MAX_ALPHA = 0.8f
 
         private const val MIN_DISTANCE = 0f
         private const val MAX_DISTANCE = 1.0f // of RecyclerView's half-width

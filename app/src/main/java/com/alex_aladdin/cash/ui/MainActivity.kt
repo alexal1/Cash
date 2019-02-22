@@ -1,5 +1,6 @@
 package com.alex_aladdin.cash.ui
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.constraint.ConstraintSet.PARENT_ID
 import android.support.v4.content.ContextCompat
@@ -9,27 +10,54 @@ import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.ui.dates.DatesAdapter
 import com.alex_aladdin.cash.ui.dates.DatesLayoutManager
 import com.alex_aladdin.cash.ui.dates.DatesSnapHelper
-import com.alex_aladdin.cash.utils.currentLocale
-import com.alex_aladdin.cash.utils.fancyButton
+import com.alex_aladdin.cash.utils.*
+import com.alex_aladdin.cash.viewmodels.MainViewModel
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.matchConstraint
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.recyclerview.v7.recyclerView
+import org.jetbrains.anko.textColorResource
+import org.jetbrains.anko.textView
+import org.jetbrains.anko.wrapContent
 
 class MainActivity : AppCompatActivity() {
 
+    private val dc = DisposableCache()
+
+    private lateinit var viewModel: MainViewModel
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+
 
         constraintLayout {
             val datesRecyclerView = recyclerView {
                 id = View.generateViewId()
                 layoutManager = DatesLayoutManager(this@MainActivity)
-                adapter = DatesAdapter(currentLocale())
                 DatesSnapHelper().attachToRecyclerView(this)
+                adapter = DatesAdapter(currentLocale()).also { datesAdapter ->
+                    datesAdapter.dateObservable.subscribe(viewModel.dateConsumer).cache(dc)
+                }
             }.lparams(0, 0)
+
+            val weekdayText = textView {
+                id = View.generateViewId()
+                textSize = 14f
+                textColorResource = R.color.white
+                includeFontPadding = false
+                letterSpacing = 0.01f
+                alpha = 0.8f
+                viewModel.weekdayObservable.subscribeOnUi { weekday ->
+                    text = if (weekday.isToday) "${weekday.name} (${getString(R.string.today)})" else weekday.name
+                }.cache(dc)
+            }.lparams(wrapContent, wrapContent) {
+                topMargin = dip(12)
+            }
 
             val buttonGain = fancyButton {
                 id = View.generateViewId()
@@ -57,12 +85,19 @@ class MainActivity : AppCompatActivity() {
                 rightMargin = dip(4)
             }
 
+
             applyConstraintSet {
                 connect(
                     START of datesRecyclerView to START of PARENT_ID,
                     END of datesRecyclerView to END of PARENT_ID,
                     TOP of datesRecyclerView to TOP of PARENT_ID,
                     BOTTOM of datesRecyclerView to BOTTOM of PARENT_ID
+                )
+
+                connect(
+                    START of weekdayText to START of PARENT_ID,
+                    END of weekdayText to END of PARENT_ID,
+                    TOP of weekdayText to TOP of PARENT_ID
                 )
 
                 connect(
@@ -78,6 +113,11 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        dc.drain()
     }
 
 }
