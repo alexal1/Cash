@@ -12,15 +12,12 @@ import com.alex_aladdin.cash.ui.dates.DatesLayoutManager
 import com.alex_aladdin.cash.ui.dates.DatesSnapHelper
 import com.alex_aladdin.cash.utils.*
 import com.alex_aladdin.cash.viewmodels.MainViewModel
+import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.matchConstraint
-import org.jetbrains.anko.dip
 import org.jetbrains.anko.recyclerview.v7.recyclerView
-import org.jetbrains.anko.textColorResource
-import org.jetbrains.anko.textView
-import org.jetbrains.anko.wrapContent
 
 class MainActivity : AppCompatActivity() {
 
@@ -43,7 +40,7 @@ class MainActivity : AppCompatActivity() {
                 adapter = DatesAdapter(currentLocale()).also { datesAdapter ->
                     datesAdapter.dateObservable.subscribe(viewModel.dateConsumer).cache(dc)
                 }
-            }.lparams(0, 0)
+            }.lparams(matchConstraint, matchConstraint)
 
             val weekdayText = textView {
                 id = View.generateViewId()
@@ -57,6 +54,16 @@ class MainActivity : AppCompatActivity() {
                 }.cache(dc)
             }.lparams(wrapContent, wrapContent) {
                 topMargin = dip(12)
+            }
+
+            val datesSpace = space {
+                id = View.generateViewId()
+            }.lparams(matchConstraint, dimen(R.dimen.date_height))
+
+            val chartView = chartView {
+                id = View.generateViewId()
+            }.lparams(matchConstraint, matchConstraint) {
+                bottomMargin = dip(32)
             }
 
             val buttonGain = fancyButton {
@@ -98,6 +105,19 @@ class MainActivity : AppCompatActivity() {
                     START of weekdayText to START of PARENT_ID,
                     END of weekdayText to END of PARENT_ID,
                     TOP of weekdayText to TOP of PARENT_ID
+                )
+
+                connect(
+                    START of datesSpace to START of PARENT_ID,
+                    END of datesSpace to END of PARENT_ID,
+                    TOP of datesSpace to TOP of PARENT_ID
+                )
+
+                connect(
+                    START of chartView to START of PARENT_ID,
+                    END of chartView to END of PARENT_ID,
+                    TOP of chartView to BOTTOM of datesSpace,
+                    BOTTOM of chartView to TOP of buttonLoss
                 )
 
                 connect(
