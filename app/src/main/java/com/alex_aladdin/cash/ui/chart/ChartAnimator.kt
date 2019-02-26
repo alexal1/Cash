@@ -16,6 +16,9 @@ class ChartAnimator(
     private val currentGain = HashMap(prevChartData.gain)
     private val currentLoss = HashMap(prevChartData.loss)
 
+    private val gainCounters = HashMap(GainCategories.values().map { it to 0 }.toMap())
+    private val lossCounters = HashMap(LossCategories.values().map { it to 0 }.toMap())
+
     private val step = ChartData(
         gain = GainCategories.values()
             .map { gainCategory ->
@@ -45,9 +48,6 @@ class ChartAnimator(
         maxOf(newChartData.gain.values.sum(), newChartData.loss.values.sum())
     }
 
-    private var gainStepsCounter = 0
-    private var lossStepsCounter = 0
-
     val maxValue get() = if (!isAnimationOnEmptyChart) {
         maxOf(currentGain.values.sum(), currentLoss.values.sum())
     } else {
@@ -57,37 +57,45 @@ class ChartAnimator(
 
     fun nextGain(category: GainCategories): Float {
         var value = currentGain[category] ?: 0f
+        var counter = gainCounters[category]!!
 
         if (!isRunning) {
             return value
         }
 
-        if (gainStepsCounter == framesCount - 1) {
+        if (counter == framesCount - 1) {
             return newChartData.gain[category] ?: 0f
         }
 
         val step = step.gain[category] ?: 0f
-        value += decelerator(step, gainStepsCounter)
+        value += decelerator(step, counter)
         currentGain[category] = value
-        gainStepsCounter++
+
+        counter++
+        gainCounters[category] = counter
+
         return value
     }
 
     fun nextLoss(category: LossCategories): Float {
         var value = currentLoss[category] ?: 0f
+        var counter = lossCounters[category]!!
 
         if (!isRunning) {
             return value
         }
 
-        if (lossStepsCounter == framesCount - 1) {
+        if (counter == framesCount - 1) {
             return newChartData.loss[category] ?: 0f
         }
 
         val step = step.loss[category] ?: 0f
-        value += decelerator(step, lossStepsCounter)
+        value += decelerator(step, counter)
         currentLoss[category] = value
-        lossStepsCounter++
+
+        counter++
+        lossCounters[category] = counter
+
         return value
     }
 

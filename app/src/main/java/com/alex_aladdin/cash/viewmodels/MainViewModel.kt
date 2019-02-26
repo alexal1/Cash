@@ -38,7 +38,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         val testChartData = ChartData(
             gain = mapOf(GainCategories.SALARY to 1000f),
-            loss = mapOf(LossCategories.CAFES_AND_RESTAURANTS to 500f)
+            loss = mapOf(LossCategories.CAFES_AND_RESTAURANTS to 500f, LossCategories.FOODSTUFF to 250f)
         )
 
         chartDataSubject.onNext(testChartData)
