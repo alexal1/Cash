@@ -2,12 +2,18 @@ package com.alex_aladdin.cash.ui
 
 import android.arch.lifecycle.ViewModelProviders
 import android.graphics.PixelFormat
+import android.graphics.Point
+import android.graphics.PointF
+import android.graphics.Rect
 import android.os.Bundle
 import android.support.constraint.ConstraintSet.PARENT_ID
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.MotionEvent
 import android.view.View
+import androidx.core.graphics.contains
 import com.alex_aladdin.cash.R
+import com.alex_aladdin.cash.ui.chart.ChartView
 import com.alex_aladdin.cash.ui.dates.DatesAdapter
 import com.alex_aladdin.cash.ui.dates.DatesLayoutManager
 import com.alex_aladdin.cash.ui.dates.DatesSnapHelper
@@ -19,12 +25,23 @@ import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.matchConstraint
 import org.jetbrains.anko.recyclerview.v7.recyclerView
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity() {
 
     private val dc = DisposableCache()
+    private val maxClickRadius by lazy { dip(5).toFloat() }
+    private val chartHitRect by lazy {
+        val rect = Rect()
+        chartView.getHitRect(rect)
+        rect
+    }
 
     private lateinit var viewModel: MainViewModel
+    private lateinit var chartView: ChartView
+
+    private var touchStart: PointF? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                 id = View.generateViewId()
             }.lparams(matchConstraint, dimen(R.dimen.date_height))
 
-            val chartView = chartView {
+            chartView = chartView {
                 id = View.generateViewId()
                 setZOrderOnTop(true)
                 holder.setFormat(PixelFormat.TRANSPARENT)
@@ -138,6 +155,32 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        when (ev?.action) {
+            MotionEvent.ACTION_DOWN -> {
+                if (chartHitRect.contains(Point(ev.x.toInt(), ev.y.toInt()))) {
+                    touchStart = PointF(ev.x, ev.y)
+                }
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                if (touchStart != null && touchStart!!.distanceTo(PointF(ev.x, ev.y)) > maxClickRadius) {
+                    touchStart = null
+                }
+            }
+
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                if (touchStart != null) {
+                    chartView.click(PointF(ev.x - chartView.left, ev.y - chartView.top))
+                }
+            }
+        }
+
+        return super.dispatchTouchEvent(ev)
+    }
+
+    private fun PointF.distanceTo(point: PointF) = sqrt((x - point.x).pow(2) + (y - point.y).pow(2))
 
     override fun onDestroy() {
         super.onDestroy()

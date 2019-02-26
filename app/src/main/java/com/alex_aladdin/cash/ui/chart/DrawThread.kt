@@ -5,6 +5,9 @@ import android.graphics.*
 import android.support.v4.content.ContextCompat
 import android.view.SurfaceHolder
 import com.alex_aladdin.cash.R
+import com.alex_aladdin.cash.ui.chart.ChartDrawer.CENTRAL_CHART_WIDTH
+import com.alex_aladdin.cash.ui.chart.ChartDrawer.SIDE_CHART_WIDTH
+import com.alex_aladdin.cash.viewmodels.enums.Categories
 import com.alex_aladdin.cash.viewmodels.enums.GainCategories
 import com.alex_aladdin.cash.viewmodels.enums.LossCategories
 import org.jetbrains.anko.dip
@@ -15,18 +18,14 @@ class DrawThread(
     private val latency: Long
 ) : Thread() {
 
-    companion object {
-
-        private const val SIDE_CHART_WIDTH = 0.06f
-        private const val CENTRAL_CHART_WIDTH = 0.25f
-
-    }
-
     @Volatile
     var isRunning = false
 
     @Volatile
     var chartAnimator: ChartAnimator? = null
+
+    @Volatile
+    var checkedCategory: Categories? = null
 
     private val backgroundPaint = Paint().apply {
         color = ContextCompat.getColor(context, R.color.palladium)
@@ -85,31 +84,25 @@ class DrawThread(
         drawRect(columnLeft, 0f, columnRight, height, backgroundPaint)
 
         chartAnimator?.let { chartAnimator ->
-            // Draw gains
-            var lastTop = 0f
-            GainCategories.values().forEach { gainCategory ->
-                val value = chartAnimator.nextGain(gainCategory)
-                val columnHeight = height * value / chartAnimator.maxValue
-                val paint = gainPaints[gainCategory]
-
-                drawRect(0f, height - lastTop - columnHeight, sideChartWidth, height - lastTop, paint)
-                drawRect(columnLeft, height - lastTop - columnHeight, columnRight, height - lastTop, paint)
-
-                lastTop += columnHeight
-            }
-
-            // Draw losses
-            lastTop = 0f
-            LossCategories.values().forEach { lossCategory ->
-                val value = chartAnimator.nextLoss(lossCategory)
-                val columnHeight = height * value / chartAnimator.maxValue
-                val paint = lossPaints[lossCategory]
-
-                drawRect(columnLeft, height - lastTop - columnHeight, columnRight, height - lastTop, paint)
-                drawRect(width - sideChartWidth, height - lastTop - columnHeight, width, height - lastTop, paint)
-
-                lastTop += columnHeight
-            }
+            ChartDrawer.categoriesRects(
+                width = width,
+                height = height,
+                chartAnimator = chartAnimator,
+                forEachGain = { category, (rect1, rect2) ->
+                    if (checkedCategory == null || checkedCategory == category) {
+                        val paint = gainPaints[category]
+                        drawRect(rect1, paint)
+                        drawRect(rect2, paint)
+                    }
+                },
+                forEachLoss = { category, (rect1, rect2) ->
+                    if (checkedCategory == null || checkedCategory == category) {
+                        val paint = lossPaints[category]
+                        drawRect(rect1, paint)
+                        drawRect(rect2, paint)
+                    }
+                }
+            )
         }
 
         // Draw line

@@ -1,9 +1,12 @@
 package com.alex_aladdin.cash.ui.chart
 
 import android.content.Context
+import android.graphics.PointF
 import android.util.Log.e
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import androidx.core.graphics.contains
+import com.alex_aladdin.cash.viewmodels.enums.Categories
 import io.reactivex.functions.Consumer
 
 class ChartView(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
@@ -61,6 +64,41 @@ class ChartView(context: Context) : SurfaceView(context), SurfaceHolder.Callback
                 }
             }
         }
+    }
+
+    fun click(point: PointF) {
+        drawThread?.let { drawThread ->
+            val oldCheckedCategory = drawThread.checkedCategory
+            val newCheckedCategory = findCategoryByClick(point)
+
+            if (oldCheckedCategory == null) {
+                drawThread.checkedCategory = newCheckedCategory
+            } else if (oldCheckedCategory != newCheckedCategory) {
+                drawThread.checkedCategory = null
+            }
+        }
+    }
+
+    private fun findCategoryByClick(point: PointF): Categories? = lastChartAnimator?.let { chartAnimator ->
+        var resultCategory: Categories? = null
+
+        ChartDrawer.categoriesRects(
+            width = width.toFloat(),
+            height = height.toFloat(),
+            chartAnimator = chartAnimator,
+            forEachGain = { category, (rect1, rect2) ->
+                if (rect1.contains(point) || rect2.contains(point)) {
+                    resultCategory = category
+                }
+            },
+            forEachLoss = { category, (rect1, rect2) ->
+                if (rect1.contains(point) || rect2.contains(point)) {
+                    resultCategory = category
+                }
+            }
+        )
+
+        return resultCategory
     }
 
 }
