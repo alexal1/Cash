@@ -3,10 +3,20 @@ package com.alex_aladdin.cash.ui.dates
 import android.support.v7.widget.LinearSnapHelper
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.NO_POSITION
+import kotlin.math.abs
 
 class DatesSnapHelper : LinearSnapHelper() {
 
+
+    companion object {
+
+        private const val VELOCITY_MIN = 200
+
+    }
+
+
     private var lastPos = -1
+
 
     override fun findTargetSnapPosition(
         layoutManager: RecyclerView.LayoutManager,
@@ -20,10 +30,10 @@ class DatesSnapHelper : LinearSnapHelper() {
                 lastPos = position
                 lastPos
             } else {
-                if (velocityX < 0) {
-                    --lastPos
-                } else {
-                    ++lastPos
+                when {
+                    abs(velocityX) <= VELOCITY_MIN -> return lastPos
+                    velocityX < 0 -> --lastPos
+                    else -> ++lastPos
                 }
             }
         } else {
