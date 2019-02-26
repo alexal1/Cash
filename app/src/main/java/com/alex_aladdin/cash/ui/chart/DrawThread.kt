@@ -5,73 +5,112 @@ import android.graphics.*
 import android.support.v4.content.ContextCompat
 import android.view.SurfaceHolder
 import com.alex_aladdin.cash.R
+import com.alex_aladdin.cash.viewmodels.enums.GainCategories
+import com.alex_aladdin.cash.viewmodels.enums.LossCategories
 import org.jetbrains.anko.dip
-import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.atomic.AtomicBoolean
 
-class DrawThread(private val surfaceHolder: SurfaceHolder, private val context: Context) : Thread() {
+class DrawThread(
+    private val surfaceHolder: SurfaceHolder,
+    private val context: Context,
+    private val latency: Long
+) : Thread() {
 
     companion object {
-
-        private const val ANIMATION_DURATION = 400L
-        private const val FRAMES_COUNT = 25
-        private const val LATENCY = ANIMATION_DURATION / FRAMES_COUNT
 
         private const val SIDE_CHART_WIDTH = 0.06f
         private const val CENTRAL_CHART_WIDTH = 0.25f
 
     }
 
+    @Volatile
+    var isRunning = false
 
-    val runFlag = AtomicBoolean()
-    val drawQueue = ConcurrentLinkedQueue<ChartData>()
+    @Volatile
+    var chartAnimator: ChartAnimator? = null
 
     private val backgroundPaint = Paint().apply {
         color = ContextCompat.getColor(context, R.color.palladium)
         isAntiAlias = false
     }
 
+    private val gainPaints: Map<GainCategories, Paint> = GainCategories.values()
+        .map { it to Paint().apply { color = ContextCompat.getColor(context, it.colorRes); isAntiAlias = false } }
+        .toMap()
+    private val lossPaints: Map<LossCategories, Paint> = LossCategories.values()
+        .map { it to Paint().apply { color = ContextCompat.getColor(context, it.colorRes); isAntiAlias = false } }
+        .toMap()
+
     private val lineWidth = context.dip(1).toFloat()
 
     private var linePaint: Paint? = null
-
-    var prevFrameTime = Long.MAX_VALUE
+    private var prevFrameTime = 0L
 
 
     override fun run() {
-        while (runFlag.get()) {
-            val chartData = drawQueue.poll() ?: continue
+        while (isRunning) {
+            val now = System.currentTimeMillis()
+            if (now >= prevFrameTime + latency) {
+                prevFrameTime = now
+            } else {
+                continue
+            }
 
             var canvas: Canvas? = null
             try {
                 canvas = surfaceHolder.lockCanvas(null)
                 synchronized(surfaceHolder) {
-                    drawChart(canvas, chartData)
+                    canvas?.let(this::drawChart)
                 }
             } finally {
                 canvas?.let(surfaceHolder::unlockCanvasAndPost)
             }
-
-            val realLatency = System.currentTimeMillis() - prevFrameTime
-            if (realLatency < LATENCY) {
-                Thread.sleep(minOf(LATENCY, LATENCY - realLatency))
-            }
         }
     }
 
-    private fun drawChart(canvas: Canvas, chartData: ChartData) = canvas.apply {
+    private fun drawChart(canvas: Canvas) = canvas.apply {
         val width = width.toFloat()
         val height = height.toFloat()
         val sideChartWidth = SIDE_CHART_WIDTH * width
         val centralChartWidth = CENTRAL_CHART_WIDTH * width
 
-        // Draw background
-        drawColor(ContextCompat.getColor(context, R.color.deepDark))
+        // Clear background
+        drawColor(0, PorterDuff.Mode.CLEAR)
 
         // Draw chart background
         drawRect(0f, 0f, sideChartWidth, height, backgroundPaint)
         drawRect(width - sideChartWidth, 0f, width, height, backgroundPaint)
-        drawRect((width - centralChartWidth) / 2f, 0f, (width + centralChartWidth) / 2f, height, backgroundPaint)
+
+        val columnLeft = (width - centralChartWidth) / 2f
+        val columnRight = (width + centralChartWidth) / 2f
+        drawRect(columnLeft, 0f, columnRight, height, backgroundPaint)
+
+        chartAnimator?.let { chartAnimator ->
+            // Draw gains
+            var lastTop = 0f
+            GainCategories.values().forEach { gainCategory ->
+                val value = chartAnimator.nextGain(gainCategory)
+                val columnHeight = height * value / chartAnimator.maxValue
+                val paint = gainPaints[gainCategory]
+
+                drawRect(0f, height - lastTop - columnHeight, sideChartWidth, height - lastTop, paint)
+                drawRect(columnLeft, height - lastTop - columnHeight, columnRight, height - lastTop, paint)
+
+                lastTop += columnHeight
+            }
+
+            // Draw losses
+            lastTop = 0f
+            LossCategories.values().forEach { lossCategory ->
+                val value = chartAnimator.nextLoss(lossCategory)
+                val columnHeight = height * value / chartAnimator.maxValue
+                val paint = lossPaints[lossCategory]
+
+                drawRect(columnLeft, height - lastTop - columnHeight, columnRight, height - lastTop, paint)
+                drawRect(width - sideChartWidth, height - lastTop - columnHeight, width, height - lastTop, paint)
+
+                lastTop += columnHeight
+            }
+        }
 
         // Draw line
         drawLine(0f, height - lineWidth / 2f, width, height - lineWidth / 2f, getLinePaint(width))

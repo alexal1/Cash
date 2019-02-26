@@ -1,6 +1,7 @@
 package com.alex_aladdin.cash.ui
 
 import android.arch.lifecycle.ViewModelProviders
+import android.graphics.PixelFormat
 import android.os.Bundle
 import android.support.constraint.ConstraintSet.PARENT_ID
 import android.support.v4.content.ContextCompat
@@ -62,6 +63,9 @@ class MainActivity : AppCompatActivity() {
 
             val chartView = chartView {
                 id = View.generateViewId()
+                setZOrderOnTop(true)
+                holder.setFormat(PixelFormat.TRANSPARENT)
+                viewModel.chartDataObservable.subscribe(chartDataConsumer).cache(dc)
             }.lparams(matchConstraint, matchConstraint) {
                 bottomMargin = dip(32)
             }
