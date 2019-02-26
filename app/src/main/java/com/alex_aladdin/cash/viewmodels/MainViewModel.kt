@@ -17,31 +17,35 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val weekdayFormat = SimpleDateFormat("EEEE", application.currentLocale())
 
-    private val weekdaySubject = BehaviorSubject.createDefault(Date().toWeekday())
+    private val weekdaySubject = BehaviorSubject.create<Weekday>()
     val weekdayObservable: Observable<Weekday> = weekdaySubject
 
     private val chartDataSubject = BehaviorSubject.createDefault(ChartData())
     val chartDataObservable: Observable<ChartData> = chartDataSubject
 
-    val dateConsumer = Consumer<Date> { date -> weekdaySubject.onNext(date.toWeekday())}
+    val dateConsumer = Consumer<Date> { date ->
+        weekdaySubject.onNext(date.toWeekday())
+
+        // TODO: remove
+        val chartData = if (DateUtils.isToday(date.time)) {
+            ChartData(
+                gain = mapOf(GainCategories.SALARY to 1000f),
+                loss = mapOf(LossCategories.CAFES_AND_RESTAURANTS to 500f, LossCategories.FOODSTUFF to 250f)
+            )
+        } else {
+            ChartData(
+                gain = mapOf(GainCategories.SALARY to 1000f),
+                loss = mapOf(LossCategories.CAFES_AND_RESTAURANTS to 250f, LossCategories.FOODSTUFF to 500f)
+            )
+        }
+        chartDataSubject.onNext(chartData)
+    }
 
 
     private fun Date.toWeekday(): Weekday {
         val name = weekdayFormat.format(this).capitalize()
         val isToday = DateUtils.isToday(time)
         return Weekday(name, isToday)
-    }
-
-
-    init {
-        // TODO: remove
-
-        val testChartData = ChartData(
-            gain = mapOf(GainCategories.SALARY to 1000f),
-            loss = mapOf(LossCategories.CAFES_AND_RESTAURANTS to 500f, LossCategories.FOODSTUFF to 250f)
-        )
-
-        chartDataSubject.onNext(testChartData)
     }
 
 

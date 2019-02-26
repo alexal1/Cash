@@ -30,7 +30,7 @@ class DatesAdapter(locale: Locale) : RecyclerView.Adapter<DatesAdapter.DateViewH
     private val todayPos = Int.MAX_VALUE / 2
     private val dateFormatter = SimpleDateFormat("d MMM", locale)
 
-    private val dateSubject = BehaviorSubject.create<Date>()
+    private val dateSubject = BehaviorSubject.createDefault(Date())
     val dateObservable: Observable<Date> = dateSubject.distinctUntilChanged()
 
     private var datesScrollListener: DatesScrollListener? = null
