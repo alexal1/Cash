@@ -1,8 +1,13 @@
 package com.alex_aladdin.cash.viewmodels.enums
 
-import android.support.annotation.ColorRes
 import com.alex_aladdin.cash.R
 
-enum class GainCategories(@ColorRes val colorRes: Int) : Categories {
-    SALARY(R.color.green)
+enum class GainCategories : Categories {
+
+    SALARY {
+        override val isGain = true
+        override val colorRes = R.color.green
+        override val stringRes = R.string.gain_salary
+    }
+
 }

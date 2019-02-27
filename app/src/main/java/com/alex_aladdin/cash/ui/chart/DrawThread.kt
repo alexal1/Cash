@@ -7,6 +7,7 @@ import android.view.SurfaceHolder
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.ui.chart.ChartDrawer.CENTRAL_CHART_WIDTH
 import com.alex_aladdin.cash.ui.chart.ChartDrawer.SIDE_CHART_WIDTH
+import com.alex_aladdin.cash.utils.TextUtils
 import com.alex_aladdin.cash.viewmodels.enums.Categories
 import com.alex_aladdin.cash.viewmodels.enums.GainCategories
 import com.alex_aladdin.cash.viewmodels.enums.LossCategories
@@ -17,6 +18,15 @@ class DrawThread(
     private val context: Context,
     private val latency: Long
 ) : Thread() {
+
+    companion object {
+
+        private const val TEXT_PADDING = 0.01f
+        private const val CHECKED_TEXT_PADDING = 0.02f
+        private const val TAP_TO_RETURN_TEXT_PADDING = 0.08f
+
+    }
+
 
     @Volatile
     var isRunning = false
@@ -38,6 +48,29 @@ class DrawThread(
     private val lossPaints: Map<LossCategories, Paint> = LossCategories.values()
         .map { it to Paint().apply { color = ContextCompat.getColor(context, it.colorRes); isAntiAlias = false } }
         .toMap()
+
+    private val textPaint = Paint().apply {
+        color = Color.WHITE
+        textSize = context.dip(12).toFloat()
+        isAntiAlias = true
+        alpha = (0.8f * 255).toInt()
+    }
+
+    private val checkedTextPaint = Paint().apply {
+        color = Color.WHITE
+        textSize = context.dip(16).toFloat()
+        isAntiAlias = true
+        alpha = (0.8f * 255).toInt()
+        isFakeBoldText = true
+        letterSpacing = 0.02f
+    }
+
+    private val tapToReturnTextPaint = Paint().apply {
+        color = Color.WHITE
+        textSize = context.dip(16).toFloat()
+        isAntiAlias = true
+        alpha = (0.8f * 255).toInt()
+    }
 
     private val lineWidth = context.dip(1).toFloat()
 
@@ -107,6 +140,61 @@ class DrawThread(
 
         // Draw line
         drawLine(0f, height - lineWidth / 2f, width, height - lineWidth / 2f, getLinePaint(width))
+
+        // Draw text
+        if (checkedCategory == null) {
+            // Gain
+            chartAnimator?.let { chartAnimator ->
+                val gain = TextUtils.formatMoney(chartAnimator.totalGain)
+                val textRect = Rect()
+                textPaint.getTextBounds(gain, 0, gain.length, textRect)
+                val top = minOf(
+                    height * (1f - chartAnimator.totalGain / chartAnimator.maxValue) + textRect.height(),
+                    height - textRect.height()
+                )
+                val left = sideChartWidth + TEXT_PADDING * width
+                drawText(gain, left, top, textPaint)
+            }
+
+            // Loss
+            chartAnimator?.let { chartAnimator ->
+                val loss = TextUtils.formatMoney(chartAnimator.totalLoss)
+                val textRect = Rect()
+                textPaint.getTextBounds(loss, 0, loss.length, textRect)
+                val top = minOf(
+                    height * (1f - chartAnimator.totalLoss / chartAnimator.maxValue) + textRect.height(),
+                    height - textRect.height()
+                )
+                val left = width - sideChartWidth - textRect.width() - TEXT_PADDING * width
+                drawText(loss, left, top, textPaint)
+            }
+        } else {
+            checkedCategory?.let { checkedCategory ->
+                val textName = context.getString(checkedCategory.stringRes)
+                val textNameRect = Rect()
+                checkedTextPaint.getTextBounds(textName, 0, textName.length, textNameRect)
+
+                val textValue = TextUtils.formatMoney(chartAnimator?.getCurrentValue(checkedCategory))
+                val textValueRect = Rect()
+                checkedTextPaint.getTextBounds(textValue, 0, textValue.length, textValueRect)
+
+                val textTapToReturn = context.getString(R.string.tap_to_return)
+                val textTapToReturnRect = Rect()
+                tapToReturnTextPaint.getTextBounds(textTapToReturn, 0, textTapToReturn.length, textTapToReturnRect)
+
+                val textNameTop = (height - textNameRect.height() - textValueRect.height()) / 2f
+                val textNameLeft = (width - textNameRect.width()) / 2f
+                drawText(textName, textNameLeft, textNameTop, checkedTextPaint)
+
+                val textValueTop = textNameTop + CHECKED_TEXT_PADDING * height + textNameRect.height()
+                val textValueLeft = (width - textValueRect.width()) / 2f
+                drawText(textValue, textValueLeft, textValueTop, checkedTextPaint)
+
+                val textTapToReturnTop = textValueTop + TAP_TO_RETURN_TEXT_PADDING * height + textValueRect.height()
+                val textTapToReturnLeft = (width - textTapToReturnRect.width()) / 2f
+                drawText(textTapToReturn, textTapToReturnLeft, textTapToReturnTop, tapToReturnTextPaint)
+            }
+        }
     }
 
     private fun getLinePaint(width: Float): Paint {

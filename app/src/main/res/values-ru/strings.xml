@@ -3,4 +3,12 @@
     <string name="loss">+ Расход</string>
     <string name="gain">+ Доход</string>
     <string name="today">сегодня</string>
+    <string name="tap_to_return">( Тап чтобы вернуться )</string>
+
+    <!-- Gain -->
+    <string name="gain_salary">Зарплата</string>
+
+    <!-- Loss -->
+    <string name="loss_cafes_and_restaurants">Кафе и рестораны</string>
+    <string name="loss_foodstuff">Продукты</string>
 </resources>

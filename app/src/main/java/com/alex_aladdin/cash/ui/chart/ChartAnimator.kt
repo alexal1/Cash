@@ -1,5 +1,6 @@
 package com.alex_aladdin.cash.ui.chart
 
+import com.alex_aladdin.cash.viewmodels.enums.Categories
 import com.alex_aladdin.cash.viewmodels.enums.GainCategories
 import com.alex_aladdin.cash.viewmodels.enums.LossCategories
 import kotlin.math.pow
@@ -54,6 +55,9 @@ class ChartAnimator(
         maxValueByNewChart
     }
 
+    val totalGain get() = currentGain.values.sum()
+    val totalLoss get() = currentLoss.values.sum()
+
 
     fun nextGain(category: GainCategories): Float {
         var value = currentGain[category] ?: 0f
@@ -64,7 +68,9 @@ class ChartAnimator(
         }
 
         if (counter == framesCount - 1) {
-            return newChartData.gain[category] ?: 0f
+            val finalGain = newChartData.gain[category] ?: 0f
+            currentGain[category] = finalGain
+            return finalGain
         }
 
         val step = step.gain[category] ?: 0f
@@ -86,7 +92,9 @@ class ChartAnimator(
         }
 
         if (counter == framesCount - 1) {
-            return newChartData.loss[category] ?: 0f
+            val finalLoss = newChartData.loss[category] ?: 0f
+            currentLoss[category] = finalLoss
+            return finalLoss
         }
 
         val step = step.loss[category] ?: 0f
@@ -102,6 +110,12 @@ class ChartAnimator(
     fun stop(): ChartData {
         isRunning = false
         return ChartData(currentGain, currentLoss)
+    }
+
+    fun getCurrentValue(category: Categories) = if (category.isGain) {
+        currentGain[category] ?: 0f
+    } else {
+        currentLoss[category] ?: 0f
     }
 
 }

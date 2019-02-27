@@ -31,7 +31,7 @@ import kotlin.math.sqrt
 class MainActivity : AppCompatActivity() {
 
     private val dc = DisposableCache()
-    private val maxClickRadius by lazy { dip(5).toFloat() }
+    private val maxClickRadius by lazy { dip(10).toFloat() }
     private val chartHitRect by lazy {
         val rect = Rect()
         chartView.getHitRect(rect)

@@ -68,12 +68,9 @@ class ChartView(context: Context) : SurfaceView(context), SurfaceHolder.Callback
 
     fun click(point: PointF) {
         drawThread?.let { drawThread ->
-            val oldCheckedCategory = drawThread.checkedCategory
-            val newCheckedCategory = findCategoryByClick(point)
-
-            if (oldCheckedCategory == null) {
-                drawThread.checkedCategory = newCheckedCategory
-            } else if (oldCheckedCategory != newCheckedCategory) {
+            if (drawThread.checkedCategory == null) {
+                drawThread.checkedCategory = findCategoryByClick(point)
+            } else {
                 drawThread.checkedCategory = null
             }
         }
