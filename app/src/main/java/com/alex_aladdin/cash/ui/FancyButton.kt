@@ -4,7 +4,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 import android.view.Gravity.CENTER
 import android.view.MotionEvent
 import android.view.View

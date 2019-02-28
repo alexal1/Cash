@@ -1,12 +1,12 @@
 package com.alex_aladdin.cash.ui.dates
 
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE
 import android.view.Gravity.CENTER
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.utils.screenSize
 import io.reactivex.Observable
@@ -58,8 +58,9 @@ class DatesAdapter(locale: Locale) : RecyclerView.Adapter<DatesAdapter.DateViewH
             val position = layoutManager.findFirstCompletelyVisibleItemPosition()
             val date = dateByPos(position)
             dateSubject.onNext(date)
+        }.also {
+            recyclerView.addOnScrollListener(it)
         }
-        recyclerView.addOnScrollListener(datesScrollListener)
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
@@ -75,7 +76,7 @@ class DatesAdapter(locale: Locale) : RecyclerView.Adapter<DatesAdapter.DateViewH
 
     private class DatesScrollListener(private val onScrolled: () -> Unit) : RecyclerView.OnScrollListener() {
 
-        override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             if (newState == SCROLL_STATE_IDLE) {
                 onScrolled()
             }

@@ -1,8 +1,8 @@
 package com.alex_aladdin.cash.viewmodels
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
 import android.text.format.DateUtils
+import androidx.lifecycle.AndroidViewModel
 import com.alex_aladdin.cash.ui.chart.ChartData
 import com.alex_aladdin.cash.utils.currentLocale
 import com.alex_aladdin.cash.viewmodels.enums.GainCategories

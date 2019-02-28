@@ -2,8 +2,8 @@ package com.alex_aladdin.cash.ui.chart
 
 import android.content.Context
 import android.graphics.*
-import android.support.v4.content.ContextCompat
 import android.view.SurfaceHolder
+import androidx.core.content.ContextCompat
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.ui.chart.ChartDrawer.CENTRAL_CHART_WIDTH
 import com.alex_aladdin.cash.ui.chart.ChartDrawer.SIDE_CHART_WIDTH

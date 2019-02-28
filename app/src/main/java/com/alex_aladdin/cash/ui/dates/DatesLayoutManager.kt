@@ -1,9 +1,9 @@
 package com.alex_aladdin.cash.ui.dates
 
 import android.content.Context
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.Recycler
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.Recycler
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -34,7 +34,7 @@ class DatesLayoutManager(context: Context) : LinearLayoutManager(context) {
         val minDistance = MIN_DISTANCE * parentMidpoint
         val maxDistance = MAX_DISTANCE * parentMidpoint
 
-        (0 until childCount).map { i -> getChildAt(i) }.forEach { child ->
+        (0 until childCount).mapNotNull { i -> getChildAt(i) }.forEach { child ->
             val childMidpoint = (getDecoratedLeft(child) + getDecoratedRight(child)) / 2f
             val distance = min(maxDistance, max(minDistance, abs(parentMidpoint - childMidpoint)))
 

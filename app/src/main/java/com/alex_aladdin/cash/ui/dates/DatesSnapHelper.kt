@@ -1,8 +1,8 @@
 package com.alex_aladdin.cash.ui.dates
 
-import android.support.v7.widget.LinearSnapHelper
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.NO_POSITION
+import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.NO_POSITION
 import kotlin.math.abs
 
 class DatesSnapHelper : LinearSnapHelper() {
