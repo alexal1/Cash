@@ -4,13 +4,13 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
-import androidx.annotation.StringRes
 import android.view.Gravity.CENTER
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
+import androidx.annotation.StringRes
 import androidx.core.graphics.contains
 import com.alex_aladdin.cash.R
 import org.jetbrains.anko.*
@@ -90,17 +90,12 @@ class FancyButton(context: Context) : _FrameLayout(context) {
                     fillAnimator = ValueAnimator.ofInt(fillDrawable.alpha, DEFAULT_ALPHA).apply {
                         duration = DURATION
                         interpolator = AccelerateInterpolator()
-                        addUpdateListener {
-                            val alpha = it.animatedValue as Int
-                            fillDrawable.alpha = alpha
-
-                            if (alpha == DEFAULT_ALPHA) {
-                                if (viewRect.contains(Point(event.x.toInt(), event.y.toInt()))) {
-                                    performClick()
-                                }
-                            }
-                        }
+                        addUpdateListener { fillDrawable.alpha = it.animatedValue as Int }
                         start()
+                    }
+
+                    if (viewRect.contains(Point(event.rawX.toInt(), event.rawY.toInt()))) {
+                        performClick()
                     }
 
                     true
