@@ -4,6 +4,8 @@
     <string name="gain">+ Gain</string>
     <string name="today">today</string>
     <string name="tap_to_return">( Tap to return )</string>
+    <string name="new_gain_on">New gain on</string>
+    <string name="new_loss_on">New loss on</string>
     
     <!-- Gain -->
     <string name="gain_salary">Salary</string>

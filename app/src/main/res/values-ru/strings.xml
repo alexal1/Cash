@@ -4,6 +4,8 @@
     <string name="gain">+ Доход</string>
     <string name="today">сегодня</string>
     <string name="tap_to_return">( Тап чтобы вернуться )</string>
+    <string name="new_gain_on">Новый доход</string>
+    <string name="new_loss_on">Новый расход</string>
 
     <!-- Gain -->
     <string name="gain_salary">Зарплата</string>

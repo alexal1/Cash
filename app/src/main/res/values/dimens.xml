@@ -2,4 +2,5 @@
 <resources>
     <dimen name="glow_size">8dp</dimen>
     <dimen name="date_height">128dp</dimen>
+    <dimen name="toolbar_height">56dp</dimen>
 </resources>

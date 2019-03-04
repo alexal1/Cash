@@ -10,27 +10,19 @@ import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.utils.screenSize
 import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import org.jetbrains.anko.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar.DAY_OF_MONTH
 
-class DatesAdapter(locale: Locale) : RecyclerView.Adapter<DatesAdapter.DateViewHolder>() {
-
-    companion object {
-
-        private const val textDateId = 1
-
-    }
-
+class DatesAdapter(locale: Locale, private val todayDate: Date) : RecyclerView.Adapter<DatesAdapter.DateViewHolder>() {
 
     private val calendar = GregorianCalendar.getInstance(locale)
-    private val todayDate = Date(System.currentTimeMillis())
     private val todayPos = Int.MAX_VALUE / 2
     private val dateFormatter = SimpleDateFormat("d MMM", locale)
 
-    private val dateSubject = BehaviorSubject.createDefault(Date())
+    private val dateSubject = PublishSubject.create<Date>()
     val dateObservable: Observable<Date> = dateSubject.distinctUntilChanged()
 
     private var datesScrollListener: DatesScrollListener? = null
@@ -88,7 +80,7 @@ class DatesAdapter(locale: Locale) : RecyclerView.Adapter<DatesAdapter.DateViewH
 
         override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
             textView {
-                id = textDateId
+                id = R.id.text_date
                 layoutParams = ViewGroup.LayoutParams(context.screenSize().x / 2, dimen(R.dimen.date_height))
                 gravity = CENTER
                 textSize = 44f
@@ -101,7 +93,7 @@ class DatesAdapter(locale: Locale) : RecyclerView.Adapter<DatesAdapter.DateViewH
 
     class DateViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val textDate: TextView = itemView.findViewById(textDateId)
+        val textDate: TextView = itemView.findViewById(R.id.text_date)
 
     }
 

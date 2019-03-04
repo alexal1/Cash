@@ -94,7 +94,7 @@ class FancyButton(context: Context) : _FrameLayout(context) {
                         start()
                     }
 
-                    if (viewRect.contains(Point(event.rawX.toInt(), event.rawY.toInt()))) {
+                    if (viewRect.contains(Point(event.x.toInt() + left, event.y.toInt() + top))) {
                         performClick()
                     }
 

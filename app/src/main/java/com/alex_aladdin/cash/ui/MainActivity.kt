@@ -1,17 +1,17 @@
 package com.alex_aladdin.cash.ui
 
-import androidx.lifecycle.ViewModelProviders
 import android.graphics.PixelFormat
 import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.Rect
 import android.os.Bundle
-import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
 import android.view.MotionEvent
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.contains
+import androidx.lifecycle.ViewModelProviders
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.ui.chart.ChartView
 import com.alex_aladdin.cash.ui.dates.DatesAdapter
@@ -19,6 +19,7 @@ import com.alex_aladdin.cash.ui.dates.DatesLayoutManager
 import com.alex_aladdin.cash.ui.dates.DatesSnapHelper
 import com.alex_aladdin.cash.utils.*
 import com.alex_aladdin.cash.viewmodels.MainViewModel
+import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
@@ -52,10 +53,10 @@ class MainActivity : AppCompatActivity() {
 
         constraintLayout {
             val datesRecyclerView = recyclerView {
-                id = View.generateViewId()
+                id = R.id.dates_recycler_view
                 layoutManager = DatesLayoutManager(this@MainActivity)
                 DatesSnapHelper().attachToRecyclerView(this)
-                adapter = DatesAdapter(currentLocale()).also { datesAdapter ->
+                adapter = DatesAdapter(currentLocale(), viewModel.todayDate).also { datesAdapter ->
                     datesAdapter.dateObservable.subscribe(viewModel.dateConsumer).cache(dc)
                 }
             }.lparams(matchConstraint, matchConstraint)
@@ -95,6 +96,10 @@ class MainActivity : AppCompatActivity() {
                     ContextCompat.getColor(this@MainActivity, R.color.greenGradColor2)
                 )
                 setTextResource(R.string.gain)
+
+                setOnClickListener {
+                    NewTransactionActivity.create(this@MainActivity, NewTransactionViewModel.Type.GAIN)
+                }
             }.lparams(matchConstraint, dip(70)) {
                 bottomMargin = dip(4)
                 leftMargin = dip(4)
@@ -108,6 +113,10 @@ class MainActivity : AppCompatActivity() {
                     ContextCompat.getColor(this@MainActivity, R.color.redGradColor2)
                 )
                 setTextResource(R.string.loss)
+
+                setOnClickListener {
+                    NewTransactionActivity.create(this@MainActivity, NewTransactionViewModel.Type.LOSS)
+                }
             }.lparams(matchConstraint, dip(70)) {
                 bottomMargin = dip(4)
                 rightMargin = dip(4)
