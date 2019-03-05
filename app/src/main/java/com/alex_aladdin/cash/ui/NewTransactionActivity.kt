@@ -65,7 +65,7 @@ class NewTransactionActivity : AppCompatActivity() {
                 textView {
                     id = View.generateViewId()
                     textColorResource = R.color.white
-                    textSize = 19f
+                    textSize = 18f
                     backgroundColor = Color.TRANSPARENT
                     gravity = Gravity.CENTER_VERTICAL
                     includeFontPadding = false
