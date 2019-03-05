@@ -1,4 +1,4 @@
-package com.alex_aladdin.cash.ui
+package com.alex_aladdin.cash.ui.activities
 
 import android.graphics.PixelFormat
 import android.graphics.Point
