@@ -1,21 +1,18 @@
 package com.alex_aladdin.cash.utils
 
-import java.math.RoundingMode
-import java.text.DecimalFormat
+import android.text.SpannableStringBuilder
+import android.text.style.CharacterStyle
 
-object TextUtils {
+fun String.asSpannableBuilder() = SpannableStringBuilder(this)
 
-    private const val currencySymbol = "₽"
+fun SpannableStringBuilder.replace(replacement: String, target: String, vararg spans: CharacterStyle): SpannableStringBuilder {
+    val index = indexOf(replacement)
 
-    private val decimalFormat = DecimalFormat("#.##").apply {
-        roundingMode = RoundingMode.CEILING
+    replace(index, index + replacement.length, target)
+
+    spans.forEach {
+        setSpan(it, index, index + target.length, SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE)
     }
 
-
-    fun formatMoney(value: Float?) = if (value != null) {
-        "${decimalFormat.format(value)} $currencySymbol"
-    } else {
-        "0"
-    }
-
+    return this
 }
