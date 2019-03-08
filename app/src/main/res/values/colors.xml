@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="transparent">#00000000</color>
     <color name="nightBlack">#0D0D13</color>
     <color name="deepDark">#12121E</color>
     <color name="dark">#151523</color>
+    <color name="dark_transparent">#00151523</color>
     <color name="palladium">#323244</color>
     <color name="white">#FFFFFF</color>
     <color name="red">#ED1652</color>

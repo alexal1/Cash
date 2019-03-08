@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.utils.*
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel
+import com.alex_aladdin.cash.viewmodels.enums.LossCategories
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
@@ -65,7 +66,7 @@ class NewTransactionActivity : AppCompatActivity() {
                 textView {
                     id = View.generateViewId()
                     textColorResource = R.color.white
-                    textSize = 18f
+                    textSize = 16f
                     backgroundColor = Color.TRANSPARENT
                     gravity = Gravity.CENTER_VERTICAL
                     includeFontPadding = false
@@ -76,12 +77,24 @@ class NewTransactionActivity : AppCompatActivity() {
                 }.lparams(wrapContent, matchParent)
             }.lparams(matchConstraint, dimen(R.dimen.toolbar_height))
 
+            val categoryPicker = fancyPicker {
+                id = R.id.category_picker
+                setData((0..100).map { it.toString() })
+                setData(LossCategories.values().map { getString(it.stringRes) })
+            }.lparams(matchConstraint, wrapContent)
+
 
             applyConstraintSet {
                 connect(
                     START of toolbar to START of PARENT_ID,
                     END of toolbar to END of PARENT_ID,
                     TOP of toolbar to TOP of PARENT_ID
+                )
+
+                connect(
+                    START of categoryPicker to START of PARENT_ID,
+                    END of categoryPicker to END of PARENT_ID,
+                    TOP of categoryPicker to BOTTOM of toolbar
                 )
             }
         }

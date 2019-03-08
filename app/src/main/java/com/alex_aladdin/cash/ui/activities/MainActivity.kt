@@ -56,6 +56,8 @@ class MainActivity : AppCompatActivity() {
                 id = R.id.dates_recycler_view
                 layoutManager = DatesLayoutManager(this@MainActivity)
                 DatesSnapHelper().attachToRecyclerView(this)
+                setHasFixedSize(true)
+
                 adapter = DatesAdapter(currentLocale(), viewModel.todayDate).also { datesAdapter ->
                     datesAdapter.dateObservable.subscribe(viewModel.dateConsumer).cache(dc)
                 }

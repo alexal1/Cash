@@ -69,7 +69,7 @@ class DrawThread(
         color = Color.WHITE
         textSize = context.dip(16).toFloat()
         isAntiAlias = true
-        alpha = (0.8f * 255).toInt()
+        alpha = (0.5f * 255).toInt()
     }
 
     private val lineWidth = context.dip(1).toFloat()
