@@ -4,4 +4,5 @@
     <dimen name="date_height">128dp</dimen>
     <dimen name="toolbar_height">56dp</dimen>
     <dimen name="fancy_picker_item_height">42dp</dimen>
+    <dimen name="screen_border_size">16dp</dimen>
 </resources>

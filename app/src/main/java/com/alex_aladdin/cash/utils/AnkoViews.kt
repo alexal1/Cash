@@ -1,6 +1,7 @@
 package com.alex_aladdin.cash.utils
 
 import android.view.ViewManager
+import androidx.appcompat.widget.AppCompatEditText
 import com.alex_aladdin.cash.ui.FancyButton
 import com.alex_aladdin.cash.ui.FancyPicker
 import com.alex_aladdin.cash.ui.chart.ChartView
@@ -16,4 +17,8 @@ inline fun ViewManager.chartView(init: ChartView.() -> Unit = {}): ChartView {
 
 inline fun ViewManager.fancyPicker(init: FancyPicker.() -> Unit = {}): FancyPicker {
     return ankoView({ FancyPicker(it) }, theme = 0, init = init)
+}
+
+inline fun ViewManager.appCompatEditText(init: AppCompatEditText.() -> Unit = {}): AppCompatEditText {
+    return ankoView({ AppCompatEditText(it) }, theme = 0, init = init)
 }

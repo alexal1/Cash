@@ -5,17 +5,22 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.text.InputType
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.view.Gravity
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.LinearLayout.VERTICAL
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProviders
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.utils.*
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel
 import com.alex_aladdin.cash.viewmodels.enums.LossCategories
+import com.jakewharton.rxbinding3.widget.textChanges
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
@@ -52,9 +57,10 @@ class NewTransactionActivity : AppCompatActivity() {
 
         viewModel = ViewModelProviders.of(this).get(NewTransactionViewModel::class.java)
 
+        linearLayout {
+            orientation = VERTICAL
 
-        constraintLayout {
-            val toolbar = toolbar {
+            toolbar {
                 id = View.generateViewId()
                 navigationIconResource = R.drawable.ic_cross
                 backgroundColorResource = R.color.deepDark
@@ -75,27 +81,82 @@ class NewTransactionActivity : AppCompatActivity() {
                         text = getTitle(type, date)
                     }.cache(dc)
                 }.lparams(wrapContent, matchParent)
-            }.lparams(matchConstraint, dimen(R.dimen.toolbar_height))
+            }.lparams(matchParent, dimen(R.dimen.toolbar_height))
 
-            val categoryPicker = fancyPicker {
-                id = R.id.category_picker
-                setData((0..100).map { it.toString() })
-                setData(LossCategories.values().map { getString(it.stringRes) })
-            }.lparams(matchConstraint, wrapContent)
+            scrollView {
+                constraintLayout {
+                    val nameLabel = textView {
+                        id = View.generateViewId()
+                        textSize = 10f
+                        textColorResource = R.color.white
+                        textResource = if (type == NewTransactionViewModel.Type.GAIN) R.string.gain_name_hint else R.string.loss_name_hint
+                        alpha = 0.0f
+                    }.lparams(wrapContent, wrapContent) {
+                        leftMargin = dip(4)
+                        topMargin = dip(4)
+                    }
+
+                    val nameInput = appCompatEditText {
+                        id = R.id.name_input
+                        textSize = 16f
+                        textColorResource = R.color.white
+                        hintResource = if (type == NewTransactionViewModel.Type.GAIN) R.string.gain_name_hint else R.string.loss_name_hint
+                        hintTextColor = ContextCompat.getColor(context, R.color.smoke)
+                        background = null
+                        inputType = InputType.TYPE_TEXT_FLAG_CAP_WORDS
+                        imeOptions = EditorInfo.IME_ACTION_DONE
+
+                        requestFocus()
+
+                        textChanges().subscribeOnUi { text ->
+                            if (text.isEmpty()) {
+                                nameLabel.disappear()
+                            } else {
+                                nameLabel.appear()
+                            }
+                        }.cache(dc)
+                    }.lparams(matchConstraint, wrapContent)
+
+                    val nameSeparator = view {
+                        id = View.generateViewId()
+                        backgroundColorResource = R.color.palladium
+                    }.lparams(matchConstraint, dip(0.5f))
+
+                    val categoryPicker = fancyPicker {
+                        id = R.id.category_picker
+                        setData((0..100).map { it.toString() })
+                        setData(LossCategories.values().map { getString(it.stringRes) })
+                    }.lparams(matchConstraint, wrapContent)
 
 
-            applyConstraintSet {
-                connect(
-                    START of toolbar to START of PARENT_ID,
-                    END of toolbar to END of PARENT_ID,
-                    TOP of toolbar to TOP of PARENT_ID
-                )
+                    applyConstraintSet {
+                        connect(
+                            START of nameLabel to START of PARENT_ID,
+                            TOP of nameLabel to TOP of PARENT_ID
+                        )
 
-                connect(
-                    START of categoryPicker to START of PARENT_ID,
-                    END of categoryPicker to END of PARENT_ID,
-                    TOP of categoryPicker to BOTTOM of toolbar
-                )
+                        connect(
+                            START of nameInput to START of PARENT_ID,
+                            END of nameInput to END of PARENT_ID,
+                            TOP of nameInput to BOTTOM of nameLabel
+                        )
+
+                        connect(
+                            START of nameSeparator to START of PARENT_ID,
+                            END of nameSeparator to END of PARENT_ID,
+                            TOP of nameSeparator to BOTTOM of nameInput
+                        )
+
+                        connect(
+                            START of categoryPicker to START of PARENT_ID,
+                            END of categoryPicker to END of PARENT_ID,
+                            TOP of categoryPicker to BOTTOM of nameSeparator
+                        )
+                    }
+                }
+            }.lparams(matchParent, matchParent) {
+                marginStart = dimen(R.dimen.screen_border_size)
+                marginEnd = dimen(R.dimen.screen_border_size)
             }
         }
     }

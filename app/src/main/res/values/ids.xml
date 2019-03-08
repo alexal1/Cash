@@ -5,4 +5,5 @@
     <item name="category_picker" type="id" />
     <item name="category_picker_recycler_view" type="id" />
     <item name="category_picker_text" type="id" />
+    <item name="name_input" type="id" />
 </resources>
