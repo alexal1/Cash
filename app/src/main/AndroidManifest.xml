@@ -19,9 +19,7 @@
             </intent-filter>
         </activity>
 
-        <activity
-                android:name=".ui.activities.NewTransactionActivity"
-                android:windowSoftInputMode="stateVisible" />
+        <activity android:name=".ui.activities.NewTransactionActivity" />
     </application>
 
 </manifest>
