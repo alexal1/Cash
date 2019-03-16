@@ -337,4 +337,9 @@ class CalculatorFragment : Fragment() {
         return rect
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        dc.drain()
+    }
+
 }
