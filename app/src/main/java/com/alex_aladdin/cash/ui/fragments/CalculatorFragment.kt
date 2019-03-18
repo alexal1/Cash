@@ -38,7 +38,7 @@ class CalculatorFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this).get(NewTransactionViewModel::class.java)
+        viewModel = ViewModelProviders.of(requireActivity()).get(NewTransactionViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -286,7 +286,7 @@ class CalculatorFragment : Fragment() {
             id = View.generateViewId()
             gravity = CENTER
             isClickable = true
-            textColorResource = R.color.white
+            textColorResource = R.color.white_80
             textSize = 24f
             text = when (action.type) {
                 PLUS -> "+"

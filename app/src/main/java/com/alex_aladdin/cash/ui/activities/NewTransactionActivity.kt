@@ -5,27 +5,29 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.text.InputType
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
+import android.util.TypedValue
 import android.view.Gravity
+import android.view.Gravity.CENTER
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.widget.LinearLayout.VERTICAL
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
-import androidx.core.content.ContextCompat
+import androidx.core.widget.TextViewCompat
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.ViewModelProviders
 import com.alex_aladdin.cash.R
+import com.alex_aladdin.cash.ui.fragments.CalculatorFragment
+import com.alex_aladdin.cash.ui.fragments.CategoriesFragment
 import com.alex_aladdin.cash.utils.*
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel
-import com.alex_aladdin.cash.viewmodels.enums.LossCategories
-import com.jakewharton.rxbinding3.widget.textChanges
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.matchConstraint
+import org.jetbrains.anko.support.v4.viewPager
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -35,7 +37,7 @@ class NewTransactionActivity : AppCompatActivity() {
 
         private const val TYPE_EXTRA = "type"
 
-        fun create(activity: Activity, type: NewTransactionViewModel.Type) {
+        fun start(activity: Activity, type: NewTransactionViewModel.Type) {
             val intent = Intent(activity, NewTransactionActivity::class.java).apply {
                 putExtra(TYPE_EXTRA, type)
             }
@@ -57,10 +59,8 @@ class NewTransactionActivity : AppCompatActivity() {
 
         viewModel = ViewModelProviders.of(this).get(NewTransactionViewModel::class.java)
 
-        linearLayout {
-            orientation = VERTICAL
-
-            toolbar {
+        constraintLayout {
+            val toolbar = toolbar {
                 id = View.generateViewId()
                 navigationIconResource = R.drawable.ic_cross
                 backgroundColorResource = R.color.deepDark
@@ -83,80 +83,65 @@ class NewTransactionActivity : AppCompatActivity() {
                 }.lparams(wrapContent, matchParent)
             }.lparams(matchParent, dimen(R.dimen.toolbar_height))
 
-            scrollView {
-                constraintLayout {
-                    val nameLabel = textView {
-                        id = View.generateViewId()
-                        textSize = 10f
-                        textColorResource = R.color.white
-                        textResource = if (type == NewTransactionViewModel.Type.GAIN) R.string.gain_name_hint else R.string.loss_name_hint
-                        alpha = 0.0f
-                    }.lparams(wrapContent, wrapContent) {
-                        leftMargin = dip(4)
-                        topMargin = dip(4)
-                    }
+            val amountText = appCompatTextView {
+                id = View.generateViewId()
+                textColorResource = R.color.white
+                gravity = CENTER
+                maxLines = 1
+                TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                    this@appCompatTextView,
+                    12,
+                    44,
+                    1,
+                    TypedValue.COMPLEX_UNIT_SP
+                )
 
-                    val nameInput = appCompatEditText {
-                        id = R.id.name_input
-                        textSize = 16f
-                        textColorResource = R.color.white
-                        hintResource = if (type == NewTransactionViewModel.Type.GAIN) R.string.gain_name_hint else R.string.loss_name_hint
-                        hintTextColor = ContextCompat.getColor(context, R.color.smoke)
-                        background = null
-                        inputType = InputType.TYPE_TEXT_FLAG_CAP_WORDS
-                        imeOptions = EditorInfo.IME_ACTION_DONE
+                viewModel.amountObservable.subscribeOnUi { amount ->
+                    text = amount
+                }.cache(dc)
+            }.lparams(matchConstraint, matchConstraint)
 
-                        requestFocus()
+            val viewPager = viewPager {
+                id = R.id.view_pager
+                adapter = ViewPagerAdapter(supportFragmentManager)
+            }.lparams(matchConstraint, minOf(dip(320), (screenSize().y * 0.5f).toInt()))
 
-                        textChanges().subscribeOnUi { text ->
-                            if (text.isEmpty()) {
-                                nameLabel.disappear()
-                            } else {
-                                nameLabel.appear()
-                            }
-                        }.cache(dc)
-                    }.lparams(matchConstraint, wrapContent)
+            val largeButton = button {
+                id = View.generateViewId()
+                backgroundResource = R.drawable.bg_large_button
+                textColorResource = R.color.blue
+                textSize = 14f
+                letterSpacing = 0.02f
+                typeface = Typeface.DEFAULT_BOLD
+                allCaps = false
+                text = "Check category"
+            }.lparams(matchConstraint, dip(54))
 
-                    val nameSeparator = view {
-                        id = View.generateViewId()
-                        backgroundColorResource = R.color.palladium
-                    }.lparams(matchConstraint, dip(0.5f))
+            applyConstraintSet {
+                connect(
+                    START of toolbar to START of PARENT_ID,
+                    END of toolbar to END of PARENT_ID,
+                    TOP of toolbar to TOP of PARENT_ID
+                )
 
-                    val categoryPicker = fancyPicker {
-                        id = R.id.category_picker
-                        setData((0..100).map { it.toString() })
-                        setData(LossCategories.values().map { getString(it.stringRes) })
-                    }.lparams(matchConstraint, wrapContent)
+                connect(
+                    START of amountText to START of PARENT_ID,
+                    END of amountText to END of PARENT_ID,
+                    TOP of amountText to BOTTOM of toolbar,
+                    BOTTOM of amountText to TOP of viewPager
+                )
 
+                connect(
+                    START of viewPager to START of PARENT_ID,
+                    END of viewPager to END of PARENT_ID,
+                    BOTTOM of viewPager to TOP of largeButton
+                )
 
-                    applyConstraintSet {
-                        connect(
-                            START of nameLabel to START of PARENT_ID,
-                            TOP of nameLabel to TOP of PARENT_ID
-                        )
-
-                        connect(
-                            START of nameInput to START of PARENT_ID,
-                            END of nameInput to END of PARENT_ID,
-                            TOP of nameInput to BOTTOM of nameLabel
-                        )
-
-                        connect(
-                            START of nameSeparator to START of PARENT_ID,
-                            END of nameSeparator to END of PARENT_ID,
-                            TOP of nameSeparator to BOTTOM of nameInput
-                        )
-
-                        connect(
-                            START of categoryPicker to START of PARENT_ID,
-                            END of categoryPicker to END of PARENT_ID,
-                            TOP of categoryPicker to BOTTOM of nameSeparator
-                        )
-                    }
-                }
-            }.lparams(matchParent, matchParent) {
-                marginStart = dimen(R.dimen.screen_border_size)
-                marginEnd = dimen(R.dimen.screen_border_size)
+                connect(
+                    START of largeButton to START of PARENT_ID,
+                    END of largeButton to END of PARENT_ID,
+                    BOTTOM of largeButton to BOTTOM of PARENT_ID
+                )
             }
         }
     }
@@ -175,6 +160,22 @@ class NewTransactionActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         dc.drain()
+    }
+
+
+    private class ViewPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
+
+        private val calculatorFragment = CalculatorFragment()
+        private val categoriesFragment = CategoriesFragment()
+
+        override fun getItem(position: Int) = when (position) {
+            0 -> calculatorFragment
+            1 -> categoriesFragment
+            else -> throw IllegalArgumentException()
+        }
+
+        override fun getCount() = 2
+
     }
 
 }
