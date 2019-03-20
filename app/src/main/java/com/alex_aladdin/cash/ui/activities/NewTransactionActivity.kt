@@ -9,14 +9,15 @@ import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.util.TypedValue
 import android.view.Gravity
-import android.view.Gravity.CENTER
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.solver.widgets.Guideline.VERTICAL
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.ViewModelProviders
+import androidx.viewpager.widget.ViewPager
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.ui.fragments.CalculatorFragment
 import com.alex_aladdin.cash.ui.fragments.CategoriesFragment
@@ -26,6 +27,7 @@ import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.constraint.layout.constraintLayout
+import org.jetbrains.anko.constraint.layout.guideline
 import org.jetbrains.anko.constraint.layout.matchConstraint
 import org.jetbrains.anko.support.v4.viewPager
 import java.text.SimpleDateFormat
@@ -52,6 +54,7 @@ class NewTransactionActivity : AppCompatActivity() {
     private val type by lazy { intent.getSerializableExtra(TYPE_EXTRA) as NewTransactionViewModel.Type }
 
     private lateinit var viewModel: NewTransactionViewModel
+    private lateinit var viewPager: ViewPager
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +63,71 @@ class NewTransactionActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(NewTransactionViewModel::class.java)
 
         constraintLayout {
+            setOnClickListener {
+                viewPager.currentItem = 0
+            }
+
+            val guidelineInputStart = guideline {
+                id = View.generateViewId()
+            }.lparams(0, matchConstraint) {
+                orientation = VERTICAL
+                guidePercent = 0.15f
+            }
+
+            val guidelineInputEnd = guideline {
+                id = View.generateViewId()
+            }.lparams(wrapContent, matchConstraint) {
+                orientation = VERTICAL
+                guidePercent = 0.85f
+            }
+
+            val amountText = appCompatTextView {
+                id = View.generateViewId()
+                textColorResource = R.color.white
+                gravity = Gravity.CENTER_VERTICAL or Gravity.END
+                maxLines = 1
+                includeFontPadding = false
+                TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                    this@appCompatTextView,
+                    12,
+                    44,
+                    1,
+                    TypedValue.COMPLEX_UNIT_SP
+                )
+
+                viewModel.amountObservable.subscribeOnUi { amount ->
+                    text = amount
+                }.cache(dc)
+            }.lparams(matchConstraint, matchConstraint) {
+                rightMargin = dip(16)
+            }
+
+            val currencyPicker = currencyPicker {
+                id = View.generateViewId()
+                setData(viewModel.currenciesList)
+                setCurrentPos(viewModel.currencyIndex)
+
+                itemPickedObservable.subscribe { pos ->
+                    viewModel.currencyIndex = pos
+                }.cache(dc)
+            }.lparams(wrapContent, wrapContent)
+
+            viewPager = viewPager {
+                id = R.id.view_pager
+                adapter = ViewPagerAdapter(supportFragmentManager)
+            }.lparams(matchConstraint, minOf(dip(320), (screenSize().y * 0.5f).toInt()))
+
+            val largeButton = button {
+                id = View.generateViewId()
+                backgroundResource = R.drawable.bg_large_button
+                textColorResource = R.color.blue
+                textSize = 14f
+                letterSpacing = 0.02f
+                typeface = Typeface.DEFAULT_BOLD
+                allCaps = false
+                text = "Check category"
+            }.lparams(matchConstraint, dip(54))
+
             val toolbar = toolbar {
                 id = View.generateViewId()
                 navigationIconResource = R.drawable.ic_cross
@@ -83,40 +151,6 @@ class NewTransactionActivity : AppCompatActivity() {
                 }.lparams(wrapContent, matchParent)
             }.lparams(matchParent, dimen(R.dimen.toolbar_height))
 
-            val amountText = appCompatTextView {
-                id = View.generateViewId()
-                textColorResource = R.color.white
-                gravity = CENTER
-                maxLines = 1
-                TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
-                    this@appCompatTextView,
-                    12,
-                    44,
-                    1,
-                    TypedValue.COMPLEX_UNIT_SP
-                )
-
-                viewModel.amountObservable.subscribeOnUi { amount ->
-                    text = amount
-                }.cache(dc)
-            }.lparams(matchConstraint, matchConstraint)
-
-            val viewPager = viewPager {
-                id = R.id.view_pager
-                adapter = ViewPagerAdapter(supportFragmentManager)
-            }.lparams(matchConstraint, minOf(dip(320), (screenSize().y * 0.5f).toInt()))
-
-            val largeButton = button {
-                id = View.generateViewId()
-                backgroundResource = R.drawable.bg_large_button
-                textColorResource = R.color.blue
-                textSize = 14f
-                letterSpacing = 0.02f
-                typeface = Typeface.DEFAULT_BOLD
-                allCaps = false
-                text = "Check category"
-            }.lparams(matchConstraint, dip(54))
-
             applyConstraintSet {
                 connect(
                     START of toolbar to START of PARENT_ID,
@@ -125,10 +159,24 @@ class NewTransactionActivity : AppCompatActivity() {
                 )
 
                 connect(
-                    START of amountText to START of PARENT_ID,
-                    END of amountText to END of PARENT_ID,
+                    START of guidelineInputStart to START of PARENT_ID
+                )
+
+                connect(
+                    END of guidelineInputEnd to END of PARENT_ID
+                )
+
+                connect(
+                    START of amountText to END of guidelineInputStart,
+                    END of amountText to START of currencyPicker,
                     TOP of amountText to BOTTOM of toolbar,
                     BOTTOM of amountText to TOP of viewPager
+                )
+
+                connect(
+                    END of currencyPicker to START of guidelineInputEnd,
+                    TOP of currencyPicker to BOTTOM of toolbar,
+                    BOTTOM of currencyPicker to TOP of viewPager
                 )
 
                 connect(

@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.alex_aladdin.cash.CashApp
 import com.alex_aladdin.cash.utils.TextFormatter
+import com.alex_aladdin.cash.utils.currentLocale
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel.CalculatorActionType.*
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
@@ -13,12 +14,17 @@ import java.util.*
 class NewTransactionViewModel(application: Application) : AndroidViewModel(application) {
 
     private val app = application as CashApp
+    private val currencyManager = app.currencyManager
+    private val defaultCurrencyIndex = currencyManager.getDefaultCurrencyIndex(app.currentLocale())
 
     private val amountSubject = BehaviorSubject.createDefault("0")
     val amountObservable: Observable<String> = amountSubject
 
     val currentDateObservable: Observable<Date> = app.currentDate
     val calculatorActionConsumer = Consumer(this::handleCalculatorAction)
+    val currenciesList = currencyManager.getCurrenciesList()
+
+    var currencyIndex = defaultCurrencyIndex
 
     private var firstOperand: String? = null
     private var operator: CalculatorActionType? = null
