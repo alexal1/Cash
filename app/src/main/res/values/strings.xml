@@ -13,6 +13,25 @@
     <string name="gain_salary">Salary</string>
 
     <!-- Loss -->
-    <string name="loss_cafes_and_restaurants">Cafes and Restaurants</string>
+    <string name="loss_real_estate_purchase">Real Estate Purchase</string>
+    <string name="loss_furniture_and_renovation">Furniture and Renovation</string>
+    <string name="loss_devices">Devices</string>
+    <string name="loss_banks_and_services">Banks and Services</string>
+    <string name="loss_some_stuff">Some Stuff</string>
+    <string name="loss_clothes_and_shoes">Clothes and Shoes</string>
+    <string name="loss_sport">Sport</string>
+    <string name="loss_books_films_games">Books, films, games</string>
+    <string name="loss_accommodation">Accommodation</string>
+    <string name="loss_internet_and_communication">Internet and Communication</string>
+    <string name="loss_travel_passes">Travel Passes</string>
+    <string name="loss_business">Business</string>
+    <string name="loss_travelling">Travelling</string>
+    <string name="loss_health">Health</string>
     <string name="loss_foodstuff">Foodstuff</string>
+    <string name="loss_cafes_and_restaurants">Cafes and Restaurants</string>
+    <string name="loss_fastfood">Fastfood</string>
+    <string name="loss_gifts">Gifts</string>
+    <string name="loss_philantropy">Philanthropy</string>
+    <string name="loss_taxi_and_carsharing">Taxi and Carsharing</string>
+    <string name="loss_enterntainment">Entertainment</string>
 </resources>

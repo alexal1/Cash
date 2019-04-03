@@ -13,6 +13,25 @@
     <string name="gain_salary">Зарплата</string>
 
     <!-- Loss -->
-    <string name="loss_cafes_and_restaurants">Кафе и рестораны</string>
+    <string name="loss_real_estate_purchase">Покупка недвижимости</string>
+    <string name="loss_furniture_and_renovation">Ремонт и мебель</string>
+    <string name="loss_devices">Техника</string>
+    <string name="loss_banks_and_services">Банки и государство</string>
+    <string name="loss_some_stuff">Вещи</string>
+    <string name="loss_clothes_and_shoes">Одежда и обувь</string>
+    <string name="loss_sport">Спорт</string>
+    <string name="loss_books_films_games">Книги, фильмы, игры</string>
+    <string name="loss_accommodation">Аренда жилья</string>
+    <string name="loss_internet_and_communication">Связь и интернет</string>
+    <string name="loss_travel_passes">Проездные билеты</string>
+    <string name="loss_business">Бизнес</string>
+    <string name="loss_travelling">Путешествия</string>
+    <string name="loss_health">Здоровье</string>
     <string name="loss_foodstuff">Продукты</string>
+    <string name="loss_cafes_and_restaurants">Кафе и рестораны</string>
+    <string name="loss_fastfood">Фастфуд</string>
+    <string name="loss_gifts">Подарки</string>
+    <string name="loss_philantropy">Благотврительность</string>
+    <string name="loss_taxi_and_carsharing">Такси и каршеринг</string>
+    <string name="loss_enterntainment">Развлечения</string>
 </resources>
