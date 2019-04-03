@@ -28,8 +28,6 @@ class DatesLayoutManager(context: Context) : LinearLayoutManager(context) {
     }
 
     override fun scrollHorizontallyBy(dx: Int, recycler: RecyclerView.Recycler?, state: RecyclerView.State?): Int {
-        val result = super.scrollHorizontallyBy(dx, recycler, state)
-
         val parentMidpoint = width / 2f
         val minDistance = MIN_DISTANCE * parentMidpoint
         val maxDistance = MAX_DISTANCE * parentMidpoint
@@ -46,7 +44,7 @@ class DatesLayoutManager(context: Context) : LinearLayoutManager(context) {
             child.alpha = alpha
         }
 
-        return result
+        return super.scrollHorizontallyBy(dx, recycler, state)
     }
 
     override fun onLayoutChildren(recycler: Recycler, state: RecyclerView.State) {

@@ -5,6 +5,7 @@
     <color name="dark">#151523</color>
     <color name="dark_transparent">#00151523</color>
     <color name="soft_dark">#1B1B2A</color>
+    <color name="soft_dark_transparent">#001B1B2A</color>
     <color name="steel_gray">#242433</color>
     <color name="palladium">#323244</color>
     <color name="smoke">#69697F</color>

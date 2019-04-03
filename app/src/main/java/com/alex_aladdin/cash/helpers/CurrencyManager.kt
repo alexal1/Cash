@@ -1,4 +1,4 @@
-package com.alex_aladdin.cash.utils
+package com.alex_aladdin.cash.helpers
 
 import android.content.SharedPreferences
 import androidx.core.content.edit

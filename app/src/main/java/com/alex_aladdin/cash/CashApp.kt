@@ -2,7 +2,7 @@ package com.alex_aladdin.cash
 
 import android.app.Application
 import android.content.Context
-import com.alex_aladdin.cash.utils.CurrencyManager
+import com.alex_aladdin.cash.helpers.CurrencyManager
 import com.alex_aladdin.cash.utils.currentLocale
 import io.reactivex.subjects.BehaviorSubject
 import java.util.*

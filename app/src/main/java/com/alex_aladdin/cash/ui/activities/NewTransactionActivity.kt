@@ -19,6 +19,8 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.alex_aladdin.cash.R
+import com.alex_aladdin.cash.ui.appCompatTextView
+import com.alex_aladdin.cash.ui.currencyPicker
 import com.alex_aladdin.cash.ui.fragments.CalculatorFragment
 import com.alex_aladdin.cash.ui.fragments.CategoriesFragment
 import com.alex_aladdin.cash.utils.*
@@ -104,8 +106,7 @@ class NewTransactionActivity : AppCompatActivity() {
 
             val currencyPicker = currencyPicker {
                 id = View.generateViewId()
-                setData(viewModel.currenciesList)
-                setCurrentPos(viewModel.currencyIndex)
+                setData(viewModel.currenciesList, viewModel.currencyIndex)
 
                 itemPickedObservable.subscribe { pos ->
                     viewModel.currencyIndex = pos
