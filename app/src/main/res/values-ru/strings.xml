@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Cash</string>
+    <string name="app_name">DayBalance</string>
     <string name="loss">+ Расход</string>
     <string name="gain">+ Доход</string>
     <string name="today">сегодня</string>
