@@ -10,6 +10,10 @@ import android.text.style.StyleSpan
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.solver.widgets.Guideline.VERTICAL
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
@@ -54,9 +58,24 @@ class NewTransactionActivity : AppCompatActivity() {
     private val dc = DisposableCache()
     private val dateFormatter by lazy { SimpleDateFormat("d MMM yyyy", currentLocale()) }
     private val type by lazy { intent.getSerializableExtra(TYPE_EXTRA) as NewTransactionViewModel.Type }
+    private val pageChangeListener by lazy {
+        object : ViewPager.SimpleOnPageChangeListener() {
+
+            override fun onPageSelected(position: Int) {
+                largeButton.textResource = if (position == 0) {
+                    R.string.choose_category
+                } else {
+                    R.string.ready
+                }
+            }
+
+        }
+    }
 
     private lateinit var viewModel: NewTransactionViewModel
+    private lateinit var amountText: TextView
     private lateinit var viewPager: ViewPager
+    private lateinit var largeButton: Button
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +83,13 @@ class NewTransactionActivity : AppCompatActivity() {
 
         viewModel = ViewModelProviders.of(this).get(NewTransactionViewModel::class.java)
         viewModel.setTransactionType(type)
+        viewModel.isDoneObservable.subscribeOnUi { isDone ->
+            if (isDone) {
+                finish()
+            } else {
+                shakeAmount()
+            }
+        }.cache(dc)
 
         constraintLayout {
             setOnClickListener {
@@ -84,7 +110,7 @@ class NewTransactionActivity : AppCompatActivity() {
                 guidePercent = 0.85f
             }
 
-            val amountText = appCompatTextView {
+            amountText = appCompatTextView {
                 id = View.generateViewId()
                 textColorResource = R.color.white
                 gravity = Gravity.CENTER_VERTICAL or Gravity.END
@@ -114,12 +140,7 @@ class NewTransactionActivity : AppCompatActivity() {
                 }.cache(dc)
             }.lparams(wrapContent, wrapContent)
 
-            viewPager = viewPager {
-                id = R.id.view_pager
-                adapter = ViewPagerAdapter(supportFragmentManager)
-            }.lparams(matchConstraint, minOf(dip(320), (screenSize().y * 0.5f).toInt()))
-
-            val largeButton = button {
+            largeButton = button {
                 id = View.generateViewId()
                 backgroundResource = R.drawable.bg_large_button
                 textColorResource = R.color.blue
@@ -127,8 +148,22 @@ class NewTransactionActivity : AppCompatActivity() {
                 letterSpacing = 0.02f
                 typeface = Typeface.DEFAULT_BOLD
                 allCaps = false
-                text = "Check category"
+
+                setOnClickListener {
+                    if (viewPager.currentItem == 0) {
+                        viewPager.currentItem = 1
+                    } else {
+                        viewModel.done()
+                    }
+                }
             }.lparams(matchConstraint, dip(54))
+
+            viewPager = viewPager {
+                id = R.id.view_pager
+                adapter = ViewPagerAdapter(supportFragmentManager)
+                addOnPageChangeListener(pageChangeListener)
+                pageChangeListener.onPageSelected(currentItem)
+            }.lparams(matchConstraint, minOf(dip(320), (screenSize().y * 0.5f).toInt()))
 
             val toolbar = toolbar {
                 id = View.generateViewId()
@@ -207,9 +242,30 @@ class NewTransactionActivity : AppCompatActivity() {
             .replace(dateReplacement, formattedDate, StyleSpan(Typeface.BOLD))
     }
 
+    private fun shakeAmount() {
+        val animation = AnimationUtils.loadAnimation(this, R.anim.shake)
+        animation.setAnimationListener(object : Animation.AnimationListener {
+
+            override fun onAnimationStart(animation: Animation?) {
+                amountText.textColorResource = R.color.cherry
+            }
+
+            override fun onAnimationEnd(animation: Animation?) {
+                amountText.textColorResource = R.color.white
+            }
+
+            override fun onAnimationRepeat(animation: Animation?) {
+            }
+
+        })
+
+        amountText.startAnimation(animation)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         dc.drain()
+        viewPager.removeOnPageChangeListener(pageChangeListener)
     }
 
 

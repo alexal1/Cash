@@ -13,6 +13,8 @@
     <string name="period_modify">Изменить</string>
     <string name="ok">OK</string>
     <string name="cancel">Отмена</string>
+    <string name="choose_category">Выбрать категорию</string>
+    <string name="ready">Готово</string>
 
     <!-- Gain -->
     <string name="gain_salary">Зарплата</string>

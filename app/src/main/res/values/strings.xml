@@ -13,6 +13,8 @@
     <string name="period_modify">Modify</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="choose_category">Choose category</string>
+    <string name="ready">Ready</string>
     
     <!-- Gain -->
     <string name="gain_salary">Salary</string>

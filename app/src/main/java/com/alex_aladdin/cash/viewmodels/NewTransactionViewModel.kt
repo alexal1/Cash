@@ -20,12 +20,16 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
     private val currencyManager = app.currencyManager
     private val categoriesManager = app.categoriesManager
     private val defaultCurrencyIndex = currencyManager.getDefaultCurrencyIndex(app.currentLocale())
+    private val amountPattern = Regex("\\d+(\\.\\d+)?")
 
     private val amountSubject = BehaviorSubject.createDefault("0")
     val amountObservable: Observable<String> = amountSubject
 
     private val periodSubject = PublishSubject.create<Periods>()
     val periodObservable: Observable<Periods> = periodSubject
+
+    private val isDoneSubject = PublishSubject.create<Boolean>()
+    val isDoneObservable: Observable<Boolean> = isDoneSubject
 
     val currentDateObservable: Observable<Date> = app.currentDate
     val calculatorActionConsumer = Consumer(this::handleCalculatorAction)
@@ -66,6 +70,10 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
         val period = getAvailablePeriods()[index]
         categoriesManager.setPeriod(currentCategory, period)
         periodSubject.onNext(period)
+    }
+
+    fun done() {
+        isDoneSubject.onNext(amountSubject.value!!.isValidAmount())
     }
 
     private fun handleCalculatorAction(action: CalculatorAction) = amountSubject.value!!
@@ -188,6 +196,8 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
         val period = categoriesManager.getPeriod(category)
         periodSubject.onNext(period)
     }
+
+    private fun String.isValidAmount() = this.matches(amountPattern) && this.toDouble() > 0
 
 
     enum class Type { GAIN, LOSS }
