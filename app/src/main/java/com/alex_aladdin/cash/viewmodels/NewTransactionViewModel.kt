@@ -34,6 +34,7 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
 
     var currencyIndex = defaultCurrencyIndex
     lateinit var type: Type; private set
+    lateinit var currentCategory: Categories; private set
 
     private var firstOperand: String? = null
     private var operator: CalculatorActionType? = null
@@ -47,6 +48,24 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
         categoriesManager.getDefaultLossCategory()
     } else {
         categoriesManager.getDefaultGainCategory()
+    }
+
+    fun getAvailablePeriods(): List<Periods> = if (type == Type.LOSS) {
+        Periods.values()
+            .filterNot { it == Periods.SINGLE }
+            .reversed()
+    } else {
+        Periods.values()
+            .filterNot { listOf(Periods.TWENTY_YEARS, Periods.TEN_YEARS, Periods.THREE_YEARS).contains(it) }
+            .reversed()
+    }
+
+    fun getCurrentPeriodIndex(): Int = getAvailablePeriods().indexOf(categoriesManager.getPeriod(currentCategory))
+
+    fun setPeriodIndex(index: Int) {
+        val period = getAvailablePeriods()[index]
+        categoriesManager.setPeriod(currentCategory, period)
+        periodSubject.onNext(period)
     }
 
     private fun handleCalculatorAction(action: CalculatorAction) = amountSubject.value!!
@@ -163,6 +182,7 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
     }
 
     private fun handleCategoryPick(category: Categories) {
+        currentCategory = category
         categoriesManager.setDefaultCategory(category)
 
         val period = categoriesManager.getPeriod(category)

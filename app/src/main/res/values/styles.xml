@@ -5,10 +5,22 @@
         <item name="android:navigationBarColor">@color/nightBlack</item>
         <item name="android:background">@color/dark</item>
         <item name="editTextStyle">@style/AppTheme.EditText</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+        <item name="colorAccent">@color/blue</item>
     </style>
 
     <style name="AppTheme.EditText" parent="@style/Widget.AppCompat.EditText">
         <item name="android:textCursorDrawable">@drawable/edit_text_cursor</item>
     </style>
 
+    <style name="NegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+    
 </resources>

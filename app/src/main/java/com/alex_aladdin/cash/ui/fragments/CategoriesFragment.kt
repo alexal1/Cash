@@ -10,6 +10,7 @@ import android.view.Gravity.CENTER_HORIZONTAL
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.solver.widgets.Guideline
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.CHAIN_PACKED
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
@@ -139,6 +140,10 @@ class CategoriesFragment : Fragment() {
             compoundDrawablePadding = dip(4)
             paintFlags = paintFlags or UNDERLINE_TEXT_FLAG
             setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_settings, 0, 0, 0)
+
+            setOnClickListener {
+                showPeriodManageDialog()
+            }
         }.lparams(wrapContent, wrapContent) {
             topMargin = dip(4)
             verticalChainStyle = CHAIN_PACKED
@@ -209,6 +214,25 @@ class CategoriesFragment : Fragment() {
                 START of guideline to START of PARENT_ID
             )
         }
+    }
+
+    private fun showPeriodManageDialog() {
+        var chosenIndex = viewModel.getCurrentPeriodIndex()
+
+        AlertDialog.Builder(requireContext())
+            .setTitle(viewModel.currentCategory.stringRes)
+            .setSingleChoiceItems(
+                viewModel.getAvailablePeriods().map { getString(it.fullString) }.toTypedArray(),
+                chosenIndex
+            ) { _, index -> chosenIndex = index }
+            .setPositiveButton(R.string.ok) { dialog, _ ->
+                viewModel.setPeriodIndex(chosenIndex)
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     override fun onDestroyView() {

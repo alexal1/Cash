@@ -5,6 +5,7 @@ import com.alex_aladdin.cash.R
 
 enum class Periods(@StringRes val shortString: Int, @StringRes val fullString: Int) {
 
+    SINGLE(R.string.period_single, R.string.period_single_full),
     TWENTY_YEARS(R.string.period_twenty_years, R.string.period_twenty_years_full),
     TEN_YEARS(R.string.period_ten_years, R.string.period_ten_years_full),
     THREE_YEARS(R.string.period_three_years, R.string.period_three_years_full),
@@ -14,7 +15,6 @@ enum class Periods(@StringRes val shortString: Int, @StringRes val fullString: I
     TWO_WEEKS(R.string.period_two_weeks, R.string.period_two_weeks_full),
     ONE_WEEK(R.string.period_one_week, R.string.period_one_week_full),
     THREE_DAYS(R.string.period_three_days, R.string.period_three_days_full),
-    ONE_DAY(R.string.period_one_day, R.string.period_one_day_full),
-    SINGLE(R.string.period_single, R.string.period_single_full)
+    ONE_DAY(R.string.period_one_day, R.string.period_one_day_full)
 
 }

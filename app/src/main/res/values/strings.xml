@@ -11,6 +11,8 @@
     <string name="period_title_gain">In what time will this earning be repeated?</string>
     <string name="period_title_loss">How long will you utilize this purchase?</string>
     <string name="period_modify">Modify</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
     
     <!-- Gain -->
     <string name="gain_salary">Salary</string>
