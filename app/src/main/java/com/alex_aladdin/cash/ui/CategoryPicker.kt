@@ -34,16 +34,13 @@ class CategoryPicker(context: Context) : _FrameLayout(context) {
     private val averageItemSubject = PublishSubject.create<Pair<Float, Int>>()
     val averageItemObservable: Observable<Pair<Float, Int>> = averageItemSubject
 
-    private val itemPickedSubject = BehaviorSubject.create<Int>()
-    val itemPickedObservable: Observable<Int> = itemPickedSubject.distinctUntilChanged()
-
-    private val categorySnapHelper = CategorySnapHelper { pos -> itemPickedSubject.onNext(pos) }
+    private val itemPickedSubject = BehaviorSubject.create<Categories>()
+    val itemPickedObservable: Observable<Categories> = itemPickedSubject.distinctUntilChanged()
 
 
     init {
         recyclerView = recyclerView {
             id = View.generateViewId()
-            categorySnapHelper.attachToRecyclerView(this)
             setHasFixedSize(true)
             backgroundColor = Color.TRANSPARENT
             clipToPadding = false
@@ -70,9 +67,10 @@ class CategoryPicker(context: Context) : _FrameLayout(context) {
 
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = CategoryAdapter(data, scrollListener)
+        CategorySnapHelper(data) { category -> itemPickedSubject.onNext(category) }.attachToRecyclerView(recyclerView)
 
         layoutManager.scrollToPosition(startPos)
-        itemPickedSubject.onNext(startPos)
+        itemPickedSubject.onNext(data[startPos])
     }
 
     override fun onDetachedFromWindow() {
@@ -127,7 +125,7 @@ class CategoryPicker(context: Context) : _FrameLayout(context) {
                 gravity = Gravity.CENTER_VERTICAL
                 includeFontPadding = false
                 backgroundColor = Color.TRANSPARENT
-                setPadding(dip(8), 0, dip(8), 0)
+                setPadding(dip(12), 0, dip(12), 0)
             }
         }
 
@@ -182,14 +180,17 @@ class CategoryPicker(context: Context) : _FrameLayout(context) {
 
     }
 
-    private class CategorySnapHelper(private val onScrolledToPos: (pos: Int) -> Unit) : LinearSnapHelper() {
+    private class CategorySnapHelper(
+        private val data: List<Categories>,
+        private val onScrolledToPos: (category: Categories) -> Unit
+    ) : LinearSnapHelper() {
 
         override fun findSnapView(layoutManager: RecyclerView.LayoutManager?): View? {
             val view = super.findSnapView(layoutManager)
 
             if (view != null) {
                 val pos = layoutManager?.getPosition(view)
-                pos?.let(onScrolledToPos)
+                pos?.let(data::getOrNull)?.let(onScrolledToPos)
             }
 
             return view
