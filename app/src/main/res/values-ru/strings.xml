@@ -8,6 +8,9 @@
     <string name="new_loss_on">Новый расход</string>
     <string name="gain_name_hint">Наименование дохода</string>
     <string name="loss_name_hint">Получатель или купленный товар</string>
+    <string name="period_title_gain">Через какое время повторится этот заработок?</string>
+    <string name="period_title_loss">Как долго вы будете пользоваться этой покупкой?</string>
+    <string name="period_modify">Изменить</string>
 
     <!-- Gain -->
     <string name="gain_salary">Зарплата</string>
@@ -34,4 +37,28 @@
     <string name="loss_philantropy">Благотврительность</string>
     <string name="loss_taxi_and_carsharing">Такси и каршеринг</string>
     <string name="loss_enterntainment">Развлечения</string>
+
+    <!-- Periods -->
+    <string name="period_twenty_years">~ 20 лет</string>
+    <string name="period_twenty_years_full">20 лет</string>
+    <string name="period_ten_years">~ 10 лет</string>
+    <string name="period_ten_years_full">10 лет</string>
+    <string name="period_three_years">~ 3 года</string>
+    <string name="period_three_years_full">3 года</string>
+    <string name="period_one_year">~ 1 год</string>
+    <string name="period_one_year_full">1 год</string>
+    <string name="period_three_months">~ 3 мес.</string>
+    <string name="period_three_months_full">3 месяца</string>
+    <string name="period_one_month">~ 1 мес.</string>
+    <string name="period_one_month_full">1 месяц</string>
+    <string name="period_two_weeks">~ 2 нед.</string>
+    <string name="period_two_weeks_full">2 недели</string>
+    <string name="period_one_week">~ 1 нед.</string>
+    <string name="period_one_week_full">1 неделя</string>
+    <string name="period_three_days">~ 3 дня</string>
+    <string name="period_three_days_full">3 дня</string>
+    <string name="period_one_day">~ 1 день</string>
+    <string name="period_one_day_full">1 день</string>
+    <string name="period_single">—</string>
+    <string name="period_single_full">Разово</string>
 </resources>

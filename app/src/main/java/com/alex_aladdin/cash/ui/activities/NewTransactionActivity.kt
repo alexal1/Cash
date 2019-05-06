@@ -63,6 +63,7 @@ class NewTransactionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProviders.of(this).get(NewTransactionViewModel::class.java)
+        viewModel.setTransactionType(type)
 
         constraintLayout {
             setOnClickListener {

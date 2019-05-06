@@ -8,6 +8,9 @@
     <string name="new_loss_on">New expense on</string>
     <string name="gain_name_hint">Name of income</string>
     <string name="loss_name_hint">Payee or item purchased</string>
+    <string name="period_title_gain">In what time will this earning be repeated?</string>
+    <string name="period_title_loss">How long will you utilize this purchase?</string>
+    <string name="period_modify">Modify</string>
     
     <!-- Gain -->
     <string name="gain_salary">Salary</string>
@@ -34,4 +37,28 @@
     <string name="loss_philantropy">Philanthropy</string>
     <string name="loss_taxi_and_carsharing">Taxi and Carsharing</string>
     <string name="loss_enterntainment">Entertainment</string>
+
+    <!-- Periods -->
+    <string name="period_twenty_years">~ 20 yrs.</string>
+    <string name="period_twenty_years_full">20 years</string>
+    <string name="period_ten_years">~ 10 yrs.</string>
+    <string name="period_ten_years_full">10 years</string>
+    <string name="period_three_years">~ 3 yrs.</string>
+    <string name="period_three_years_full">3 years</string>
+    <string name="period_one_year">~ 1 yr.</string>
+    <string name="period_one_year_full">1 year</string>
+    <string name="period_three_months">~ 3 mos.</string>
+    <string name="period_three_months_full">3 months</string>
+    <string name="period_one_month">~ 1 mo.</string>
+    <string name="period_one_month_full">1 month</string>
+    <string name="period_two_weeks">~ 2 w.</string>
+    <string name="period_two_weeks_full">2 weeks</string>
+    <string name="period_one_week">~ 1 w.</string>
+    <string name="period_one_week_full">1 week</string>
+    <string name="period_three_days">~ 3 days</string>
+    <string name="period_three_days_full">3 days</string>
+    <string name="period_one_day">~ 1 day</string>
+    <string name="period_one_day_full">1 day</string>
+    <string name="period_single">—</string>
+    <string name="period_single_full">Single time</string>
 </resources>

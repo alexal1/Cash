@@ -3,32 +3,51 @@ package com.alex_aladdin.cash.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.alex_aladdin.cash.CashApp
+import com.alex_aladdin.cash.helpers.enums.Periods
 import com.alex_aladdin.cash.utils.TextFormatter
 import com.alex_aladdin.cash.utils.currentLocale
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel.CalculatorActionType.*
+import com.alex_aladdin.cash.viewmodels.enums.Categories
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import java.util.*
 
 class NewTransactionViewModel(application: Application) : AndroidViewModel(application) {
 
     private val app = application as CashApp
     private val currencyManager = app.currencyManager
+    private val categoriesManager = app.categoriesManager
     private val defaultCurrencyIndex = currencyManager.getDefaultCurrencyIndex(app.currentLocale())
 
     private val amountSubject = BehaviorSubject.createDefault("0")
     val amountObservable: Observable<String> = amountSubject
 
+    private val periodSubject = PublishSubject.create<Periods>()
+    val periodObservable: Observable<Periods> = periodSubject
+
     val currentDateObservable: Observable<Date> = app.currentDate
     val calculatorActionConsumer = Consumer(this::handleCalculatorAction)
+    val categoryPickConsumer = Consumer(this::handleCategoryPick)
     val currenciesList = currencyManager.getCurrenciesList()
 
     var currencyIndex = defaultCurrencyIndex
+    lateinit var type: Type; private set
 
     private var firstOperand: String? = null
     private var operator: CalculatorActionType? = null
 
+
+    fun setTransactionType(type: Type) {
+        this.type = type
+    }
+
+    fun getDefaultCategory(): Categories = if (type == Type.LOSS) {
+        categoriesManager.getDefaultLossCategory()
+    } else {
+        categoriesManager.getDefaultGainCategory()
+    }
 
     private fun handleCalculatorAction(action: CalculatorAction) = amountSubject.value!!
         // Empty field if operator was chosen
@@ -141,6 +160,13 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
         }
     } catch (e: NumberFormatException) {
         "0"
+    }
+
+    private fun handleCategoryPick(category: Categories) {
+        categoriesManager.setDefaultCategory(category)
+
+        val period = categoriesManager.getPeriod(category)
+        periodSubject.onNext(period)
     }
 
 
