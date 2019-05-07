@@ -41,6 +41,8 @@ class CategoriesFragment : Fragment() {
 
     private lateinit var viewModel: NewTransactionViewModel
 
+    private var periodDialog: AlertDialog? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +59,7 @@ class CategoriesFragment : Fragment() {
         }.lparams(dip(100), dip(42))
 
         val categoryPicker = categoryPicker {
-            id = View.generateViewId()
+            id = R.id.category_picker
             backgroundColor = Color.TRANSPARENT
 
             val categories: List<Categories> = if (viewModel.type == NewTransactionViewModel.Type.LOSS) {
@@ -219,7 +221,8 @@ class CategoriesFragment : Fragment() {
     private fun showPeriodManageDialog() {
         var chosenIndex = viewModel.getCurrentPeriodIndex()
 
-        AlertDialog.Builder(requireContext())
+        periodDialog?.dismiss()
+        periodDialog = AlertDialog.Builder(requireContext())
             .setTitle(viewModel.currentCategory.stringRes)
             .setSingleChoiceItems(
                 viewModel.getAvailablePeriods().map { getString(it.fullString) }.toTypedArray(),
@@ -237,6 +240,7 @@ class CategoriesFragment : Fragment() {
 
     override fun onDestroyView() {
         dc.drain()
+        periodDialog?.dismiss()
         super.onDestroyView()
     }
 

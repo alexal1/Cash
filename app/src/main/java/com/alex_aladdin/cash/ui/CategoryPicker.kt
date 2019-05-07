@@ -69,7 +69,9 @@ class CategoryPicker(context: Context) : _FrameLayout(context) {
         recyclerView.adapter = CategoryAdapter(data, scrollListener)
         CategorySnapHelper(data) { category -> itemPickedSubject.onNext(category) }.attachToRecyclerView(recyclerView)
 
-        layoutManager.scrollToPosition(startPos)
+        post {
+            layoutManager.scrollToPosition(startPos)
+        }
         itemPickedSubject.onNext(data[startPos])
     }
 
