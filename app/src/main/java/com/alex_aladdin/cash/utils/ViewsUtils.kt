@@ -3,7 +3,10 @@ package com.alex_aladdin.cash.utils
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.view.View
+import com.jakewharton.rxbinding3.view.clicks
+import io.reactivex.disposables.Disposable
 import org.jetbrains.anko.dip
+import java.util.concurrent.TimeUnit
 
 fun View.appear(animationDuration: Long = 200, maxTranslation: Int = dip(10)) {
     (tag as? Animator)?.cancel()
@@ -47,4 +50,8 @@ fun View.disappear(animationDuration: Long = 200, maxTranslation: Int = dip(10))
     }
 
     tag = animator
+}
+
+fun View.setOnClickListenerWithThrottle(action: () -> Unit): Disposable = clicks().throttleFirst(1, TimeUnit.SECONDS).subscribeOnUi {
+    action()
 }

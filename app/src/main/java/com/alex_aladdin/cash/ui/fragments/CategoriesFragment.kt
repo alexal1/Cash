@@ -23,6 +23,7 @@ import com.alex_aladdin.cash.ui.appCompatTextView
 import com.alex_aladdin.cash.ui.categoryPicker
 import com.alex_aladdin.cash.utils.DisposableCache
 import com.alex_aladdin.cash.utils.cache
+import com.alex_aladdin.cash.utils.setOnClickListenerWithThrottle
 import com.alex_aladdin.cash.utils.subscribeOnUi
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel
 import com.alex_aladdin.cash.viewmodels.enums.Categories
@@ -143,9 +144,9 @@ class CategoriesFragment : Fragment() {
             paintFlags = paintFlags or UNDERLINE_TEXT_FLAG
             setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_settings, 0, 0, 0)
 
-            setOnClickListener {
+            setOnClickListenerWithThrottle {
                 showPeriodManageDialog()
-            }
+            }.cache(dc)
         }.lparams(wrapContent, wrapContent) {
             topMargin = dip(4)
             verticalChainStyle = CHAIN_PACKED
