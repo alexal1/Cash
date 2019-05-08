@@ -153,6 +153,7 @@ class NewTransactionActivity : AppCompatActivity() {
                     if (viewPager.currentItem == 0) {
                         viewPager.currentItem = 1
                     } else {
+                        isEnabled = false
                         viewModel.done()
                     }
                 }

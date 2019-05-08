@@ -5,9 +5,12 @@ import android.content.Context
 import android.util.Log.e
 import com.alex_aladdin.cash.helpers.CategoriesManager
 import com.alex_aladdin.cash.helpers.CurrencyManager
+import com.alex_aladdin.cash.repository.TransactionsRepository
 import com.alex_aladdin.cash.utils.currentLocale
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.subjects.BehaviorSubject
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import java.util.*
 import java.util.Calendar.*
 
@@ -44,6 +47,10 @@ class CashApp : Application() {
         BehaviorSubject.createDefault(todayDate)
     }
 
+    val repository by lazy {
+        TransactionsRepository()
+    }
+
     private val sharedPreferences by lazy {
         applicationContext.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
@@ -53,6 +60,19 @@ class CashApp : Application() {
         RxJavaPlugins.setErrorHandler { throwable ->
             e(TAG, "Uncaught exception: ", throwable)
         }
+    }
+
+
+    override fun onCreate() {
+        super.onCreate()
+
+        Realm.init(this)
+        val config = RealmConfiguration.Builder()
+            .name("cash.realm")
+            .deleteRealmIfMigrationNeeded() // TODO: remove before production!
+            .build()
+
+        Realm.setDefaultConfiguration(config)
     }
 
 }

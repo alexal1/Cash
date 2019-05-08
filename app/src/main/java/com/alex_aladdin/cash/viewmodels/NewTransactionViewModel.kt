@@ -4,7 +4,11 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.alex_aladdin.cash.CashApp
 import com.alex_aladdin.cash.helpers.enums.Periods
+import com.alex_aladdin.cash.repository.entities.Account
+import com.alex_aladdin.cash.repository.entities.Transaction
+import com.alex_aladdin.cash.utils.DisposableCache
 import com.alex_aladdin.cash.utils.TextFormatter
+import com.alex_aladdin.cash.utils.cache
 import com.alex_aladdin.cash.utils.currentLocale
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel.CalculatorActionType.*
 import com.alex_aladdin.cash.viewmodels.enums.Categories
@@ -17,10 +21,12 @@ import java.util.*
 class NewTransactionViewModel(application: Application) : AndroidViewModel(application) {
 
     private val app = application as CashApp
+    private val repository = app.repository
     private val currencyManager = app.currencyManager
     private val categoriesManager = app.categoriesManager
     private val defaultCurrencyIndex = currencyManager.getDefaultCurrencyIndex(app.currentLocale())
     private val amountPattern = Regex("\\d+(\\.\\d+)?")
+    private val dc = DisposableCache()
 
     private val amountSubject = BehaviorSubject.createDefault("0")
     val amountObservable: Observable<String> = amountSubject
@@ -73,7 +79,16 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
     }
 
     fun done() {
-        isDoneSubject.onNext(amountSubject.value!!.isValidAmount())
+        val isInputValid = amountSubject.value!!.isValidAmount()
+
+        if (isInputValid) {
+            val transaction = getCurrentTransaction()
+            repository.addTransaction(transaction).subscribe {
+                isDoneSubject.onNext(true)
+            }.cache(dc)
+        } else {
+            isDoneSubject.onNext(false)
+        }
     }
 
     private fun handleCalculatorAction(action: CalculatorAction) = amountSubject.value!!
@@ -198,6 +213,20 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
     }
 
     private fun String.isValidAmount() = this.matches(amountPattern) && this.toDouble() > 0
+
+    private fun getCurrentTransaction() = Transaction().apply {
+        isGain = type == Type.GAIN
+        amount = amountSubject.value!!.toDouble()
+        categoryId = currentCategory.id
+        account = Account().apply {
+            currencyIndex = this@NewTransactionViewModel.currencyIndex
+        }
+    }
+
+    override fun onCleared() {
+        dc.drain()
+        super.onCleared()
+    }
 
 
     enum class Type { GAIN, LOSS }
