@@ -14,9 +14,11 @@ import androidx.core.graphics.contains
 import androidx.lifecycle.ViewModelProviders
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.ui.chart.ChartView
+import com.alex_aladdin.cash.ui.chartView
 import com.alex_aladdin.cash.ui.dates.DatesAdapter
 import com.alex_aladdin.cash.ui.dates.DatesLayoutManager
 import com.alex_aladdin.cash.ui.dates.DatesSnapHelper
+import com.alex_aladdin.cash.ui.fancyButton
 import com.alex_aladdin.cash.utils.*
 import com.alex_aladdin.cash.viewmodels.MainViewModel
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel
@@ -99,9 +101,9 @@ class MainActivity : AppCompatActivity() {
                 )
                 setTextResource(R.string.gain)
 
-                setOnClickListener {
-                    NewTransactionActivity.create(this@MainActivity, NewTransactionViewModel.Type.GAIN)
-                }
+                setOnClickListenerWithThrottle {
+                    NewTransactionActivity.start(this@MainActivity, NewTransactionViewModel.Type.GAIN)
+                }.cache(dc)
             }.lparams(matchConstraint, dip(70)) {
                 bottomMargin = dip(4)
                 leftMargin = dip(4)
@@ -116,9 +118,9 @@ class MainActivity : AppCompatActivity() {
                 )
                 setTextResource(R.string.loss)
 
-                setOnClickListener {
-                    NewTransactionActivity.create(this@MainActivity, NewTransactionViewModel.Type.LOSS)
-                }
+                setOnClickListenerWithThrottle {
+                    NewTransactionActivity.start(this@MainActivity, NewTransactionViewModel.Type.LOSS)
+                }.cache(dc)
             }.lparams(matchConstraint, dip(70)) {
                 bottomMargin = dip(4)
                 rightMargin = dip(4)

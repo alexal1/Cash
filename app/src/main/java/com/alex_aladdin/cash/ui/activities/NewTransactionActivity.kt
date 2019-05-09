@@ -84,6 +84,8 @@ class NewTransactionActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(NewTransactionViewModel::class.java)
         viewModel.setTransactionType(type)
         viewModel.isDoneObservable.subscribeOnUi { isDone ->
+            largeButton.isEnabled = true
+
             if (isDone) {
                 finish()
             } else {
@@ -261,6 +263,14 @@ class NewTransactionActivity : AppCompatActivity() {
         })
 
         amountText.startAnimation(animation)
+    }
+
+    override fun onBackPressed() {
+        if (viewPager.currentItem == 1) {
+            viewPager.currentItem = 0
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun onDestroy() {
