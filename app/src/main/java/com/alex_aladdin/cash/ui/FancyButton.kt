@@ -1,5 +1,6 @@
 package com.alex_aladdin.cash.ui
 
+import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
@@ -33,13 +34,40 @@ class FancyButton(context: Context) : _FrameLayout(context) {
 
     private lateinit var textView: TextView
 
-    private var glowAnimator: ValueAnimator? = null
-    private var fillAnimator: ValueAnimator? = null
-
 
     fun init(glowColor: Int, gradStartColor: Int, gradEndColor: Int) {
         val glowDrawable = getGlowDrawable(glowColor)
         val fillDrawable = getFillDrawable(gradStartColor, gradEndColor)
+
+        val fadeIn: AnimatorSet = AnimatorSet().apply {
+            playTogether(
+                ValueAnimator.ofInt(0, 255).apply {
+                    duration = DURATION
+                    interpolator = DecelerateInterpolator()
+                    addUpdateListener { glowDrawable.alpha = it.animatedValue as Int }
+                },
+                ValueAnimator.ofInt(DEFAULT_ALPHA, 255).apply {
+                    duration = DURATION
+                    interpolator = DecelerateInterpolator()
+                    addUpdateListener { fillDrawable.alpha = it.animatedValue as Int }
+                }
+            )
+        }
+
+        val fadeOut: AnimatorSet = AnimatorSet().apply {
+            playTogether(
+                ValueAnimator.ofInt(255, 0).apply {
+                    duration = DURATION
+                    interpolator = AccelerateInterpolator()
+                    addUpdateListener { glowDrawable.alpha = it.animatedValue as Int }
+                },
+                ValueAnimator.ofInt(255, DEFAULT_ALPHA).apply {
+                    duration = DURATION
+                    interpolator = AccelerateInterpolator()
+                    addUpdateListener { fillDrawable.alpha = it.animatedValue as Int }
+                }
+            )
+        }
 
         background = glowDrawable
 
@@ -56,43 +84,15 @@ class FancyButton(context: Context) : _FrameLayout(context) {
         setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    glowAnimator?.cancel()
-                    fillAnimator?.cancel()
-
-                    ValueAnimator.ofInt(glowDrawable.alpha, 255).apply {
-                        duration = DURATION
-                        interpolator = DecelerateInterpolator()
-                        addUpdateListener { glowDrawable.alpha = it.animatedValue as Int }
-                        start()
-                    }
-
-                    fillAnimator = ValueAnimator.ofInt(fillDrawable.alpha, 255).apply {
-                        duration = DURATION
-                        interpolator = DecelerateInterpolator()
-                        addUpdateListener { fillDrawable.alpha = it.animatedValue as Int }
-                        start()
-                    }
+                    fadeOut.cancel()
+                    fadeIn.start()
 
                     true
                 }
 
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    glowAnimator?.cancel()
-                    fillAnimator?.cancel()
-
-                    glowAnimator = ValueAnimator.ofInt(glowDrawable.alpha, 0).apply {
-                        duration = DURATION
-                        interpolator = AccelerateInterpolator()
-                        addUpdateListener { glowDrawable.alpha = it.animatedValue as Int }
-                        start()
-                    }
-
-                    fillAnimator = ValueAnimator.ofInt(fillDrawable.alpha, DEFAULT_ALPHA).apply {
-                        duration = DURATION
-                        interpolator = AccelerateInterpolator()
-                        addUpdateListener { fillDrawable.alpha = it.animatedValue as Int }
-                        start()
-                    }
+                    fadeIn.cancel()
+                    fadeOut.start()
 
                     if (viewRect.contains(Point(event.x.toInt() + left, event.y.toInt() + top))) {
                         performClick()
