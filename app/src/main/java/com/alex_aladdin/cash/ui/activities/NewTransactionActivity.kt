@@ -174,7 +174,7 @@ class NewTransactionActivity : AppCompatActivity() {
                 backgroundColorResource = R.color.deepDark
 
                 setNavigationOnClickListener {
-                    onBackPressed()
+                    finish()
                 }
 
                 textView {
