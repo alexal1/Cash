@@ -35,7 +35,7 @@ class CashApp : Application() {
     val todayDate: Date by lazy {
         GregorianCalendar.getInstance(currentLocale())
             .apply {
-                set(HOUR, 0)
+                set(HOUR_OF_DAY, 0)
                 set(MINUTE, 0)
                 set(SECOND, 0)
                 set(MILLISECOND, 0)
