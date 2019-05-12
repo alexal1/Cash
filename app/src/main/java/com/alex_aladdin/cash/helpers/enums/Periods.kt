@@ -2,6 +2,9 @@ package com.alex_aladdin.cash.helpers.enums
 
 import androidx.annotation.StringRes
 import com.alex_aladdin.cash.R
+import com.alex_aladdin.cash.helpers.enums.Periods.*
+import java.util.*
+import java.util.GregorianCalendar.*
 
 enum class Periods(@StringRes val shortString: Int, @StringRes val fullString: Int) {
 
@@ -17,4 +20,25 @@ enum class Periods(@StringRes val shortString: Int, @StringRes val fullString: I
     THREE_DAYS(R.string.period_three_days, R.string.period_three_days_full),
     ONE_DAY(R.string.period_one_day, R.string.period_one_day_full)
 
+}
+
+fun Periods.getDateIncrement(locale: Locale, date: Date): Date {
+    val calendar = GregorianCalendar.getInstance(locale)
+    calendar.time = date
+
+    when (this) {
+        SINGLE -> calendar.add(DAY_OF_MONTH, 1)
+        TWENTY_YEARS -> calendar.add(YEAR, 20)
+        TEN_YEARS -> calendar.add(YEAR, 10)
+        THREE_YEARS -> calendar.add(YEAR, 3)
+        ONE_YEAR -> calendar.add(YEAR, 1)
+        THREE_MONTHS -> calendar.add(MONTH, 3)
+        ONE_MONTH -> calendar.add(MONTH, 1)
+        TWO_WEEKS -> calendar.add(WEEK_OF_YEAR, 2)
+        ONE_WEEK -> calendar.add(WEEK_OF_YEAR, 1)
+        THREE_DAYS -> calendar.add(DAY_OF_MONTH, 3)
+        ONE_DAY -> calendar.add(DAY_OF_MONTH, 1)
+    }
+
+    return calendar.time
 }
