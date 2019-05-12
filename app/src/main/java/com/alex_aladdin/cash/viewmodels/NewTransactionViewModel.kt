@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.alex_aladdin.cash.CashApp
 import com.alex_aladdin.cash.helpers.enums.Periods
+import com.alex_aladdin.cash.helpers.enums.getDateIncrement
 import com.alex_aladdin.cash.repository.entities.Account
 import com.alex_aladdin.cash.repository.entities.Transaction
 import com.alex_aladdin.cash.utils.DisposableCache
@@ -218,6 +219,15 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
         isGain = type == Type.GAIN
         amount = amountSubject.value!!.toDouble()
         categoryId = currentCategory.id
+        startTimestamp = app.currentDate.value!!.time
+
+        endTimestamp = categoriesManager
+            .getPeriod(currentCategory)
+            .getDateIncrement(app.currentLocale(), app.currentDate.value!!)
+            .time
+
+        addedTimestamp = System.currentTimeMillis()
+
         account = Account().apply {
             currencyIndex = this@NewTransactionViewModel.currencyIndex
         }

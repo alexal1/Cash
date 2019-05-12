@@ -15,6 +15,12 @@ open class Transaction : RealmObject() {
 
     var categoryId: String = ""
 
+    var startTimestamp: Long = 0
+
+    var endTimestamp: Long = 0
+
+    var addedTimestamp: Long = 0
+
     var account: Account? = null
 
 }
