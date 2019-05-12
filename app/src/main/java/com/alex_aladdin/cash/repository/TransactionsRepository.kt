@@ -2,8 +2,9 @@ package com.alex_aladdin.cash.repository
 
 import android.os.HandlerThread
 import com.alex_aladdin.cash.repository.entities.Transaction
-import com.alex_aladdin.cash.repository.specification.TransactionsSpecification
+import com.alex_aladdin.cash.repository.specification.RealmSpecification
 import io.reactivex.Completable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Realm
 
@@ -19,11 +20,11 @@ class TransactionsRepository {
                 realm.executeTransaction {
                     try {
                         realm.copyToRealm(transaction)
+                        emitter.onComplete()
                     } catch (e: Exception) {
                         emitter.onError(e)
                     }
                 }
-                emitter.onComplete()
             }
         }
         .subscribeOn(realmScheduler)
@@ -32,7 +33,19 @@ class TransactionsRepository {
         // TODO
     }
 
-    fun query(specification: TransactionsSpecification): List<Transaction> = TODO()
+    fun query(specification: RealmSpecification): Single<List<Transaction>> = Single
+        .create<List<Transaction>> { emitter ->
+            realm().use { realm ->
+                realm.executeTransaction {
+                    try {
+                        emitter.onSuccess(realm.copyFromRealm(specification.toRealmResults(realm)))
+                    } catch (e: Exception) {
+                        emitter.onError(e)
+                    }
+                }
+            }
+        }
+        .subscribeOn(realmScheduler)
 
     private fun realm() = Realm.getDefaultInstance()
 
