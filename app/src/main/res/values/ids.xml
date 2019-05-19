@@ -6,4 +6,10 @@
     <item name="currency_picker_text" type="id" />
     <item name="category_picker" type="id" />
     <item name="category_picker_text" type="id" />
+    <item name="day_transactions_coordinator" type="id" />
+    <item name="day_transcations_appbar" type="id" />
+    <item name="day_transactions_collapsing_toolbar" type="id" />
+    <item name="day_transactions_view_pager" type="id" />
+    <item name="transactions_list" type="id" />
+    <item name="transaction_text_amount" type="id" />
 </resources>

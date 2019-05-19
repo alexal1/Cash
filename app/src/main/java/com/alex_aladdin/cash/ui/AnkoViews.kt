@@ -1,8 +1,14 @@
 package com.alex_aladdin.cash.ui
 
+import android.app.Activity
 import android.view.ViewManager
 import androidx.appcompat.widget.AppCompatTextView
 import com.alex_aladdin.cash.ui.chart.ChartView
+import com.alex_aladdin.cash.utils.rxlayouts._AppBarLayout
+import com.alex_aladdin.cash.utils.rxlayouts._CollapsingToolbarLayout
+import com.alex_aladdin.cash.utils.rxlayouts._CoordinatorLayout
+import com.alex_aladdin.cash.utils.rxlayouts._Toolbar
+import com.google.android.material.tabs.TabLayout
 import org.jetbrains.anko.custom.ankoView
 
 inline fun ViewManager.fancyButton(init: FancyButton.() -> Unit = {}): FancyButton {
@@ -23,4 +29,28 @@ inline fun ViewManager.currencyPicker(init: CurrencyPicker.() -> Unit = {}): Cur
 
 inline fun ViewManager.categoryPicker(init: CategoryPicker.() -> Unit = {}): CategoryPicker {
     return ankoView({ CategoryPicker(it) }, theme = 0, init = init)
+}
+
+inline fun Activity.coordinatorLayout(init: _CoordinatorLayout.() -> Unit = {}): _CoordinatorLayout {
+    return ankoView({ _CoordinatorLayout(it) }, theme = 0, init = init)
+}
+
+inline fun ViewManager.appBarLayout(init: _AppBarLayout.() -> Unit = {}): _AppBarLayout {
+    return ankoView({ _AppBarLayout(it) }, theme = 0, init = init)
+}
+
+inline fun ViewManager.collapsingToolbarLayout(init: _CollapsingToolbarLayout.() -> Unit = {}): _CollapsingToolbarLayout {
+    return ankoView({ _CollapsingToolbarLayout(it) }, theme = 0, init = init)
+}
+
+inline fun ViewManager.transactionsList(init: TransactionsList.() -> Unit = {}): TransactionsList {
+    return ankoView({ TransactionsList(it) }, theme = 0, init = init)
+}
+
+inline fun ViewManager.appCompatToolbar(init: _Toolbar.() -> Unit = {}): _Toolbar {
+    return ankoView({ _Toolbar(it) }, theme = 0, init = init)
+}
+
+inline fun ViewManager.tabLayout(init: TabLayout.() -> Unit = {}): TabLayout {
+    return ankoView({ TabLayout(it) }, theme = 0, init = init)
 }

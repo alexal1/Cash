@@ -20,6 +20,8 @@
         </activity>
 
         <activity android:name=".ui.activities.NewTransactionActivity" />
+
+        <activity android:name=".ui.activities.DayTransactionsActivity" />
     </application>
 
 </manifest>
