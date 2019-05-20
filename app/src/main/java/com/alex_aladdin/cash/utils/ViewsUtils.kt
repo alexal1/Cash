@@ -1,55 +1,31 @@
 package com.alex_aladdin.cash.utils
 
-import android.animation.Animator
+import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.view.View
+import androidx.core.animation.doOnEnd
 import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.disposables.Disposable
-import org.jetbrains.anko.dip
 import java.util.concurrent.TimeUnit
 
-fun View.appear(animationDuration: Long = 200, maxTranslation: Int = dip(10)) {
-    (tag as? Animator)?.cancel()
+fun View.blink(doOnInvisible: (view: View) -> Unit) {
+    val animationDuration = 400L
 
-    if (alpha == 1.0f) {
-        return
+    val fadeOut = ValueAnimator.ofFloat(1.0f, 0.0f).apply {
+        duration = animationDuration / 2
+        addUpdateListener { alpha = it.animatedValue as Float }
+        doOnEnd { doOnInvisible(this@blink) }
     }
 
-    val animator = ValueAnimator.ofFloat(alpha, 1.0f).apply {
-        duration = animationDuration
+    val fadeIn = ValueAnimator.ofFloat(0.0f, 1.0f).apply {
+        duration = animationDuration / 2
+        addUpdateListener { alpha = it.animatedValue as Float }
+    }
 
-        addUpdateListener { animation ->
-            val value = animation.animatedValue as Float
-            alpha = value
-            translationY = (1.0f - value) * maxTranslation
-        }
-
+    AnimatorSet().apply {
+        playSequentially(fadeOut, fadeIn)
         start()
     }
-
-    tag = animator
-}
-
-fun View.disappear(animationDuration: Long = 200, maxTranslation: Int = dip(10)) {
-    (tag as? Animator)?.cancel()
-
-    if (alpha == 0.0f) {
-        return
-    }
-
-    val animator = ValueAnimator.ofFloat(alpha, 0.0f).apply {
-        duration = animationDuration
-
-        addUpdateListener { animation ->
-            val value = animation.animatedValue as Float
-            alpha = value
-            translationY = (1.0f - value) * maxTranslation
-        }
-
-        start()
-    }
-
-    tag = animator
 }
 
 fun View.setOnClickListenerWithThrottle(action: () -> Unit): Disposable = clicks().throttleFirst(1, TimeUnit.SECONDS).subscribeOnUi {

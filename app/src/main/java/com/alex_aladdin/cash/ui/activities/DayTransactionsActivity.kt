@@ -8,6 +8,7 @@ import android.text.style.StyleSpan
 import android.view.Gravity.CENTER_VERTICAL
 import android.view.Gravity.START
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.LinearLayout.VERTICAL
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -38,6 +39,7 @@ class DayTransactionsActivity : AppCompatActivity() {
     private val pageChangeListener by lazy { OnPageChangeListener() }
 
     private lateinit var viewModel: DayTransactionsViewModel
+    private lateinit var titleTexts: LinearLayout
     private lateinit var titleText1: TextView
     private lateinit var titleText2: TextView
     private lateinit var tabLayout: TabLayout
@@ -61,7 +63,7 @@ class DayTransactionsActivity : AppCompatActivity() {
                     setContentScrimResource(R.color.deepDark)
                     scrimAnimationDuration = 200
 
-                    linearLayout {
+                    titleTexts = linearLayout {
                         orientation = VERTICAL
                         backgroundColor = Color.TRANSPARENT
 
@@ -164,8 +166,8 @@ class DayTransactionsActivity : AppCompatActivity() {
     private inner class SectionsPagerAdapter : FragmentStatePagerAdapter(supportFragmentManager) {
 
         override fun getItem(position: Int) = when (position) {
-            0 -> DayTransactionsFragment()
-            1 -> DayTransactionsFragment()
+            0 -> DayTransactionsFragment.create(DayTransactionsFragment.Type.GAIN)
+            1 -> DayTransactionsFragment.create(DayTransactionsFragment.Type.LOSS)
             else -> throw IllegalArgumentException("Unexpected position: $position")
         }
 
@@ -191,14 +193,18 @@ class DayTransactionsActivity : AppCompatActivity() {
             when (position) {
                 0 -> {
                     viewModel.currentDateObservable.take(1).subscribeOnUi { date ->
-                        titleText1.text = getString(R.string.gain_transactions_description_part1)
-                        titleText2.text = getStringWithDate(R.string.gain_transactions_description_part2, date, false)
+                        titleTexts.blink {
+                            titleText1.text = getString(R.string.gain_transactions_description_part1)
+                            titleText2.text = getStringWithDate(R.string.gain_transactions_description_part2, date, false)
+                        }
                     }.cache(dc)
                 }
                 1 -> {
                     viewModel.currentDateObservable.take(1).subscribeOnUi { date ->
-                        titleText1.text = getString(R.string.loss_transactions_description_part1)
-                        titleText2.text = getStringWithDate(R.string.loss_transactions_description_part2, date, false)
+                        titleTexts.blink {
+                            titleText1.text = getString(R.string.loss_transactions_description_part1)
+                            titleText2.text = getStringWithDate(R.string.loss_transactions_description_part2, date, false)
+                        }
                     }.cache(dc)
                 }
                 else -> throw IllegalArgumentException("Unexpected position: $position")
