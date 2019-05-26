@@ -14,7 +14,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.ui.*
@@ -29,16 +28,17 @@ import com.google.android.material.tabs.TabLayout
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.navigationIconResource
 import org.jetbrains.anko.support.v4.viewPager
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
 class DayTransactionsActivity : AppCompatActivity() {
 
+    private val viewModel: DayTransactionsViewModel by viewModel()
     private val dc = DisposableCache()
     private val dateFormatter by lazy { SimpleDateFormat("d MMM yyyy", currentLocale()) }
     private val pageChangeListener by lazy { OnPageChangeListener() }
 
-    private lateinit var viewModel: DayTransactionsViewModel
     private lateinit var titleTexts: LinearLayout
     private lateinit var titleText1: TextView
     private lateinit var titleText2: TextView
@@ -47,8 +47,6 @@ class DayTransactionsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewModel = ViewModelProviders.of(this).get(DayTransactionsViewModel::class.java)
 
         coordinatorLayout {
             id = R.id.day_transactions_coordinator

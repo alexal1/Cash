@@ -17,7 +17,6 @@ import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
 import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.ui.appCompatTextView
 import com.alex_aladdin.cash.ui.categoryPicker
@@ -35,21 +34,15 @@ import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.guideline
 import org.jetbrains.anko.constraint.layout.matchConstraint
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class CategoriesFragment : Fragment() {
 
+    private val viewModel: NewTransactionViewModel by sharedViewModel()
     private val dc = DisposableCache()
-
-    private lateinit var viewModel: NewTransactionViewModel
 
     private var periodDialog: AlertDialog? = null
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        viewModel = ViewModelProviders.of(requireActivity()).get(NewTransactionViewModel::class.java)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = container?.context?.constraintLayout {
         backgroundColorResource = R.color.soft_dark

@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.contains
-import androidx.lifecycle.ViewModelProviders
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.ui.chart.ChartView
 import com.alex_aladdin.cash.ui.chartView
@@ -28,11 +27,13 @@ import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.matchConstraint
 import org.jetbrains.anko.recyclerview.v7.recyclerView
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.pow
 import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity() {
 
+    private val viewModel: MainViewModel by viewModel()
     private val dc = DisposableCache()
     private val maxClickRadius by lazy { dip(10).toFloat() }
     private val chartHitRect by lazy {
@@ -41,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         rect
     }
 
-    private lateinit var viewModel: MainViewModel
     private lateinit var chartView: ChartView
 
     private var touchStart: PointF? = null
@@ -49,9 +49,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-
 
         constraintLayout {
             val datesRecyclerView = recyclerView {

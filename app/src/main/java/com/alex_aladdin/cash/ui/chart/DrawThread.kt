@@ -5,19 +5,21 @@ import android.graphics.*
 import android.view.SurfaceHolder
 import androidx.core.content.ContextCompat
 import com.alex_aladdin.cash.R
+import com.alex_aladdin.cash.helpers.CurrencyManager
 import com.alex_aladdin.cash.ui.chart.ChartDrawer.CENTRAL_CHART_WIDTH
 import com.alex_aladdin.cash.ui.chart.ChartDrawer.SIDE_CHART_WIDTH
-import com.alex_aladdin.cash.utils.TextFormatter
 import com.alex_aladdin.cash.viewmodels.enums.Categories
 import com.alex_aladdin.cash.viewmodels.enums.GainCategories
 import com.alex_aladdin.cash.viewmodels.enums.LossCategories
 import org.jetbrains.anko.dip
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 class DrawThread(
     private val surfaceHolder: SurfaceHolder,
     private val context: Context,
     private val latency: Long
-) : Thread() {
+) : Thread(), KoinComponent {
 
     companion object {
 
@@ -36,6 +38,8 @@ class DrawThread(
 
     @Volatile
     var checkedCategory: Categories? = null
+
+    private val currencyManager: CurrencyManager by inject()
 
     private val backgroundPaint = Paint().apply {
         color = ContextCompat.getColor(context, R.color.palladium)
@@ -145,7 +149,7 @@ class DrawThread(
         if (checkedCategory == null) {
             // Gain
             chartAnimator?.let { chartAnimator ->
-                val gain = TextFormatter.formatMoney(chartAnimator.totalGain)
+                val gain = currencyManager.formatMoney(chartAnimator.totalGain)
                 val textRect = Rect()
                 textPaint.getTextBounds(gain, 0, gain.length, textRect)
                 val top = minOf(
@@ -158,7 +162,7 @@ class DrawThread(
 
             // Loss
             chartAnimator?.let { chartAnimator ->
-                val loss = TextFormatter.formatMoney(chartAnimator.totalLoss)
+                val loss = currencyManager.formatMoney(chartAnimator.totalLoss)
                 val textRect = Rect()
                 textPaint.getTextBounds(loss, 0, loss.length, textRect)
                 val top = minOf(
@@ -174,7 +178,7 @@ class DrawThread(
                 val textNameRect = Rect()
                 checkedTextPaint.getTextBounds(textName, 0, textName.length, textNameRect)
 
-                val textValue = TextFormatter.formatMoney(chartAnimator?.getCurrentValue(checkedCategory))
+                val textValue = currencyManager.formatMoney(chartAnimator?.getCurrentValue(checkedCategory))
                 val textValueRect = Rect()
                 checkedTextPaint.getTextBounds(textValue, 0, textValue.length, textValueRect)
 

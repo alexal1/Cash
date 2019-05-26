@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.ui.transactionsList
 import com.alex_aladdin.cash.utils.DisposableCache
@@ -14,6 +13,7 @@ import com.alex_aladdin.cash.utils.subscribeOnUi
 import com.alex_aladdin.cash.viewmodels.DayTransactionsViewModel
 import org.jetbrains.anko.frameLayout
 import org.jetbrains.anko.matchParent
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class DayTransactionsFragment : Fragment() {
 
@@ -28,17 +28,10 @@ class DayTransactionsFragment : Fragment() {
     }
 
 
+    private val viewModel: DayTransactionsViewModel by sharedViewModel()
     private val dc = DisposableCache()
     private val type by lazy { arguments!!.getSerializable(TYPE) as Type }
 
-    private lateinit var viewModel: DayTransactionsViewModel
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        viewModel = ViewModelProviders.of(requireActivity()).get(DayTransactionsViewModel::class.java)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = container?.context?.frameLayout {
         transactionsList {

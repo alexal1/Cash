@@ -2,13 +2,14 @@ package com.alex_aladdin.cash.helpers
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.alex_aladdin.cash.CashApp.Companion.PREFS_CURRENT_CURRENCY_INDEX
+import java.math.RoundingMode
+import java.text.DecimalFormat
 import java.util.*
 
-class CurrencyManager(private val sharedPreferences: SharedPreferences) {
+class CurrencyManager(private val sharedPreferences: SharedPreferences, private val locale: Locale) {
 
     companion object {
-
-        private const val DEFAULT_CURRENCY_INDEX = "currency_index"
 
         private val currenciesList = listOf(
             "\u0024", "\u20BD", "\u20AC", "\u00A3", "\u00A5", "\u058F", "\u060B", "\u09F2", "\u09F3", "\u0AF1",
@@ -21,25 +22,42 @@ class CurrencyManager(private val sharedPreferences: SharedPreferences) {
     }
 
 
+    private val decimalFormat = DecimalFormat("#.##").apply {
+        roundingMode = RoundingMode.CEILING
+    }
+
+
     fun getCurrenciesList() = currenciesList
 
-    fun getDefaultCurrencyIndex(locale: Locale): Int {
-        val spIndex = sharedPreferences.getInt(DEFAULT_CURRENCY_INDEX, -1)
-        if (spIndex > 0) {
+    fun getCurrencyIndexByLocale(): Int = when (locale.country) {
+        // TODO: maintain more countries
+        "RU" -> 1
+        else -> 0
+    }
+
+    fun getCurrentCurrencyIndex(): Int {
+        val spIndex = sharedPreferences.getInt(PREFS_CURRENT_CURRENCY_INDEX, -1)
+        if (spIndex >= 0) {
             return spIndex
         }
 
-        val localeIndex = when (locale.country) {
-            // TODO: maintain more countries
-            "RU" -> 1
-            else -> 0
-        }
+        val localeIndex = getCurrencyIndexByLocale()
 
         sharedPreferences.edit {
-            putInt(DEFAULT_CURRENCY_INDEX, localeIndex)
+            putInt(PREFS_CURRENT_CURRENCY_INDEX, localeIndex)
         }
 
         return localeIndex
+    }
+
+    fun setCurrentCurrencyIndex(currencyIndex: Int) = sharedPreferences.edit {
+        putInt(PREFS_CURRENT_CURRENCY_INDEX, currencyIndex)
+    }
+
+    fun formatMoney(value: Number?, currencyIndex: Int = getCurrentCurrencyIndex()) = if (value != null) {
+        "${decimalFormat.format(value)} ${currenciesList[currencyIndex]}"
+    } else {
+        "0"
     }
 
 }

@@ -1,10 +1,16 @@
 package com.alex_aladdin.cash.viewmodels
 
 import android.app.Application
+import android.content.SharedPreferences
+import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import com.alex_aladdin.cash.CashApp
+import com.alex_aladdin.cash.CashApp.Companion.PREFS_DEFAULT_PICKER_CURRENCY_INDEX
+import com.alex_aladdin.cash.helpers.CategoriesManager
+import com.alex_aladdin.cash.helpers.CurrencyManager
 import com.alex_aladdin.cash.helpers.enums.Periods
 import com.alex_aladdin.cash.helpers.enums.getDateIncrement
+import com.alex_aladdin.cash.repository.TransactionsRepository
 import com.alex_aladdin.cash.repository.entities.Account
 import com.alex_aladdin.cash.repository.entities.Transaction
 import com.alex_aladdin.cash.utils.DisposableCache
@@ -17,15 +23,18 @@ import io.reactivex.Observable
 import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import java.util.*
 
-class NewTransactionViewModel(application: Application) : AndroidViewModel(application) {
+class NewTransactionViewModel(application: Application) : AndroidViewModel(application), KoinComponent {
 
     private val app = application as CashApp
-    private val repository = app.repository
-    private val currencyManager = app.currencyManager
-    private val categoriesManager = app.categoriesManager
-    private val defaultCurrencyIndex = currencyManager.getDefaultCurrencyIndex(app.currentLocale())
+    private val repository: TransactionsRepository by inject()
+    private val currencyManager: CurrencyManager by inject()
+    private val categoriesManager: CategoriesManager by inject()
+    private val sharedPreferences: SharedPreferences by inject()
+    private val defaultCurrencyIndex = getDefaultCurrencyIndex()
     private val amountPattern = Regex("\\d+(\\.\\d+)?")
     private val dc = DisposableCache()
 
@@ -44,6 +53,11 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
     val currenciesList = currencyManager.getCurrenciesList()
 
     var currencyIndex = defaultCurrencyIndex
+        set(value) {
+            field = value
+            setDefaultCurrencyIndex(value)
+        }
+
     lateinit var type: Type; private set
     lateinit var currentCategory: Categories; private set
 
@@ -231,6 +245,25 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
         account = Account().apply {
             currencyIndex = this@NewTransactionViewModel.currencyIndex
         }
+    }
+
+    private fun getDefaultCurrencyIndex(): Int {
+        val spIndex = sharedPreferences.getInt(PREFS_DEFAULT_PICKER_CURRENCY_INDEX, -1)
+        if (spIndex >= 0) {
+            return spIndex
+        }
+
+        val localeIndex = currencyManager.getCurrencyIndexByLocale()
+
+        sharedPreferences.edit {
+            putInt(PREFS_DEFAULT_PICKER_CURRENCY_INDEX, localeIndex)
+        }
+
+        return localeIndex
+    }
+
+    private fun setDefaultCurrencyIndex(index: Int) = sharedPreferences.edit {
+        putInt(PREFS_DEFAULT_PICKER_CURRENCY_INDEX, index)
     }
 
     override fun onCleared() {

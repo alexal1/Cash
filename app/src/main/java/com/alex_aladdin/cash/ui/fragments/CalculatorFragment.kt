@@ -13,7 +13,6 @@ import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
 import androidx.core.graphics.contains
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.utils.DisposableCache
 import com.alex_aladdin.cash.utils.cache
@@ -27,19 +26,13 @@ import org.jetbrains.anko.constraint.layout._ConstraintLayout
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.matchConstraint
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class CalculatorFragment : Fragment() {
 
+    private val viewModel: NewTransactionViewModel by sharedViewModel()
     private val dc = DisposableCache()
 
-    private lateinit var viewModel: NewTransactionViewModel
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        viewModel = ViewModelProviders.of(requireActivity()).get(NewTransactionViewModel::class.java)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         container?.context?.constraintLayout {

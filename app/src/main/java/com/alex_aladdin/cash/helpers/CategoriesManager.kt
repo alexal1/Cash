@@ -2,6 +2,9 @@ package com.alex_aladdin.cash.helpers
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.alex_aladdin.cash.CashApp.Companion.PREFS_CATEGORIES_PREFIX
+import com.alex_aladdin.cash.CashApp.Companion.PREFS_DEFAULT_GAIN_CATEGORY
+import com.alex_aladdin.cash.CashApp.Companion.PREFS_DEFAULT_LOSS_CATEGORY
 import com.alex_aladdin.cash.helpers.enums.Periods
 import com.alex_aladdin.cash.viewmodels.enums.Categories
 import com.alex_aladdin.cash.viewmodels.enums.GainCategories
@@ -9,41 +12,32 @@ import com.alex_aladdin.cash.viewmodels.enums.LossCategories
 
 class CategoriesManager(private val sharedPreferences: SharedPreferences) {
 
-    companion object {
-
-        private const val CATEGORIES_PREFIX = "category_"
-        private const val DEFAULT_LOSS_CATEGORY = "default_loss_category"
-        private const val DEFAULT_GAIN_CATEGORY = "default_gain_category"
-
-    }
-
-
     private var categoriesToPeriods = HashMap<Categories, Periods>()
 
 
     fun getDefaultLossCategory(): LossCategories {
-        val spCategory = sharedPreferences.getString(DEFAULT_LOSS_CATEGORY, "")
+        val spCategory = sharedPreferences.getString(PREFS_DEFAULT_LOSS_CATEGORY, "")
         if (spCategory?.isNotEmpty() == true) {
             return LossCategories.valueOf(spCategory)
         }
 
         val defaultCategory = LossCategories.CAFES_AND_RESTAURANTS
         sharedPreferences.edit {
-            putString(DEFAULT_LOSS_CATEGORY, defaultCategory.id)
+            putString(PREFS_DEFAULT_LOSS_CATEGORY, defaultCategory.id)
         }
 
         return defaultCategory
     }
 
     fun getDefaultGainCategory(): GainCategories {
-        val spCategory = sharedPreferences.getString(DEFAULT_GAIN_CATEGORY, "")
+        val spCategory = sharedPreferences.getString(PREFS_DEFAULT_GAIN_CATEGORY, "")
         if (spCategory?.isNotEmpty() == true) {
             return GainCategories.valueOf(spCategory)
         }
 
         val defaultCategory = GainCategories.SALARY
         sharedPreferences.edit {
-            putString(DEFAULT_GAIN_CATEGORY, defaultCategory.id)
+            putString(PREFS_DEFAULT_GAIN_CATEGORY, defaultCategory.id)
         }
 
         return defaultCategory
@@ -52,11 +46,11 @@ class CategoriesManager(private val sharedPreferences: SharedPreferences) {
     fun setDefaultCategory(category: Categories) {
         if (category.isGain) {
             sharedPreferences.edit {
-                putString(DEFAULT_GAIN_CATEGORY, category.id)
+                putString(PREFS_DEFAULT_GAIN_CATEGORY, category.id)
             }
         } else {
             sharedPreferences.edit {
-                putString(DEFAULT_LOSS_CATEGORY, category.id)
+                putString(PREFS_DEFAULT_LOSS_CATEGORY, category.id)
             }
         }
     }
@@ -67,7 +61,7 @@ class CategoriesManager(private val sharedPreferences: SharedPreferences) {
             return periodFromCache
         }
 
-        val periodFromSharedPrefs = sharedPreferences.getString(CATEGORIES_PREFIX + category.id, "")?.takeIf { it.isNotEmpty() }?.let(Periods::valueOf)
+        val periodFromSharedPrefs = sharedPreferences.getString(PREFS_CATEGORIES_PREFIX + category.id, "")?.takeIf { it.isNotEmpty() }?.let(Periods::valueOf)
         if (periodFromSharedPrefs != null) {
             categoriesToPeriods[category] = periodFromSharedPrefs
             return periodFromSharedPrefs
@@ -77,7 +71,7 @@ class CategoriesManager(private val sharedPreferences: SharedPreferences) {
         if (defaultPeriod != null) {
             categoriesToPeriods[category] = defaultPeriod
             sharedPreferences.edit {
-                putString(CATEGORIES_PREFIX + category.id, defaultPeriod.name)
+                putString(PREFS_CATEGORIES_PREFIX + category.id, defaultPeriod.name)
             }
             return defaultPeriod
         }
@@ -88,7 +82,7 @@ class CategoriesManager(private val sharedPreferences: SharedPreferences) {
     fun setPeriod(category: Categories, period: Periods) {
         categoriesToPeriods[category] = period
         sharedPreferences.edit {
-            putString(CATEGORIES_PREFIX + category.id, period.name)
+            putString(PREFS_CATEGORIES_PREFIX + category.id, period.name)
         }
     }
 

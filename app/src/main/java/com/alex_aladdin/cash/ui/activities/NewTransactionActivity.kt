@@ -20,7 +20,6 @@ import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.ui.appCompatTextView
@@ -36,6 +35,7 @@ import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.guideline
 import org.jetbrains.anko.constraint.layout.matchConstraint
 import org.jetbrains.anko.support.v4.viewPager
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -55,6 +55,7 @@ class NewTransactionActivity : AppCompatActivity() {
     }
 
 
+    private val viewModel: NewTransactionViewModel by viewModel()
     private val dc = DisposableCache()
     private val dateFormatter by lazy { SimpleDateFormat("d MMM yyyy", currentLocale()) }
     private val type by lazy { intent.getSerializableExtra(TYPE_EXTRA) as NewTransactionViewModel.Type }
@@ -72,7 +73,6 @@ class NewTransactionActivity : AppCompatActivity() {
         }
     }
 
-    private lateinit var viewModel: NewTransactionViewModel
     private lateinit var amountText: TextView
     private lateinit var viewPager: ViewPager
     private lateinit var largeButton: Button
@@ -81,7 +81,6 @@ class NewTransactionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this).get(NewTransactionViewModel::class.java)
         viewModel.setTransactionType(type)
         viewModel.isDoneObservable.subscribeOnUi { isDone ->
             largeButton.isEnabled = true
