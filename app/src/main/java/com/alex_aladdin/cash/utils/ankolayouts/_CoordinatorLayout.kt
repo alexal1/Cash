@@ -1,12 +1,12 @@
-package com.alex_aladdin.cash.utils.rxlayouts
+package com.alex_aladdin.cash.utils.ankolayouts
 
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import com.google.android.material.appbar.AppBarLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 
 @Suppress("ClassName")
-open class _AppBarLayout(ctx: Context): AppBarLayout(ctx) {
+open class _CoordinatorLayout(ctx: Context): CoordinatorLayout(ctx) {
 
     inline fun <T: View> T.lparams(
         width: Int = WRAP_CONTENT,

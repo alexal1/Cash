@@ -4,10 +4,10 @@ import android.app.Activity
 import android.view.ViewManager
 import androidx.appcompat.widget.AppCompatTextView
 import com.alex_aladdin.cash.ui.chart.ChartView
-import com.alex_aladdin.cash.utils.rxlayouts._AppBarLayout
-import com.alex_aladdin.cash.utils.rxlayouts._CollapsingToolbarLayout
-import com.alex_aladdin.cash.utils.rxlayouts._CoordinatorLayout
-import com.alex_aladdin.cash.utils.rxlayouts._Toolbar
+import com.alex_aladdin.cash.utils.ankolayouts._AppBarLayout
+import com.alex_aladdin.cash.utils.ankolayouts._CollapsingToolbarLayout
+import com.alex_aladdin.cash.utils.ankolayouts._CoordinatorLayout
+import com.alex_aladdin.cash.utils.ankolayouts._Toolbar
 import com.google.android.material.tabs.TabLayout
 import org.jetbrains.anko.custom.ankoView
 
