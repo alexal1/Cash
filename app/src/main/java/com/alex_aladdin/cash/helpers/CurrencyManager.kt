@@ -22,6 +22,8 @@ class CurrencyManager(private val sharedPreferences: SharedPreferences, private 
     }
 
 
+    private var currentIndex = -1
+
     private val decimalFormat = DecimalFormat("#.##").apply {
         roundingMode = RoundingMode.CEILING
     }
@@ -36,13 +38,18 @@ class CurrencyManager(private val sharedPreferences: SharedPreferences, private 
     }
 
     fun getCurrentCurrencyIndex(): Int {
+        if (currentIndex >= 0) {
+            return currentIndex
+        }
+
         val spIndex = sharedPreferences.getInt(PREFS_CURRENT_CURRENCY_INDEX, -1)
         if (spIndex >= 0) {
+            currentIndex = spIndex
             return spIndex
         }
 
         val localeIndex = getCurrencyIndexByLocale()
-
+        currentIndex = localeIndex
         sharedPreferences.edit {
             putInt(PREFS_CURRENT_CURRENCY_INDEX, localeIndex)
         }
@@ -50,8 +57,11 @@ class CurrencyManager(private val sharedPreferences: SharedPreferences, private 
         return localeIndex
     }
 
-    fun setCurrentCurrencyIndex(currencyIndex: Int) = sharedPreferences.edit {
-        putInt(PREFS_CURRENT_CURRENCY_INDEX, currencyIndex)
+    fun setCurrentCurrencyIndex(currencyIndex: Int) {
+        currentIndex = currencyIndex
+        sharedPreferences.edit {
+            putInt(PREFS_CURRENT_CURRENCY_INDEX, currencyIndex)
+        }
     }
 
     fun formatMoney(value: Number?, currencyIndex: Int = getCurrentCurrencyIndex()) = if (value != null) {

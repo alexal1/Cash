@@ -115,7 +115,7 @@ class DayTransactionsActivity : AppCompatActivity() {
                     }.lparams(matchParent, dimen(R.dimen.toolbar_height)) {
                         collapseMode = COLLAPSE_MODE_PIN
                     }
-                }.lparams(matchParent, dip(256)) {
+                }.lparams(matchParent, dimen(R.dimen.day_transactions_app_bar_height)) {
                     scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED or SCROLL_FLAG_SNAP
                 }
 
@@ -123,7 +123,7 @@ class DayTransactionsActivity : AppCompatActivity() {
                     tabMode = TabLayout.MODE_FIXED
                     tabGravity = TabLayout.GRAVITY_FILL
                     backgroundColorResource = R.color.steel_gray
-                }.lparams(matchParent, wrapContent)
+                }.lparams(matchParent, dimen(R.dimen.day_transactions_tab_layout_height))
             }.lparams(matchParent, wrapContent)
 
             viewPager {

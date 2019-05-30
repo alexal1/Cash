@@ -6,11 +6,12 @@ import io.realm.RealmResults
 import io.realm.Sort
 import java.util.*
 
-class DayGainSpecification(private val date: Date) : RealmSpecification {
+class DayGainSpecification(private val date: Date, private val currencyIndex: Int) : RealmSpecification {
 
     override fun toRealmResults(realm: Realm): RealmResults<Transaction> = realm
         .where(Transaction::class.java)
         .equalTo("isGain", true)
+        .equalTo("account.currencyIndex", currencyIndex)
         .lessThanOrEqualTo("startTimestamp", date.time)
         .greaterThan("endTimestamp", date.time)
         .sort("addedTimestamp", Sort.DESCENDING)

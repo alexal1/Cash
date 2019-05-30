@@ -6,6 +6,13 @@ import java.util.*
 
 open class Transaction : RealmObject() {
 
+    companion object {
+
+        private const val millisInDay = 24 * 60 * 60 * 1000
+
+    }
+
+
     @PrimaryKey
     var id: String = UUID.randomUUID().toString()
 
@@ -22,5 +29,10 @@ open class Transaction : RealmObject() {
     var addedTimestamp: Long = 0
 
     var account: Account? = null
+
+
+    fun getDaysCount(): Int = ((endTimestamp - startTimestamp) / millisInDay).toInt()
+
+    fun getAmountPerDay(): Double = amount / getDaysCount().toDouble()
 
 }

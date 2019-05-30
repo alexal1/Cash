@@ -18,10 +18,16 @@
     <string name="day_transactions_title">Transactions on %s</string>
     <string name="day_transactions_loss">Expenses</string>
     <string name="day_transactions_gain">Incomes</string>
+    <string name="day_transactions_no_data">No data for this day</string>
+    <string name="day_transactions_total">Total :</string>
     <string name="loss_transactions_description_part1">Paid services\nand purchases</string>
     <string name="loss_transactions_description_part2">which You were using\non %s</string>
     <string name="gain_transactions_description_part1">Your income\nsources</string>
     <string name="gain_transactions_description_part2">during one day\n%s</string>
+    <string name="loss_transaction_period_one_day">Utilized during the day</string>
+    <string name="loss_transaction_period_couple_of_days">In use from %s to %s</string>
+    <string name="gain_transaction_period_one_day">One-time earning</string>
+    <string name="gain_transaction_period_couple_of_days">Covers the period from %s to %s</string>
 
     <!-- Gain -->
     <string name="gain_salary">Salary</string>

@@ -1,5 +1,6 @@
 package com.alex_aladdin.cash.ui.activities
 
+import android.content.Intent
 import android.graphics.PixelFormat
 import android.graphics.Point
 import android.graphics.PointF
@@ -50,6 +51,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // TODO remove
+        startActivity(Intent(this@MainActivity, DayTransactionsActivity::class.java))
+
         constraintLayout {
             val datesRecyclerView = recyclerView {
                 id = R.id.dates_recycler_view
@@ -99,7 +103,10 @@ class MainActivity : AppCompatActivity() {
                 setTextResource(R.string.gain)
 
                 setOnClickListenerWithThrottle {
-                    NewTransactionActivity.start(this@MainActivity, NewTransactionViewModel.Type.GAIN)
+//                    NewTransactionActivity.start(this@MainActivity, NewTransactionViewModel.Type.GAIN)
+
+                    // TODO remove
+                    startActivity(Intent(this@MainActivity, DayTransactionsActivity::class.java))
                 }.cache(dc)
             }.lparams(matchConstraint, dip(70)) {
                 bottomMargin = dip(4)

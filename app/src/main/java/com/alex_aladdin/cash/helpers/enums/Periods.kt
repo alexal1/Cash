@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.helpers.enums.Periods.*
 import java.util.*
-import java.util.GregorianCalendar.*
+import java.util.Calendar.*
 
 enum class Periods(@StringRes val shortString: Int, @StringRes val fullString: Int) {
 

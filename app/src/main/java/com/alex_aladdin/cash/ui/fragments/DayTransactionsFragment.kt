@@ -6,11 +6,14 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.alex_aladdin.cash.R
+import com.alex_aladdin.cash.repository.entities.Transaction
 import com.alex_aladdin.cash.ui.transactionsList
 import com.alex_aladdin.cash.utils.DisposableCache
 import com.alex_aladdin.cash.utils.cache
 import com.alex_aladdin.cash.utils.subscribeOnUi
 import com.alex_aladdin.cash.viewmodels.DayTransactionsViewModel
+import io.reactivex.Single
+import io.reactivex.functions.BiFunction
 import org.jetbrains.anko.frameLayout
 import org.jetbrains.anko.matchParent
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -43,9 +46,24 @@ class DayTransactionsFragment : Fragment() {
                 viewModel.dayGainTransactions
             }
 
-            transactionsSingle.subscribeOnUi { transactions ->
-                setData(transactions)
-            }.cache(dc)
+            val transactionsTotal = if (type == Type.LOSS) {
+                viewModel.dayLossTotal
+            } else {
+                viewModel.dayGainTotal
+            }
+
+            Single
+                .zip(
+                    transactionsSingle,
+                    transactionsTotal,
+                    BiFunction<List<Transaction>, Double, Pair<List<Transaction>, Double>> { transactions, total ->
+                        transactions to total
+                    }
+                )
+                .subscribeOnUi { (transactions, total) ->
+                    setData(transactions, total)
+                }
+                .cache(dc)
         }.lparams(matchParent, matchParent)
     }
 

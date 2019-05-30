@@ -18,10 +18,16 @@
     <string name="day_transactions_title">Транзакции %s</string>
     <string name="day_transactions_loss">Расход</string>
     <string name="day_transactions_gain">Доход</string>
+    <string name="day_transactions_no_data">Нет данных за этот день</string>
+    <string name="day_transactions_total">Итого :</string>
     <string name="loss_transactions_description_part1">Платные сервисы\nи покупки</string>
     <string name="loss_transactions_description_part2">которыми Вы пользовались\n%s</string>
     <string name="gain_transactions_description_part1">Ваши источники\nдохода</string>
     <string name="gain_transactions_description_part2">в течение одного дня\n%s</string>
+    <string name="loss_transaction_period_one_day">Использовано за день</string>
+    <string name="loss_transaction_period_couple_of_days">Используется с %s по %s</string>
+    <string name="gain_transaction_period_one_day">Разовый заработок</string>
+    <string name="gain_transaction_period_couple_of_days">Покрывает период с %s по %s</string>
 
     <!-- Gain -->
     <string name="gain_salary">Зарплата</string>

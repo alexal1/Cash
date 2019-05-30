@@ -12,4 +12,8 @@
     <item name="day_transactions_view_pager" type="id" />
     <item name="transactions_list" type="id" />
     <item name="transaction_text_amount" type="id" />
+    <item name="transaction_separator" type="id" />
+    <item name="transaction_category" type="id" />
+    <item name="transaction_period" type="id" />
+    <item name="transaction_total_amount" type="id" />
 </resources>
