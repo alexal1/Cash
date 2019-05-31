@@ -6,6 +6,7 @@ import com.alex_aladdin.cash.di.helpersModule
 import com.alex_aladdin.cash.di.repositoryModule
 import com.alex_aladdin.cash.di.sharedPreferencesModule
 import com.alex_aladdin.cash.di.viewModelsModule
+import com.alex_aladdin.cash.helpers.timber.CashDebugTree
 import com.alex_aladdin.cash.utils.currentLocale
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.subjects.BehaviorSubject
@@ -14,6 +15,7 @@ import io.realm.RealmConfiguration
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import timber.log.Timber
 import java.util.*
 import java.util.Calendar.*
 
@@ -64,6 +66,13 @@ class CashApp : Application() {
             androidContext(this@CashApp)
             modules(viewModelsModule, sharedPreferencesModule, helpersModule, repositoryModule)
         }
+
+        val tree = when(BuildConfig.BUILD_TYPE) {
+            "debug" -> CashDebugTree()
+            "release" -> TODO()
+            else -> throw IllegalArgumentException("Unexpected build type: ${BuildConfig.BUILD_TYPE}")
+        }
+        Timber.plant(tree)
 
         Realm.init(this)
         val config = RealmConfiguration.Builder()
