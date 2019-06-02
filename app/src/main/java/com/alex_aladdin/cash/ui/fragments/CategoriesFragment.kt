@@ -120,7 +120,7 @@ class CategoriesFragment : Fragment() {
             )
 
             viewModel.periodObservable.subscribeOnUi { period ->
-                text = getString(period.shortString)
+                text = context?.let(period::getApproximateString)
             }.cache(dc)
         }.lparams(matchConstraint, wrapContent) {
             margin = dip(4)
@@ -131,7 +131,7 @@ class CategoriesFragment : Fragment() {
             id = View.generateViewId()
             textResource = R.string.period_modify
             backgroundColor = Color.TRANSPARENT
-            textSize = 16f
+            textSize = 14f
             textColorResource = R.color.white_60
             compoundDrawablePadding = dip(4)
             paintFlags = paintFlags or UNDERLINE_TEXT_FLAG
