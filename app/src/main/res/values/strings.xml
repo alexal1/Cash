@@ -13,6 +13,8 @@
     <string name="period_modify">Modify</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="choose_category">Choose category</string>
     <string name="ready">Ready</string>
     <string name="day_transactions_title">Transactions on %s</string>
@@ -28,6 +30,15 @@
     <string name="loss_transaction_period_couple_of_days">In use from %s to %s</string>
     <string name="gain_transaction_period_one_day">One-time earning</string>
     <string name="gain_transaction_period_couple_of_days">Covers the period from %s to %s</string>
+    <string name="transaction_amount_subtitle_loss">amount of purchase made on %s\nfor %s</string>
+    <string name="transaction_amount_subtitle_gain">amount of income earned on %s\nin %s category</string>
+    <string name="transaction_period_subtitle_loss">approximate time of using\nthis purchase</string>
+    <string name="transaction_period_subtitle_gain">once in this period You earn\nsuch income</string>
+    <string name="transaction_formula_tail">/day</string>
+    <string name="transaction_formula_subtitle_loss">this is how much each day of using\nthis purchase costs You</string>
+    <string name="transaction_formula_subtitle_gain">Your everyday earning\nby this income</string>
+    <string name="transaction_delete">Delete</string>
+    <string name="transaction_delete_dialog_title">Are you sure that you want to delete this transaction?</string>
 
     <!-- Gain -->
     <string name="gain_salary">Salary</string>
@@ -56,25 +67,25 @@
     <string name="loss_enterntainment">Entertainment</string>
 
     <!-- Periods -->
-    <string name="period_twenty_years">~ 20 yrs.</string>
+    <string name="period_twenty_years">20 yrs.</string>
     <string name="period_twenty_years_full">20 years</string>
-    <string name="period_ten_years">~ 10 yrs.</string>
+    <string name="period_ten_years">10 yrs.</string>
     <string name="period_ten_years_full">10 years</string>
-    <string name="period_three_years">~ 3 yrs.</string>
+    <string name="period_three_years">3 yrs.</string>
     <string name="period_three_years_full">3 years</string>
-    <string name="period_one_year">~ 1 yr.</string>
+    <string name="period_one_year">1 yr.</string>
     <string name="period_one_year_full">1 year</string>
-    <string name="period_three_months">~ 3 mos.</string>
+    <string name="period_three_months">3 mos.</string>
     <string name="period_three_months_full">3 months</string>
-    <string name="period_one_month">~ 1 mo.</string>
+    <string name="period_one_month">1 mo.</string>
     <string name="period_one_month_full">1 month</string>
-    <string name="period_two_weeks">~ 2 w.</string>
+    <string name="period_two_weeks">2 w.</string>
     <string name="period_two_weeks_full">2 weeks</string>
-    <string name="period_one_week">~ 1 w.</string>
+    <string name="period_one_week">1 w.</string>
     <string name="period_one_week_full">1 week</string>
-    <string name="period_three_days">~ 3 days</string>
+    <string name="period_three_days">3 days</string>
     <string name="period_three_days_full">3 days</string>
-    <string name="period_one_day">~ 1 day</string>
+    <string name="period_one_day">1 day</string>
     <string name="period_one_day_full">1 day</string>
     <string name="period_single">—</string>
     <string name="period_single_full">Single time</string>

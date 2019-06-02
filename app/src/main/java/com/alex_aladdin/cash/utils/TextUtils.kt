@@ -16,3 +16,15 @@ fun SpannableStringBuilder.replace(replacement: String, target: String, vararg s
 
     return this
 }
+
+fun SpannableStringBuilder.add(text: CharSequence, flags: Int, vararg spans: Any): SpannableStringBuilder {
+    val startIndex = length
+
+    append(text)
+
+    spans.forEach {
+        setSpan(it, startIndex, length, flags)
+    }
+
+    return this
+}

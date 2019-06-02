@@ -2,8 +2,11 @@ package com.alex_aladdin.cash.utils
 
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
+import android.graphics.Rect
 import android.util.TypedValue
+import android.view.TouchDelegate
 import android.view.View
+import android.view.ViewTreeObserver
 import androidx.core.animation.doOnEnd
 import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.disposables.Disposable
@@ -46,4 +49,36 @@ fun View.setSelectableBackground(isBorderless: Boolean = false) {
     val outValue = TypedValue()
     context.theme.resolveAttribute(attribute, outValue, true)
     setBackgroundResource(outValue.resourceId)
+}
+
+/**
+ * Increases View's touch area by scaling it with given coefficient.
+ * Note that this function sets TouchDelegate to this View's parent, thus you cannot use this
+ * function on multiple children inside one parent.
+ */
+fun View.expandHitArea(scale: Float) {
+    fun expand() {
+        val viewArea = Rect()
+        val delegateArea = Rect()
+        getHitRect(viewArea)
+        delegateArea.set(
+            viewArea.left - (viewArea.width() * (scale - 1) / 2f).toInt(),
+            viewArea.top - (viewArea.height() * (scale - 1) / 2f).toInt(),
+            viewArea.right + (viewArea.width() * (scale - 1) / 2f).toInt(),
+            viewArea.bottom + (viewArea.height() * (scale - 1) / 2f).toInt()
+        )
+        (parent as View).touchDelegate = TouchDelegate(delegateArea, this)
+    }
+
+    if (width > 0 && height > 0) {
+        expand()
+    } else {
+        // If sizes are 0, wait until view is layouted
+        viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                viewTreeObserver.removeOnGlobalLayoutListener(this)
+                expand()
+            }
+        })
+    }
 }

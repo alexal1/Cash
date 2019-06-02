@@ -22,6 +22,8 @@
         <activity android:name=".ui.activities.NewTransactionActivity" />
 
         <activity android:name=".ui.activities.DayTransactionsActivity" />
+
+        <activity android:name=".ui.activities.DetailedTransactionActivity" />
     </application>
 
 </manifest>
