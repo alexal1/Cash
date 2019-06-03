@@ -7,12 +7,13 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.repository.entities.Transaction
+import com.alex_aladdin.cash.ui.activities.DetailedTransactionActivity
 import com.alex_aladdin.cash.ui.transactionsList
 import com.alex_aladdin.cash.utils.DisposableCache
 import com.alex_aladdin.cash.utils.cache
 import com.alex_aladdin.cash.utils.subscribeOnUi
 import com.alex_aladdin.cash.viewmodels.DayTransactionsViewModel
-import io.reactivex.Single
+import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import org.jetbrains.anko.frameLayout
 import org.jetbrains.anko.matchParent
@@ -40,28 +41,32 @@ class DayTransactionsFragment : Fragment() {
         transactionsList {
             id = R.id.transactions_list
 
-            val transactionsSingle = if (type == Type.LOSS) {
-                viewModel.dayLossTransactions
+            val transactionsObservable = if (type == Type.LOSS) {
+                viewModel.dayLossTransactionsObservable
             } else {
-                viewModel.dayGainTransactions
+                viewModel.dayGainTransactionsObservable
             }
 
             val transactionsTotal = if (type == Type.LOSS) {
-                viewModel.dayLossTotal
+                viewModel.dayLossTotalObservable
             } else {
-                viewModel.dayGainTotal
+                viewModel.dayGainTotalObservable
             }
 
-            Single
+            Observable
                 .zip(
-                    transactionsSingle,
+                    transactionsObservable,
                     transactionsTotal,
                     BiFunction<List<Transaction>, Double, Pair<List<Transaction>, Double>> { transactions, total ->
                         transactions to total
                     }
                 )
                 .subscribeOnUi { (transactions, total) ->
-                    setData(transactions, total)
+                    setData(transactions, total) { transaction ->
+                        activity?.let {
+                            DetailedTransactionActivity.start(it, transaction)
+                        }
+                    }
                 }
                 .cache(dc)
         }.lparams(matchParent, matchParent)

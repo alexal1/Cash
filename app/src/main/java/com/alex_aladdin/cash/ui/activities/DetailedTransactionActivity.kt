@@ -20,7 +20,7 @@ import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.helpers.CurrencyManager
 import com.alex_aladdin.cash.helpers.enums.Periods
 import com.alex_aladdin.cash.repository.entities.Transaction
-import com.alex_aladdin.cash.ui.activities.DayTransactionsActivity.Companion.DETAILED_TRANSACTION_EXTRA
+import com.alex_aladdin.cash.ui.activities.DayTransactionsActivity.Companion.DETAILED_TRANSACTION_EXTRA_ID
 import com.alex_aladdin.cash.ui.activities.DayTransactionsActivity.Companion.DETAILED_TRANSACTION_REQUEST_CODE
 import com.alex_aladdin.cash.ui.activities.DayTransactionsActivity.Companion.DETAILED_TRANSACTION_RESULT_DELETE
 import com.alex_aladdin.cash.ui.appCompatTextView
@@ -258,7 +258,7 @@ class DetailedTransactionActivity : AppCompatActivity() {
                 .setMessage(R.string.transaction_delete_dialog_title)
                 .setPositiveButton(R.string.yes) { _, _ ->
                     val intent = Intent().apply {
-                        putExtra(DETAILED_TRANSACTION_EXTRA, transaction)
+                        putExtra(DETAILED_TRANSACTION_EXTRA_ID, transaction.id)
                     }
 
                     setResult(DETAILED_TRANSACTION_RESULT_DELETE, intent)

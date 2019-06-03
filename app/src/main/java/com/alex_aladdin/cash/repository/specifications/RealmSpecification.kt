@@ -1,4 +1,4 @@
-package com.alex_aladdin.cash.repository.specification
+package com.alex_aladdin.cash.repository.specifications
 
 import com.alex_aladdin.cash.repository.entities.Transaction
 import io.realm.Realm

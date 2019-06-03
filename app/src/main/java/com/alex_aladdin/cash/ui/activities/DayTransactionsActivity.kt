@@ -1,5 +1,6 @@
 package com.alex_aladdin.cash.ui.activities
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -34,6 +35,14 @@ import java.util.*
 
 class DayTransactionsActivity : AppCompatActivity() {
 
+    companion object {
+
+        const val DETAILED_TRANSACTION_REQUEST_CODE = 1
+        const val DETAILED_TRANSACTION_RESULT_DELETE = 2
+        const val DETAILED_TRANSACTION_EXTRA_ID = "detailed_transaction_extra"
+
+    }
+
     private val viewModel: DayTransactionsViewModel by viewModel()
     private val dc = DisposableCache()
     private val dateFormatter by lazy { SimpleDateFormat("d MMM yyyy", currentLocale()) }
@@ -57,7 +66,7 @@ class DayTransactionsActivity : AppCompatActivity() {
                 collapsingToolbarLayout {
                     id = R.id.day_transactions_collapsing_toolbar
                     minimumHeight = dimen(R.dimen.toolbar_height)
-                    backgroundColorResource = R.color.smoke
+                    backgroundColorResource = R.color.palladium
                     setContentScrimResource(R.color.deepDark)
                     scrimAnimationDuration = 200
 
@@ -153,6 +162,17 @@ class DayTransactionsActivity : AppCompatActivity() {
                     it.replace(dateReplacement, formattedDate)
                 }
             }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == DETAILED_TRANSACTION_REQUEST_CODE && resultCode == DETAILED_TRANSACTION_RESULT_DELETE) {
+            val transactionId = data!!.getStringExtra(DETAILED_TRANSACTION_EXTRA_ID)
+            viewModel.deleteTransaction(transactionId)
+        }
+    }
+
+    override fun onEnterAnimationComplete() {
+        viewModel.activityReadyToDrawListener.accept(Unit)
     }
 
     override fun onDestroy() {

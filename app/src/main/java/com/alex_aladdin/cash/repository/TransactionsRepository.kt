@@ -2,7 +2,7 @@ package com.alex_aladdin.cash.repository
 
 import android.os.HandlerThread
 import com.alex_aladdin.cash.repository.entities.Transaction
-import com.alex_aladdin.cash.repository.specification.RealmSpecification
+import com.alex_aladdin.cash.repository.specifications.RealmSpecification
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -29,9 +29,24 @@ class TransactionsRepository {
         }
         .subscribeOn(realmScheduler)
 
-    fun removeTransaction(transaction: Transaction) {
-        // TODO
-    }
+    fun removeTransaction(transactionId: String): Completable = Completable
+        .create { emitter ->
+            realm().use { realm ->
+                realm.executeTransaction {
+                    try {
+                        realm
+                            .where(Transaction::class.java)
+                            .equalTo("id", transactionId)
+                            .findAll()
+                            .deleteAllFromRealm()
+
+                        emitter.onComplete()
+                    } catch (e: Exception) {
+                        emitter.onError(e)
+                    }
+                }
+            }
+        }
 
     fun query(specification: RealmSpecification): Single<List<Transaction>> = Single
         .create<List<Transaction>> { emitter ->

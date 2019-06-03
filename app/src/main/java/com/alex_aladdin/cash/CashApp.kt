@@ -1,7 +1,6 @@
 package com.alex_aladdin.cash
 
 import android.app.Application
-import android.util.Log.e
 import com.alex_aladdin.cash.di.helpersModule
 import com.alex_aladdin.cash.di.repositoryModule
 import com.alex_aladdin.cash.di.sharedPreferencesModule
@@ -22,8 +21,6 @@ import java.util.Calendar.*
 class CashApp : Application() {
 
     companion object {
-
-        private const val TAG = "CashApp"
 
         const val CASH_APP_PREFERENCES = "com.alex_aladdin.cash.CASH_APP_PREFERENCES"
         const val PREFS_CURRENT_CURRENCY_INDEX = "current_currency_index"
@@ -53,7 +50,7 @@ class CashApp : Application() {
 
     init {
         RxJavaPlugins.setErrorHandler { throwable ->
-            e(TAG, "Uncaught exception: ", throwable)
+            Timber.e(throwable)
         }
     }
 

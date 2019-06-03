@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.CHAIN_PACKED
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
 import androidx.core.view.isInvisible
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alex_aladdin.cash.R
@@ -39,15 +40,28 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
     }
 
 
-    fun setData(data: List<Transaction>, total: Double) = post {
-        adapter = TransactionsAdapter(data, total, get(), context.currentLocale())
+    fun setData(data: List<Transaction>, total: Double, onTransactionClick: (Transaction) -> Unit) = post {
+        if (adapter == null) {
+            adapter = TransactionsAdapter(data, total, get(), onTransactionClick, context.currentLocale())
+        } else {
+            val transactionsAdapter = adapter as TransactionsAdapter
+
+            val oldData = transactionsAdapter.data.toList()
+            transactionsAdapter.data = data
+            transactionsAdapter.total = total
+
+            val transactionsDiff = TransactionsDiff(oldData, data)
+            val diffResult = DiffUtil.calculateDiff(transactionsDiff)
+            diffResult.dispatchUpdatesTo(adapter!!)
+        }
     }
 
 
     private class TransactionsAdapter(
-        private val data: List<Transaction>,
-        private val total: Double,
+        var data: List<Transaction>,
+        var total: Double,
         private val currencyManager: CurrencyManager,
+        private val onTransactionClick: (Transaction) -> Unit,
         locale: Locale
     ) : RecyclerView.Adapter<ViewHolder>() {
 
@@ -68,6 +82,9 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = when (viewType) {
             Type.TRANSACTION.ordinal -> {
                 val view = TransactionUI().createView(AnkoContext.create(parent.context, parent))
+                view.setOnClickListener {
+                    onTransactionClick(it.tag as Transaction)
+                }
                 TransactionViewHolder(view)
             }
 
@@ -93,6 +110,8 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
 
                     holder as TransactionViewHolder
                     holder.apply {
+                        itemView.tag = transaction
+
                         amountText.text = currencyManager.formatMoney(
                             transaction.getAmountPerDay(),
                             transaction.account!!.currencyIndex
@@ -317,6 +336,37 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                 textColorResource = R.color.fog_white
                 textResource = R.string.day_transactions_no_data
             }
+        }
+
+    }
+
+    private class TransactionsDiff(
+        private val oldData: List<Transaction>,
+        private val newData: List<Transaction>
+    ) : DiffUtil.Callback() {
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+            if (oldData.isNotEmpty() && newData.isNotEmpty()) {
+                when {
+                    oldItemPosition < oldData.size && newItemPosition < newData.size -> {
+                        oldData[oldItemPosition].id == newData[newItemPosition].id
+                    }
+
+                    oldItemPosition == oldData.size && newItemPosition == newData.size -> true
+
+                    else -> false
+                }
+            } else {
+                true
+            }
+
+        override fun getOldListSize(): Int = oldData.size + 1
+
+        override fun getNewListSize(): Int = newData.size + 1
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = when {
+            oldData.isNotEmpty() && newData.isNotEmpty() && newItemPosition >= newData.size - 1 -> false
+            else -> true
         }
 
     }

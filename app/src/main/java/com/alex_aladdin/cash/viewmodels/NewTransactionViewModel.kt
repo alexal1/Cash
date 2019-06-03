@@ -233,6 +233,7 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
         isGain = type == Type.GAIN
         amount = amountSubject.value!!.toDouble()
         categoryId = currentCategory.id
+        period = categoriesManager.getPeriod(currentCategory).name
         startTimestamp = app.currentDate.value!!.time
 
         endTimestamp = categoriesManager
