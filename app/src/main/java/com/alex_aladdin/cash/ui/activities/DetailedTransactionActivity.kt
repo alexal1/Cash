@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.CHAIN_PACKED
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.widget.TextViewCompat
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.helpers.CurrencyManager
@@ -46,7 +47,14 @@ class DetailedTransactionActivity : AppCompatActivity() {
             val intent = Intent(activity, DetailedTransactionActivity::class.java).apply {
                 putExtra(TRANSACTION_EXTRA, transaction)
             }
-            activity.startActivityForResult(intent, DETAILED_TRANSACTION_REQUEST_CODE)
+
+            val options = ActivityOptionsCompat.makeCustomAnimation(
+                activity,
+                R.anim.activity_slide_left,
+                R.anim.activity_fade_out
+            ).toBundle()
+
+            activity.startActivityForResult(intent, DETAILED_TRANSACTION_REQUEST_CODE, options)
         }
 
     }
@@ -319,6 +327,11 @@ class DetailedTransactionActivity : AppCompatActivity() {
         getString(R.string.transaction_formula_subtitle_gain)
     } else {
         getString(R.string.transaction_formula_subtitle_loss)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_slide_right)
     }
 
     override fun onDestroy() {
