@@ -54,3 +54,11 @@ inline fun ViewManager.appCompatToolbar(init: _Toolbar.() -> Unit = {}): _Toolba
 inline fun ViewManager.tabLayout(init: TabLayout.() -> Unit = {}): TabLayout {
     return ankoView({ TabLayout(it) }, theme = 0, init = init)
 }
+
+inline fun ViewManager.shortTransactionsList(init: ShortTransactionsList.() -> Unit = {}): ShortTransactionsList {
+    return ankoView({ ShortTransactionsList(it) }, theme = 0, init = init)
+}
+
+inline fun ViewManager.dashedLineView(init: DashedLineView.() -> Unit = {}): DashedLineView {
+    return ankoView({ DashedLineView(it) }, theme = 0, init = init)
+}

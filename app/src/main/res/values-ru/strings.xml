@@ -39,6 +39,8 @@
     <string name="transaction_formula_subtitle_gain">ежедневный доход, который Вам приносит\nэтот заработок</string>
     <string name="transaction_delete">Удалить</string>
     <string name="transaction_delete_dialog_title">Вы уверены что хотите удалить эту транзакцию?</string>
+    <string name="transactions_show_all">Показать все</string>
+    <string name="no_transactions_stub">Здесь будет список недавних транзакций</string>
 
     <!-- Gain -->
     <string name="gain_salary">Зарплата</string>

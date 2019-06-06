@@ -13,15 +13,20 @@ import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.contains
 import com.alex_aladdin.cash.R
+import com.alex_aladdin.cash.repository.entities.Account
+import com.alex_aladdin.cash.repository.entities.Transaction
 import com.alex_aladdin.cash.ui.chart.ChartView
 import com.alex_aladdin.cash.ui.chartView
 import com.alex_aladdin.cash.ui.dates.DatesAdapter
 import com.alex_aladdin.cash.ui.dates.DatesLayoutManager
 import com.alex_aladdin.cash.ui.dates.DatesSnapHelper
 import com.alex_aladdin.cash.ui.fancyButton
+import com.alex_aladdin.cash.ui.shortTransactionsList
 import com.alex_aladdin.cash.utils.*
 import com.alex_aladdin.cash.viewmodels.MainViewModel
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel
+import com.alex_aladdin.cash.viewmodels.enums.GainCategories
+import com.alex_aladdin.cash.viewmodels.enums.LossCategories
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
@@ -50,9 +55,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // TODO remove
-        startActivity(Intent(this@MainActivity, DayTransactionsActivity::class.java))
 
         constraintLayout {
             val datesRecyclerView = recyclerView {
@@ -90,7 +92,31 @@ class MainActivity : AppCompatActivity() {
                 holder.setFormat(PixelFormat.TRANSPARENT)
                 viewModel.chartDataObservable.subscribe(chartDataConsumer).cache(dc)
             }.lparams(matchConstraint, matchConstraint) {
-                bottomMargin = dip(32)
+                bottomMargin = dip(8)
+            }
+
+            val shortTransactionsList = shortTransactionsList {
+                id = View.generateViewId()
+
+                showAllClicks.subscribeOnUi {
+                    startActivity(Intent(this@MainActivity, DayTransactionsActivity::class.java))
+                }.cache(dc)
+
+                // TODO remove
+                post {
+                    setData(listOf(
+                        Transaction().apply {
+                            categoryId = LossCategories.CAFES_AND_RESTAURANTS.id; amount = 3534.664; isGain = false; account = Account().also { it.currencyIndex = 0 }
+                        },
+                        Transaction().apply {
+                            categoryId = GainCategories.SALARY.id; amount = 58987460.397803249; isGain = true; account = Account().also { it.currencyIndex = 0 }
+                        }
+                    ))
+                }
+            }.lparams(matchConstraint, dip(72)) {
+                leftMargin = dip(12)
+                rightMargin = dip(12)
+                bottomMargin = dip(16)
             }
 
             val buttonGain = fancyButton {
@@ -103,10 +129,7 @@ class MainActivity : AppCompatActivity() {
                 setTextResource(R.string.gain)
 
                 setOnClickListenerWithThrottle {
-//                    NewTransactionActivity.start(this@MainActivity, NewTransactionViewModel.Type.GAIN)
-
-                    // TODO remove
-                    startActivity(Intent(this@MainActivity, DayTransactionsActivity::class.java))
+                    NewTransactionActivity.start(this@MainActivity, NewTransactionViewModel.Type.GAIN)
                 }.cache(dc)
             }.lparams(matchConstraint, dip(70)) {
                 bottomMargin = dip(4)
@@ -155,7 +178,14 @@ class MainActivity : AppCompatActivity() {
                     START of chartView to START of PARENT_ID,
                     END of chartView to END of PARENT_ID,
                     TOP of chartView to BOTTOM of datesSpace,
-                    BOTTOM of chartView to TOP of buttonLoss
+                    BOTTOM of chartView to TOP of shortTransactionsList
+                )
+
+                connect(
+                    START of shortTransactionsList to START of PARENT_ID,
+                    END of shortTransactionsList to END of PARENT_ID,
+                    TOP of shortTransactionsList to BOTTOM of chartView,
+                    BOTTOM of shortTransactionsList to TOP of buttonLoss
                 )
 
                 connect(
