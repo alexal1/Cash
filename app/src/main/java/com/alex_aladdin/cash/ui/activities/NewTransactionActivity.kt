@@ -17,6 +17,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.solver.widgets.Guideline.VERTICAL
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -49,7 +50,14 @@ class NewTransactionActivity : AppCompatActivity() {
             val intent = Intent(activity, NewTransactionActivity::class.java).apply {
                 putExtra(TYPE_EXTRA, type)
             }
-            activity.startActivity(intent)
+
+            val options = ActivityOptionsCompat.makeCustomAnimation(
+                activity,
+                R.anim.slide_in_up,
+                R.anim.slide_out_up
+            ).toBundle()
+
+            activity.startActivity(intent, options)
         }
 
     }
@@ -269,6 +277,7 @@ class NewTransactionActivity : AppCompatActivity() {
             viewPager.currentItem = 0
         } else {
             super.onBackPressed()
+            overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down)
         }
     }
 

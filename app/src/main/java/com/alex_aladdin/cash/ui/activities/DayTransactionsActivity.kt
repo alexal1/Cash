@@ -1,5 +1,6 @@
 package com.alex_aladdin.cash.ui.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -13,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.LinearLayout.VERTICAL
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
@@ -40,6 +42,18 @@ class DayTransactionsActivity : AppCompatActivity() {
         const val DETAILED_TRANSACTION_REQUEST_CODE = 1
         const val DETAILED_TRANSACTION_RESULT_DELETE = 2
         const val DETAILED_TRANSACTION_EXTRA_ID = "detailed_transaction_extra"
+
+        fun start(activity: Activity) {
+            val intent = Intent(activity, DayTransactionsActivity::class.java)
+
+            val options = ActivityOptionsCompat.makeCustomAnimation(
+                activity,
+                R.anim.slide_in_up,
+                R.anim.slide_out_up
+            ).toBundle()
+
+            activity.startActivity(intent, options)
+        }
 
     }
 
@@ -115,7 +129,7 @@ class DayTransactionsActivity : AppCompatActivity() {
                         }.lparams(matchParent, matchParent)
 
                         setNavigationOnClickListener {
-                            finish()
+                            onBackPressed()
                         }
 
                         addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, offset ->
@@ -173,6 +187,11 @@ class DayTransactionsActivity : AppCompatActivity() {
 
     override fun onEnterAnimationComplete() {
         viewModel.activityReadyToDrawListener.accept(Unit)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down)
     }
 
     override fun onDestroy() {

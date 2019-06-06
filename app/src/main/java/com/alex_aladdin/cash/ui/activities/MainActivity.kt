@@ -1,6 +1,5 @@
 package com.alex_aladdin.cash.ui.activities
 
-import android.content.Intent
 import android.graphics.PixelFormat
 import android.graphics.Point
 import android.graphics.PointF
@@ -99,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                 id = View.generateViewId()
 
                 showAllClicks.subscribeOnUi {
-                    startActivity(Intent(this@MainActivity, DayTransactionsActivity::class.java))
+                    DayTransactionsActivity.start(this@MainActivity)
                 }.cache(dc)
 
                 // TODO remove

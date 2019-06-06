@@ -50,8 +50,8 @@ class DetailedTransactionActivity : AppCompatActivity() {
 
             val options = ActivityOptionsCompat.makeCustomAnimation(
                 activity,
-                R.anim.activity_slide_left,
-                R.anim.activity_fade_out
+                R.anim.slide_in_left,
+                R.anim.slide_out_left
             ).toBundle()
 
             activity.startActivityForResult(intent, DETAILED_TRANSACTION_REQUEST_CODE, options)
@@ -331,7 +331,7 @@ class DetailedTransactionActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_slide_right)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right)
     }
 
     override fun onDestroy() {
