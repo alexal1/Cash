@@ -82,3 +82,9 @@ fun View.expandHitArea(scale: Float) {
         })
     }
 }
+
+fun View.getRect(): Rect {
+    val rect = Rect()
+    getHitRect(rect)
+    return rect
+}

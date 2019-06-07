@@ -2,7 +2,6 @@ package com.alex_aladdin.cash.ui.fragments
 
 import android.graphics.Color
 import android.graphics.Point
-import android.graphics.Rect
 import android.os.Bundle
 import android.view.Gravity.CENTER
 import android.view.LayoutInflater
@@ -16,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.utils.DisposableCache
 import com.alex_aladdin.cash.utils.cache
+import com.alex_aladdin.cash.utils.getRect
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel.CalculatorAction
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel.CalculatorActionType.*
@@ -322,12 +322,6 @@ class CalculatorFragment : Fragment() {
                 else -> false
             }
         }
-    }
-
-    private fun View.getRect(): Rect {
-        val rect = Rect()
-        getHitRect(rect)
-        return rect
     }
 
     override fun onDestroy() {

@@ -1,16 +1,19 @@
 package com.alex_aladdin.cash.ui
 
 import android.content.Context
+import android.graphics.Point
 import android.view.Gravity.CENTER
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Space
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+import androidx.core.graphics.contains
 import androidx.core.view.isVisible
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.helpers.CurrencyManager
 import com.alex_aladdin.cash.repository.entities.Transaction
-import com.alex_aladdin.cash.utils.expandHitArea
+import com.alex_aladdin.cash.utils.getRect
 import com.alex_aladdin.cash.viewmodels.enums.Categories
 import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.Observable
@@ -43,8 +46,6 @@ class ShortTransactionsList(context: Context) : _ConstraintLayout(context), Koin
             textColorResource = R.color.blue
             textResource = R.string.transactions_show_all
             alpha = 0.8f
-
-            expandHitArea(4f)
         }.lparams(wrapContent, wrapContent)
 
         stubView = textView {
@@ -55,6 +56,27 @@ class ShortTransactionsList(context: Context) : _ConstraintLayout(context), Koin
             textResource = R.string.no_transactions_stub
             gravity = CENTER
         }.lparams(matchConstraint, matchConstraint)
+
+        setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    showAllView.alpha = 1.0f
+                    true
+                }
+
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    showAllView.alpha = 0.8f
+
+                    if (getRect().contains(Point(event.x.toInt() + left, event.y.toInt() + top))) {
+                        performClick()
+                    }
+
+                    true
+                }
+
+                else -> false
+            }
+        }
 
         applyConstraintSet {
             connect(
@@ -88,9 +110,7 @@ class ShortTransactionsList(context: Context) : _ConstraintLayout(context), Koin
     }
 
 
-    val showAllClicks: Observable<Unit> = showAllView
-        .clicks()
-        .filter { !stubView.isVisible }.throttleFirst(1, TimeUnit.SECONDS)
+    val showAllClicks: Observable<Unit> = clicks().filter { !stubView.isVisible }.throttleFirst(1, TimeUnit.SECONDS)
 
 
     fun setData(transactions: List<Transaction>) = if (transactions.isNotEmpty()) {
