@@ -149,12 +149,14 @@ class CategoryPicker(context: Context) : _FrameLayout(context) {
                 val topChild = (0 until childCount)
                     .mapNotNull { i -> getChildAt(i) }
                     .filter { child -> child.midPoint() <= parentMidpoint }
-                    .minBy { child -> parentMidpoint - child.midPoint() }!!
+                    .minBy { child -> parentMidpoint - child.midPoint() }
+                    ?: return
 
                 val bottomChild = (0 until childCount)
                     .mapNotNull { i -> getChildAt(i) }
                     .filter { child -> child.midPoint() >= parentMidpoint }
-                    .minBy { child -> child.midPoint() - parentMidpoint }!!
+                    .minBy { child -> child.midPoint() - parentMidpoint }
+                    ?: return
 
                 val averageWidth =
                     topChild.width + (parentMidpoint - topChild.midPoint()) * (bottomChild.width - topChild.width) / itemHeight
