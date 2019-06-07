@@ -173,7 +173,7 @@ class NewTransactionActivity : AppCompatActivity() {
                 adapter = ViewPagerAdapter(supportFragmentManager)
                 addOnPageChangeListener(pageChangeListener)
                 pageChangeListener.onPageSelected(currentItem)
-            }.lparams(matchConstraint, minOf(dip(320), (screenSize().y * 0.5f).toInt()))
+            }.lparams(matchConstraint, minOf(dip(272), (screenSize().y * 0.5f).toInt()))
 
             val toolbar = toolbar {
                 id = View.generateViewId()
