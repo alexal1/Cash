@@ -91,11 +91,12 @@ class MainActivity : AppCompatActivity() {
                 holder.setFormat(PixelFormat.TRANSPARENT)
                 viewModel.chartDataObservable.subscribe(chartDataConsumer).cache(dc)
             }.lparams(matchConstraint, matchConstraint) {
-                bottomMargin = dip(8)
+                bottomMargin = dip(16)
             }
 
             val shortTransactionsList = shortTransactionsList {
                 id = View.generateViewId()
+                bottomPadding = dip(16)
 
                 showAllClicks.subscribeOnUi {
                     DayTransactionsActivity.start(this@MainActivity)
@@ -115,7 +116,6 @@ class MainActivity : AppCompatActivity() {
             }.lparams(matchConstraint, dip(72)) {
                 leftMargin = dip(12)
                 rightMargin = dip(12)
-                bottomMargin = dip(16)
             }
 
             val buttonGain = fancyButton {

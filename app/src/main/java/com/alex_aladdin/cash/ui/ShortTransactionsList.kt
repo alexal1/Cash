@@ -44,7 +44,7 @@ class ShortTransactionsList(context: Context) : _ConstraintLayout(context), Koin
             textResource = R.string.transactions_show_all
             alpha = 0.8f
 
-            expandHitArea(2f)
+            expandHitArea(4f)
         }.lparams(wrapContent, wrapContent)
 
         stubView = textView {
