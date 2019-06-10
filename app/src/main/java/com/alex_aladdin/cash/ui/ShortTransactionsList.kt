@@ -113,38 +113,40 @@ class ShortTransactionsList(context: Context) : _ConstraintLayout(context), Koin
     val showAllClicks: Observable<Unit> = clicks().filter { !stubView.isVisible }.throttleFirst(1, TimeUnit.SECONDS)
 
 
-    fun setData(transactions: List<Transaction>) = if (transactions.isNotEmpty()) {
-        stubView.isVisible = false
+    fun setData(transactions: List<Transaction>) = post {
+        if (transactions.isNotEmpty()) {
+            stubView.isVisible = false
 
-        val transaction0 = transactions.getOrNull(0)
-        if (transaction0 != null) {
-            block0.isVisible = true
+            val transaction0 = transactions.getOrNull(0)
+            if (transaction0 != null) {
+                block0.isVisible = true
 
-            block0.category.textResource = Categories.findById(transaction0.categoryId, transaction0.isGain).stringRes
+                block0.category.textResource = Categories.findById(transaction0.categoryId, transaction0.isGain).stringRes
 
-            val sign = if (transaction0.isGain) "+" else "-"
-            val amount =
-                "$sign ${currencyManager.formatMoney(transaction0.amount, transaction0.account!!.currencyIndex)}"
-            block0.amount.text = amount
+                val sign = if (transaction0.isGain) "+" else "-"
+                val amount =
+                    "$sign ${currencyManager.formatMoney(transaction0.amount, transaction0.account!!.currencyIndex)}"
+                block0.amount.text = amount
+            } else {
+                block0.isVisible = false
+            }
+
+            val transaction1 = transactions.getOrNull(1)
+            if (transaction1 != null) {
+                block1.isVisible = true
+
+                block1.category.textResource = Categories.findById(transaction1.categoryId, transaction1.isGain).stringRes
+
+                val sign = if (transaction1.isGain) "+" else "-"
+                val amount =
+                    "$sign ${currencyManager.formatMoney(transaction1.amount, transaction1.account!!.currencyIndex)}"
+                block1.amount.text = amount
+            } else {
+                block1.isVisible = false
+            }
         } else {
-            block0.isVisible = false
+            stubView.isVisible = true
         }
-
-        val transaction1 = transactions.getOrNull(1)
-        if (transaction1 != null) {
-            block1.isVisible = true
-
-            block1.category.textResource = Categories.findById(transaction1.categoryId, transaction1.isGain).stringRes
-
-            val sign = if (transaction1.isGain) "+" else "-"
-            val amount =
-                "$sign ${currencyManager.formatMoney(transaction1.amount, transaction1.account!!.currencyIndex)}"
-            block1.amount.text = amount
-        } else {
-            block1.isVisible = false
-        }
-    } else {
-        stubView.isVisible = true
     }
 
     private fun _ConstraintLayout.getTransactionBlock(withShadow: Boolean): Block {

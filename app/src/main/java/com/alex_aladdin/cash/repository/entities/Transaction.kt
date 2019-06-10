@@ -1,18 +1,12 @@
 package com.alex_aladdin.cash.repository.entities
 
+import com.alex_aladdin.cash.CashApp
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import java.io.Serializable
 import java.util.*
 
 open class Transaction : RealmObject(), Serializable {
-
-    companion object {
-
-        private const val millisInDay = 24 * 60 * 60 * 1000
-
-    }
-
 
     @PrimaryKey
     var id: String = UUID.randomUUID().toString()
@@ -34,7 +28,7 @@ open class Transaction : RealmObject(), Serializable {
     var account: Account? = null
 
 
-    fun getDaysCount(): Int = ((endTimestamp - startTimestamp) / millisInDay).toInt()
+    fun getDaysCount(): Int = ((endTimestamp - startTimestamp) / CashApp.millisInDay).toInt()
 
     fun getAmountPerDay(): Double = amount / getDaysCount().toDouble()
 

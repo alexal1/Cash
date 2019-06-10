@@ -12,8 +12,6 @@ import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.contains
 import com.alex_aladdin.cash.R
-import com.alex_aladdin.cash.repository.entities.Account
-import com.alex_aladdin.cash.repository.entities.Transaction
 import com.alex_aladdin.cash.ui.chart.ChartView
 import com.alex_aladdin.cash.ui.chartView
 import com.alex_aladdin.cash.ui.dates.DatesAdapter
@@ -24,8 +22,6 @@ import com.alex_aladdin.cash.ui.shortTransactionsList
 import com.alex_aladdin.cash.utils.*
 import com.alex_aladdin.cash.viewmodels.MainViewModel
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel
-import com.alex_aladdin.cash.viewmodels.enums.GainCategories
-import com.alex_aladdin.cash.viewmodels.enums.LossCategories
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
@@ -102,17 +98,9 @@ class MainActivity : AppCompatActivity() {
                     DayTransactionsActivity.start(this@MainActivity)
                 }.cache(dc)
 
-                // TODO remove
-                post {
-                    setData(listOf(
-                        Transaction().apply {
-                            categoryId = LossCategories.CAFES_AND_RESTAURANTS.id; amount = 3534.664; isGain = false; account = Account().also { it.currencyIndex = 0 }
-                        },
-                        Transaction().apply {
-                            categoryId = GainCategories.SALARY.id; amount = 58987460.397803249; isGain = true; account = Account().also { it.currencyIndex = 0 }
-                        }
-                    ))
-                }
+                viewModel.shortTransactionsListObservable.subscribeOnUi { transactions ->
+                    setData(transactions)
+                }.cache(dc)
             }.lparams(matchConstraint, dip(72)) {
                 leftMargin = dip(12)
                 rightMargin = dip(12)

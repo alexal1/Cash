@@ -18,6 +18,7 @@ import com.alex_aladdin.cash.utils.TextFormatter
 import com.alex_aladdin.cash.utils.cache
 import com.alex_aladdin.cash.utils.currentLocale
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel.CalculatorActionType.*
+import com.alex_aladdin.cash.viewmodels.cache.CacheLogicAdapter
 import com.alex_aladdin.cash.viewmodels.enums.Categories
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
@@ -34,6 +35,7 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
     private val currencyManager: CurrencyManager by inject()
     private val categoriesManager: CategoriesManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
+    private val cache: CacheLogicAdapter by inject()
     private val defaultCurrencyIndex = getDefaultCurrencyIndex()
     private val amountPattern = Regex("\\d+(\\.\\d+)?")
     private val dc = DisposableCache()
@@ -98,9 +100,14 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
 
         if (isInputValid) {
             val transaction = getCurrentTransaction()
-            repository.addTransaction(transaction).subscribe {
-                isDoneSubject.onNext(true)
-            }.cache(dc)
+            cache
+                .clear()
+                .andThen(repository.addTransaction(transaction))
+                .andThen(cache.requestDate(app.currentDate.value!!))
+                .subscribe {
+                    isDoneSubject.onNext(true)
+                }
+                .cache(dc)
         } else {
             isDoneSubject.onNext(false)
         }

@@ -11,6 +11,7 @@ import com.alex_aladdin.cash.repository.specifications.DayLossSpecification
 import com.alex_aladdin.cash.utils.DisposableCache
 import com.alex_aladdin.cash.utils.cache
 import com.alex_aladdin.cash.utils.onNextConsumer
+import com.alex_aladdin.cash.viewmodels.cache.CacheLogicAdapter
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
@@ -24,6 +25,7 @@ class DayTransactionsViewModel(application: Application) : AndroidViewModel(appl
     private val app = application as CashApp
     private val currencyManager: CurrencyManager by inject()
     private val repository: TransactionsRepository by inject()
+    private val cache: CacheLogicAdapter by inject()
     private val currentCurrencyIndex get() = currencyManager.getCurrentCurrencyIndex()
     private val dc = DisposableCache()
 
@@ -53,9 +55,11 @@ class DayTransactionsViewModel(application: Application) : AndroidViewModel(appl
     fun deleteTransaction(transactionId: String) {
         Completable
             .mergeArray(
+                cache.clear(),
                 repository.removeTransaction(transactionId),
                 activityReadyToDrawSubject.take(1).singleOrError().ignoreElement()
             )
+            .andThen(cache.requestDate(app.currentDate.value!!))
             .subscribe {
                 obtainData()
             }

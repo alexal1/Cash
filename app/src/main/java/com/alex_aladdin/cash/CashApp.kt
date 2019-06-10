@@ -1,12 +1,8 @@
 package com.alex_aladdin.cash
 
 import android.app.Application
-import com.alex_aladdin.cash.di.helpersModule
-import com.alex_aladdin.cash.di.repositoryModule
-import com.alex_aladdin.cash.di.sharedPreferencesModule
-import com.alex_aladdin.cash.di.viewModelsModule
+import com.alex_aladdin.cash.di.*
 import com.alex_aladdin.cash.helpers.timber.CashDebugTree
-import com.alex_aladdin.cash.utils.currentLocale
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.subjects.BehaviorSubject
 import io.realm.Realm
@@ -29,11 +25,13 @@ class CashApp : Application() {
         const val PREFS_DEFAULT_LOSS_CATEGORY = "default_loss_category"
         const val PREFS_DEFAULT_GAIN_CATEGORY = "default_gain_category"
 
+        const val millisInDay = 24 * 60 * 60 * 1000L
+
     }
 
 
     val todayDate: Date by lazy {
-        GregorianCalendar.getInstance(currentLocale())
+        GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT+0000"))
             .apply {
                 set(HOUR_OF_DAY, 0)
                 set(MINUTE, 0)
@@ -61,7 +59,7 @@ class CashApp : Application() {
         startKoin {
             androidLogger()
             androidContext(this@CashApp)
-            modules(viewModelsModule, sharedPreferencesModule, helpersModule, repositoryModule)
+            modules(viewModelsModule, sharedPreferencesModule, helpersModule, repositoryModule, cacheModule)
         }
 
         val tree = when(BuildConfig.BUILD_TYPE) {

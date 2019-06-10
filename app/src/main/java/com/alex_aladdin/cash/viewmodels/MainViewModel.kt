@@ -4,21 +4,27 @@ import android.app.Application
 import android.text.format.DateUtils
 import androidx.lifecycle.AndroidViewModel
 import com.alex_aladdin.cash.CashApp
+import com.alex_aladdin.cash.repository.entities.Transaction
 import com.alex_aladdin.cash.ui.chart.ChartData
 import com.alex_aladdin.cash.utils.DisposableCache
 import com.alex_aladdin.cash.utils.cache
 import com.alex_aladdin.cash.utils.currentLocale
 import com.alex_aladdin.cash.utils.onNextConsumer
+import com.alex_aladdin.cash.viewmodels.cache.CacheLogicAdapter
 import com.alex_aladdin.cash.viewmodels.enums.GainCategories
 import com.alex_aladdin.cash.viewmodels.enums.LossCategories
 import io.reactivex.Observable
+import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+class MainViewModel(application: Application) : AndroidViewModel(application), KoinComponent {
 
     private val app = application as CashApp
+    private val cache: CacheLogicAdapter by inject()
     private val weekdayFormat = SimpleDateFormat("EEEE", application.currentLocale())
     private val dc = DisposableCache()
 
@@ -28,6 +34,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val chartDataSubject = BehaviorSubject.createDefault(ChartData())
     val chartDataObservable: Observable<ChartData> = chartDataSubject
 
+    private val dayTransactionsSubject = BehaviorSubject.create<List<Transaction>>()
+    val shortTransactionsListObservable: Observable<List<Transaction>> = dayTransactionsSubject.map { it.take(2) }
+
+    private var dataLoadingDisposable: Disposable? = null
+
     val dateConsumer = app.currentDate.onNextConsumer()
     val todayDate = app.todayDate
 
@@ -35,6 +46,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     init {
         app.currentDate.subscribe { date ->
             weekdaySubject.onNext(date.toWeekday())
+
+            dataLoadingDisposable?.dispose()
+            dataLoadingDisposable = cache.requestDate(date).subscribe(dayTransactionsSubject.onNextConsumer())
 
             // TODO: remove
             val chartData = if (DateUtils.isToday(date.time)) {
@@ -61,6 +75,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     override fun onCleared() {
         dc.drain()
+        dataLoadingDisposable?.dispose()
     }
 
 
