@@ -31,11 +31,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
     private val weekdaySubject = BehaviorSubject.create<Weekday>()
     val weekdayObservable: Observable<Weekday> = weekdaySubject
 
-    private val chartDataSubject = BehaviorSubject.createDefault(ChartData())
-    val chartDataObservable: Observable<ChartData> = chartDataSubject
-
     private val dayTransactionsSubject = BehaviorSubject.create<List<Transaction>>()
     val shortTransactionsListObservable: Observable<List<Transaction>> = dayTransactionsSubject.map { it.take(2) }
+    val chartDataObservable: Observable<ChartData> = Observable.merge(
+        Observable.just(ChartData()),
+        dayTransactionsSubject.map { transactions -> transactions.toChartData() }
+    )
 
     private var dataLoadingDisposable: Disposable? = null
 
@@ -49,20 +50,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
 
             dataLoadingDisposable?.dispose()
             dataLoadingDisposable = cache.requestDate(date).subscribe(dayTransactionsSubject.onNextConsumer())
-
-            // TODO: remove
-            val chartData = if (DateUtils.isToday(date.time)) {
-                ChartData(
-                    gain = mapOf(GainCategories.SALARY to 1000f),
-                    loss = mapOf(LossCategories.CAFES_AND_RESTAURANTS to 500f, LossCategories.FOODSTUFF to 250f)
-                )
-            } else {
-                ChartData(
-                    gain = mapOf(GainCategories.SALARY to 1000f),
-                    loss = mapOf(LossCategories.CAFES_AND_RESTAURANTS to 250f, LossCategories.FOODSTUFF to 500f)
-                )
-            }
-            chartDataSubject.onNext(chartData)
         }.cache(dc)
     }
 
@@ -72,6 +59,24 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
         val isToday = DateUtils.isToday(time)
         return Weekday(name, isToday)
     }
+
+    private fun List<Transaction>.toChartData() = ChartData(
+        gain = GainCategories.values().map { category ->
+            category to filter { transaction ->
+                transaction.categoryId == category.id
+            }.sumByDouble { transaction ->
+                transaction.amount
+            }.toFloat()
+        }.toMap(),
+
+        loss = LossCategories.values().map { category ->
+            category to filter { transaction ->
+                transaction.categoryId == category.id
+            }.sumByDouble { transaction ->
+                transaction.amount
+            }.toFloat()
+        }.toMap()
+    )
 
     override fun onCleared() {
         dc.drain()
