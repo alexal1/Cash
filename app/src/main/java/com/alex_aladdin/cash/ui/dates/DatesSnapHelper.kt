@@ -15,7 +15,7 @@ class DatesSnapHelper : LinearSnapHelper() {
     }
 
 
-    private var lastPos = -1
+    var lastPos = -1
 
 
     override fun findTargetSnapPosition(

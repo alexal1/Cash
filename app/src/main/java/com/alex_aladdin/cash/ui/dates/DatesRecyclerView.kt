@@ -10,6 +10,7 @@ import java.util.*
 class DatesRecyclerView(context: Context) : RecyclerView(context) {
 
     private val datesLayoutManager = DatesLayoutManager(context)
+    private val datesSnapHelper = DatesSnapHelper()
 
     private lateinit var todayDate: Date
 
@@ -18,7 +19,7 @@ class DatesRecyclerView(context: Context) : RecyclerView(context) {
         this.todayDate = todayDate
 
         layoutManager = datesLayoutManager
-        DatesSnapHelper().attachToRecyclerView(this)
+        datesSnapHelper.attachToRecyclerView(this)
         setHasFixedSize(true)
 
         val datesAdapter = DatesAdapter(locale, todayDate)
@@ -34,5 +35,6 @@ class DatesRecyclerView(context: Context) : RecyclerView(context) {
         val newPos = todayPos + daysCountDiff
         val offset = context.screenSize().x / 4
         datesLayoutManager.scrollToPositionWithOffset(newPos, offset)
+        datesSnapHelper.lastPos = newPos
     }
 }
