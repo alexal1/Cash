@@ -24,7 +24,7 @@ import com.alex_aladdin.cash.repository.entities.Transaction
 import com.alex_aladdin.cash.ui.activities.DayTransactionsActivity.Companion.DETAILED_TRANSACTION_EXTRA_ID
 import com.alex_aladdin.cash.ui.activities.DayTransactionsActivity.Companion.DETAILED_TRANSACTION_REQUEST_CODE
 import com.alex_aladdin.cash.ui.activities.DayTransactionsActivity.Companion.DETAILED_TRANSACTION_RESULT_DELETE
-import com.alex_aladdin.cash.ui.appCompatTextView
+import com.alex_aladdin.cash.utils.anko.appCompatTextView
 import com.alex_aladdin.cash.utils.*
 import com.alex_aladdin.cash.utils.spans.VerticalOffsetSpan
 import com.alex_aladdin.cash.viewmodels.enums.Categories

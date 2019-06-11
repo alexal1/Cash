@@ -1,12 +1,12 @@
-package com.alex_aladdin.cash.utils.ankolayouts
+package com.alex_aladdin.cash.utils.anko
 
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import androidx.appcompat.widget.Toolbar
+import com.google.android.material.appbar.AppBarLayout
 
 @Suppress("ClassName")
-open class _Toolbar(ctx: Context): Toolbar(ctx) {
+open class _AppBarLayout(ctx: Context): AppBarLayout(ctx) {
 
     inline fun <T: View> T.lparams(
         width: Int = WRAP_CONTENT,

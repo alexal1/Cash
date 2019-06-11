@@ -18,8 +18,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import com.alex_aladdin.cash.R
-import com.alex_aladdin.cash.ui.appCompatTextView
-import com.alex_aladdin.cash.ui.categoryPicker
+import com.alex_aladdin.cash.utils.anko.appCompatTextView
+import com.alex_aladdin.cash.utils.anko.categoryPicker
 import com.alex_aladdin.cash.utils.DisposableCache
 import com.alex_aladdin.cash.utils.cache
 import com.alex_aladdin.cash.utils.setOnClickListenerWithThrottle

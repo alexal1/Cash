@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.helpers.CurrencyManager
 import com.alex_aladdin.cash.repository.entities.Transaction
+import com.alex_aladdin.cash.utils.anko.dashedLineView
 import com.alex_aladdin.cash.utils.getRect
 import com.alex_aladdin.cash.viewmodels.enums.Categories
 import com.jakewharton.rxbinding3.view.clicks

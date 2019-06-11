@@ -1,13 +1,11 @@
-package com.alex_aladdin.cash.ui
+package com.alex_aladdin.cash.utils.anko
 
 import android.app.Activity
 import android.view.ViewManager
 import androidx.appcompat.widget.AppCompatTextView
+import com.alex_aladdin.cash.ui.*
 import com.alex_aladdin.cash.ui.chart.ChartView
-import com.alex_aladdin.cash.utils.ankolayouts._AppBarLayout
-import com.alex_aladdin.cash.utils.ankolayouts._CollapsingToolbarLayout
-import com.alex_aladdin.cash.utils.ankolayouts._CoordinatorLayout
-import com.alex_aladdin.cash.utils.ankolayouts._Toolbar
+import com.alex_aladdin.cash.ui.dates.DatesRecyclerView
 import com.google.android.material.tabs.TabLayout
 import org.jetbrains.anko.custom.ankoView
 
@@ -61,4 +59,8 @@ inline fun ViewManager.shortTransactionsList(init: ShortTransactionsList.() -> U
 
 inline fun ViewManager.dashedLineView(init: DashedLineView.() -> Unit = {}): DashedLineView {
     return ankoView({ DashedLineView(it) }, theme = 0, init = init)
+}
+
+inline fun ViewManager.datesRecyclerView(init: DatesRecyclerView.() -> Unit = {}): DatesRecyclerView {
+    return ankoView({ DatesRecyclerView(it) }, theme = 0, init = init)
 }

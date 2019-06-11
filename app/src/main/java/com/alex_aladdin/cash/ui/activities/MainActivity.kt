@@ -13,22 +13,21 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.contains
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.ui.chart.ChartView
-import com.alex_aladdin.cash.ui.chartView
-import com.alex_aladdin.cash.ui.dates.DatesAdapter
-import com.alex_aladdin.cash.ui.dates.DatesLayoutManager
-import com.alex_aladdin.cash.ui.dates.DatesSnapHelper
-import com.alex_aladdin.cash.ui.fancyButton
-import com.alex_aladdin.cash.ui.shortTransactionsList
 import com.alex_aladdin.cash.utils.*
+import com.alex_aladdin.cash.utils.anko.chartView
+import com.alex_aladdin.cash.utils.anko.datesRecyclerView
+import com.alex_aladdin.cash.utils.anko.fancyButton
+import com.alex_aladdin.cash.utils.anko.shortTransactionsList
 import com.alex_aladdin.cash.viewmodels.MainViewModel
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel
+import io.reactivex.Observable
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.matchConstraint
-import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.*
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -52,15 +51,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         constraintLayout {
-            val datesRecyclerView = recyclerView {
+            val datesRecyclerView = datesRecyclerView {
                 id = R.id.dates_recycler_view
-                layoutManager = DatesLayoutManager(this@MainActivity)
-                DatesSnapHelper().attachToRecyclerView(this)
-                setHasFixedSize(true)
 
-                adapter = DatesAdapter(currentLocale(), viewModel.todayDate).also { datesAdapter ->
-                    datesAdapter.dateObservable.subscribe(viewModel.dateConsumer).cache(dc)
-                }
+                val dateObservable: Observable<Date> = init(viewModel.todayDate, currentLocale())
+                dateObservable.subscribe(viewModel.currentDate.onNextConsumer()).cache(dc)
+
+                setDate(viewModel.currentDate.value!!)
             }.lparams(matchConstraint, matchConstraint)
 
             val weekdayText = textView {

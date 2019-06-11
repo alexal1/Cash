@@ -19,9 +19,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.alex_aladdin.cash.R
-import com.alex_aladdin.cash.ui.*
 import com.alex_aladdin.cash.ui.fragments.DayTransactionsFragment
 import com.alex_aladdin.cash.utils.*
+import com.alex_aladdin.cash.utils.anko.*
 import com.alex_aladdin.cash.viewmodels.DayTransactionsViewModel
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.*

@@ -1,12 +1,12 @@
-package com.alex_aladdin.cash.utils.ankolayouts
+package com.alex_aladdin.cash.utils.anko
 
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import com.google.android.material.appbar.CollapsingToolbarLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 
 @Suppress("ClassName")
-open class _CollapsingToolbarLayout(ctx: Context): CollapsingToolbarLayout(ctx) {
+open class _CoordinatorLayout(ctx: Context): CoordinatorLayout(ctx) {
 
     inline fun <T: View> T.lparams(
         width: Int = WRAP_CONTENT,

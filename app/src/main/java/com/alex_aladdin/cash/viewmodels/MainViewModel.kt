@@ -40,12 +40,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
 
     private var dataLoadingDisposable: Disposable? = null
 
-    val dateConsumer = app.currentDate.onNextConsumer()
+    val currentDate = app.currentDate
     val todayDate = app.todayDate
 
 
     init {
-        app.currentDate.subscribe { date ->
+        currentDate.subscribe { date ->
             weekdaySubject.onNext(date.toWeekday())
 
             dataLoadingDisposable?.dispose()

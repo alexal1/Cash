@@ -8,8 +8,8 @@ import androidx.fragment.app.Fragment
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.repository.entities.Transaction
 import com.alex_aladdin.cash.ui.activities.DetailedTransactionActivity
-import com.alex_aladdin.cash.ui.transactionsList
 import com.alex_aladdin.cash.utils.DisposableCache
+import com.alex_aladdin.cash.utils.anko.transactionsList
 import com.alex_aladdin.cash.utils.cache
 import com.alex_aladdin.cash.utils.subscribeOnUi
 import com.alex_aladdin.cash.viewmodels.DayTransactionsViewModel

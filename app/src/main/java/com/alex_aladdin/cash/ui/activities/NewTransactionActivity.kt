@@ -23,8 +23,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.alex_aladdin.cash.R
-import com.alex_aladdin.cash.ui.appCompatTextView
-import com.alex_aladdin.cash.ui.currencyPicker
+import com.alex_aladdin.cash.utils.anko.appCompatTextView
+import com.alex_aladdin.cash.utils.anko.currencyPicker
 import com.alex_aladdin.cash.ui.fragments.CalculatorFragment
 import com.alex_aladdin.cash.ui.fragments.CategoriesFragment
 import com.alex_aladdin.cash.utils.*

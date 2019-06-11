@@ -43,9 +43,6 @@ class DatesAdapter(locale: Locale, private val todayDate: Date) : RecyclerView.A
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         val layoutManager = recyclerView.layoutManager as LinearLayoutManager
 
-        val offset = recyclerView.context.screenSize().x / 4
-        layoutManager.scrollToPositionWithOffset(todayPos, offset)
-
         datesScrollListener = DatesScrollListener {
             val position = layoutManager.findFirstCompletelyVisibleItemPosition()
             val date = dateByPos(position)
