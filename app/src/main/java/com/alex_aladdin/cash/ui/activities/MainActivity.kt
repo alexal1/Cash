@@ -60,6 +60,26 @@ class MainActivity : AppCompatActivity() {
                 setDate(viewModel.currentDate.value!!)
             }.lparams(matchConstraint, matchConstraint)
 
+            val settingsButton = imageButton {
+                id = View.generateViewId()
+                padding = dip(12)
+                setImageResource(R.drawable.ic_settings_white)
+
+                setSelectableBackground(true)
+            }.lparams(wrapContent, wrapContent) {
+                leftMargin = dip(2)
+            }
+
+            val calendarButton = imageButton {
+                id = View.generateViewId()
+                padding = dip(12)
+                setImageResource(R.drawable.ic_calendar)
+
+                setSelectableBackground(true)
+            }.lparams(wrapContent, wrapContent) {
+                rightMargin = dip(2)
+            }
+
             val weekdayText = textView {
                 id = View.generateViewId()
                 textSize = 14f
@@ -144,6 +164,16 @@ class MainActivity : AppCompatActivity() {
                     END of datesRecyclerView to END of PARENT_ID,
                     TOP of datesRecyclerView to TOP of PARENT_ID,
                     BOTTOM of datesRecyclerView to BOTTOM of PARENT_ID
+                )
+
+                connect(
+                    TOP of settingsButton to TOP of PARENT_ID,
+                    START of settingsButton to START of PARENT_ID
+                )
+
+                connect(
+                    TOP of calendarButton to TOP of PARENT_ID,
+                    END of calendarButton to END of PARENT_ID
                 )
 
                 connect(
