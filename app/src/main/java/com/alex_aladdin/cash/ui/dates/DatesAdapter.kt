@@ -9,21 +9,21 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.utils.screenSize
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.functions.Consumer
 import org.jetbrains.anko.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar.DAY_OF_MONTH
 
-class DatesAdapter(locale: Locale, private val todayDate: Date) : RecyclerView.Adapter<DatesAdapter.DateViewHolder>() {
+class DatesAdapter(
+    locale: Locale,
+    private val todayDate: Date,
+    private val dateConsumer: Consumer<Date>
+) : RecyclerView.Adapter<DatesAdapter.DateViewHolder>() {
 
     private val calendar = GregorianCalendar.getInstance(locale)
     private val todayPos = Int.MAX_VALUE / 2
     private val dateFormatter = SimpleDateFormat("d MMM", locale)
-
-    private val dateSubject = PublishSubject.create<Date>()
-    val dateObservable: Observable<Date> = dateSubject.distinctUntilChanged()
 
     private var datesScrollListener: DatesScrollListener? = null
 
@@ -46,7 +46,7 @@ class DatesAdapter(locale: Locale, private val todayDate: Date) : RecyclerView.A
         datesScrollListener = DatesScrollListener {
             val position = layoutManager.findFirstCompletelyVisibleItemPosition()
             val date = dateByPos(position)
-            dateSubject.onNext(date)
+            dateConsumer.accept(date)
         }.also {
             recyclerView.addOnScrollListener(it)
         }

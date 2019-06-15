@@ -1,5 +1,6 @@
 package com.alex_aladdin.cash.ui.activities
 
+import android.app.DatePickerDialog
 import android.graphics.PixelFormat
 import android.graphics.Point
 import android.graphics.PointF
@@ -13,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.contains
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.ui.chart.ChartView
+import com.alex_aladdin.cash.ui.dates.DatesRecyclerView
 import com.alex_aladdin.cash.utils.*
 import com.alex_aladdin.cash.utils.anko.chartView
 import com.alex_aladdin.cash.utils.anko.datesRecyclerView
@@ -20,7 +22,6 @@ import com.alex_aladdin.cash.utils.anko.fancyButton
 import com.alex_aladdin.cash.utils.anko.shortTransactionsList
 import com.alex_aladdin.cash.viewmodels.MainViewModel
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel
-import io.reactivex.Observable
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
@@ -42,19 +43,37 @@ class MainActivity : AppCompatActivity() {
         rect
     }
 
+    private val calendarListener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
+        val date = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT+0000"))
+            .apply {
+                set(Calendar.YEAR, year)
+                set(Calendar.MONTH, month)
+                set(Calendar.DAY_OF_MONTH, day)
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+            .time
+
+        datesRecyclerView.setDate(date)
+    }
+
+    private lateinit var datesRecyclerView: DatesRecyclerView
     private lateinit var chartView: ChartView
 
     private var touchStart: PointF? = null
+    private var calendarDialog: DatePickerDialog? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         constraintLayout {
-            val datesRecyclerView = datesRecyclerView {
+            datesRecyclerView = datesRecyclerView {
                 id = R.id.dates_recycler_view
 
-                val dateObservable: Observable<Date> = init(viewModel.todayDate, currentLocale())
+                init(viewModel.todayDate, currentLocale())
                 dateObservable.subscribe(viewModel.currentDate.onNextConsumer()).cache(dc)
 
                 setDate(viewModel.currentDate.value!!)
@@ -76,6 +95,9 @@ class MainActivity : AppCompatActivity() {
                 setImageResource(R.drawable.ic_calendar)
 
                 setSelectableBackground(true)
+                setOnClickListenerWithThrottle {
+                    showCalendarDialog()
+                }.cache(dc)
             }.lparams(wrapContent, wrapContent) {
                 rightMargin = dip(2)
             }
@@ -243,9 +265,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun PointF.distanceTo(point: PointF) = sqrt((x - point.x).pow(2) + (y - point.y).pow(2))
 
+    private fun showCalendarDialog() {
+        val calendar = GregorianCalendar.getInstance(currentLocale()).also { it.time = viewModel.currentDate.value!! }
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        calendarDialog?.dismiss()
+        calendarDialog = DatePickerDialog(this, calendarListener, year, month, day).also { it.show() }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         dc.drain()
+        calendarDialog?.dismiss()
     }
 
 }

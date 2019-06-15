@@ -80,7 +80,7 @@ class DayTransactionsActivity : AppCompatActivity() {
                 collapsingToolbarLayout {
                     id = R.id.day_transactions_collapsing_toolbar
                     minimumHeight = dimen(R.dimen.toolbar_height)
-                    backgroundColorResource = R.color.palladium
+                    backgroundColorResource = R.color.blue_80
                     setContentScrimResource(R.color.deepDark)
                     scrimAnimationDuration = 200
 
@@ -93,6 +93,7 @@ class DayTransactionsActivity : AppCompatActivity() {
                             textColorResource = R.color.white_80
                             textSize = 32f
                             includeFontPadding = false
+                            typeface = Typeface.DEFAULT_BOLD
                         }.lparams(wrapContent, wrapContent)
 
                         titleText2 = textView {

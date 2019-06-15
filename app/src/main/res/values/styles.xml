@@ -7,10 +7,11 @@
         <item name="android:textColor">@color/white</item>
         <item name="alertDialogTheme">@style/AppTheme.AlertDialog</item>
         <item name="colorAccent">@color/blue</item>
+        <item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item>
     </style>
 
     <style name="AppTheme.AlertDialog" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="android:background">@color/dark</item>
+        <item name="android:background">@color/palladium</item>
         <item name="colorAccent">@color/blue</item>
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
@@ -22,6 +23,18 @@
 
     <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
         <item name="android:textColor">@color/blue</item>
+    </style>
+    
+    <style name="MyDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
+        <item name="android:colorAccent">@color/blue</item>
+        <item name="android:colorBackground">@color/palladium</item>
+        <item name="android:datePickerStyle">@style/MyDatePickerStyle</item>
+    </style>
+
+    <style name="MyDatePickerStyle" parent="@android:style/Widget.Material.Light.DatePicker">
+        <item name="android:headerBackground">@color/blue_80</item>
+        <item name="android:background">@color/palladium</item>
+        <item name="android:calendarTextColor">@color/white_80</item>
     </style>
 
 </resources>
