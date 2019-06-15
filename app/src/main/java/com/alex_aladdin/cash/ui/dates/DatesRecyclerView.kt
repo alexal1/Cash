@@ -15,7 +15,7 @@ class DatesRecyclerView(context: Context) : RecyclerView(context) {
     private val datesLayoutManager = DatesLayoutManager(context)
     private val datesSnapHelper = DatesSnapHelper()
 
-    val dateObservable: Observable<Date> = dateSubject.distinctUntilChanged()
+    val dateObservable: Observable<Date> = dateSubject.distinctUntilChanged().skip(1)
 
     private lateinit var todayDate: Date
 
