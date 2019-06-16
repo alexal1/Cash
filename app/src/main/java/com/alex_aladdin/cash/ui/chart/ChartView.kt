@@ -8,6 +8,7 @@ import android.view.SurfaceView
 import androidx.core.graphics.contains
 import com.alex_aladdin.cash.viewmodels.enums.Categories
 import io.reactivex.functions.Consumer
+import timber.log.Timber
 
 class ChartView(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
@@ -27,6 +28,8 @@ class ChartView(context: Context) : SurfaceView(context), SurfaceHolder.Callback
             val lastChartData = drawThread?.chartAnimator?.stop() ?: ChartData()
             lastChartAnimator = ChartAnimator(lastChartData, chartData, FRAMES_COUNT.toInt())
             drawThread?.chartAnimator = lastChartAnimator
+
+            Timber.i("prevChartData = $lastChartData, newChartData = $chartData")
         }
     }
 

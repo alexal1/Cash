@@ -33,10 +33,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
 
     private val dayTransactionsSubject = BehaviorSubject.create<List<Transaction>>()
     val shortTransactionsListObservable: Observable<List<Transaction>> = dayTransactionsSubject.map { it.take(2) }
-    val chartDataObservable: Observable<ChartData> = Observable.merge(
-        Observable.just(ChartData()),
-        dayTransactionsSubject.map { transactions -> transactions.toChartData() }
-    )
+    val chartDataObservable: Observable<ChartData> = dayTransactionsSubject.map { it.toChartData() }
 
     private var dataLoadingDisposable: Disposable? = null
 
@@ -61,21 +58,27 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
     }
 
     private fun List<Transaction>.toChartData() = ChartData(
-        gain = GainCategories.values().map { category ->
-            category to filter { transaction ->
-                transaction.categoryId == category.id
-            }.sumByDouble { transaction ->
-                transaction.amount
-            }.toFloat()
-        }.toMap(),
+        gain = GainCategories.values()
+            .map { category ->
+                category to filter { transaction ->
+                    transaction.categoryId == category.id
+                }.sumByDouble { transaction ->
+                    transaction.amount
+                }.toFloat()
+            }
+            .filter { it.second > 0f }
+            .toMap(),
 
-        loss = LossCategories.values().map { category ->
-            category to filter { transaction ->
-                transaction.categoryId == category.id
-            }.sumByDouble { transaction ->
-                transaction.amount
-            }.toFloat()
-        }.toMap()
+        loss = LossCategories.values()
+            .map { category ->
+                category to filter { transaction ->
+                    transaction.categoryId == category.id
+                }.sumByDouble { transaction ->
+                    transaction.amount
+                }.toFloat()
+            }
+            .filter { it.second > 0f }
+            .toMap()
     )
 
     override fun onCleared() {

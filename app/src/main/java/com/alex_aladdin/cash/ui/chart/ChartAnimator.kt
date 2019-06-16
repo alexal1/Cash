@@ -43,16 +43,21 @@ class ChartAnimator(
         1.5f * step * (2 * x.pow(2) + 2 * l.pow(2) - 4 * x * l + 2 * x - 2 * l + 1) / l.pow(2)
     }
 
-    private val isAnimationOnEmptyChart = prevChartData == ChartData()
+    private val isPrevChartDataEmpty = prevChartData == ChartData()
+    private val isNewChartDataEmpty = newChartData == ChartData()
+
+    private val maxValueByPrevChart by lazy {
+        maxOf(prevChartData.gain.values.sum(), prevChartData.loss.values.sum())
+    }
 
     private val maxValueByNewChart by lazy {
         maxOf(newChartData.gain.values.sum(), newChartData.loss.values.sum())
     }
 
-    val maxValue get() = if (!isAnimationOnEmptyChart) {
-        maxOf(currentGain.values.sum(), currentLoss.values.sum())
-    } else {
-        maxValueByNewChart
+    val maxValue get() = when {
+        isPrevChartDataEmpty -> maxValueByNewChart
+        isNewChartDataEmpty -> maxValueByPrevChart
+        else -> maxOf(currentGain.values.sum(), currentLoss.values.sum())
     }
 
     val totalGain get() = currentGain.values.sum()
@@ -109,7 +114,7 @@ class ChartAnimator(
 
     fun stop(): ChartData {
         isRunning = false
-        return ChartData(currentGain, currentLoss)
+        return ChartData(currentGain.filterValues { it > 0f }, currentLoss.filterValues { it > 0f })
     }
 
     fun getCurrentValue(category: Categories) = if (category.isGain) {
