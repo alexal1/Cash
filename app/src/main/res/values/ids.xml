@@ -18,4 +18,5 @@
     <item name="transaction_category" type="id" />
     <item name="transaction_period" type="id" />
     <item name="transaction_total_amount" type="id" />
+    <item name="settings_scroll_view" type="id" />
 </resources>

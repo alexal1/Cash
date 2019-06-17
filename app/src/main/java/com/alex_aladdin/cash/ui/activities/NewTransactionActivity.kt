@@ -23,11 +23,11 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.alex_aladdin.cash.R
-import com.alex_aladdin.cash.utils.anko.appCompatTextView
-import com.alex_aladdin.cash.utils.anko.currencyPicker
 import com.alex_aladdin.cash.ui.fragments.CalculatorFragment
 import com.alex_aladdin.cash.ui.fragments.CategoriesFragment
 import com.alex_aladdin.cash.utils.*
+import com.alex_aladdin.cash.utils.anko.appCompatTextView
+import com.alex_aladdin.cash.utils.anko.currencyPicker
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
@@ -181,7 +181,7 @@ class NewTransactionActivity : AppCompatActivity() {
                 backgroundColorResource = R.color.deepDark
 
                 setNavigationOnClickListener {
-                    finish()
+                    onBackPressed()
                 }
 
                 textView {

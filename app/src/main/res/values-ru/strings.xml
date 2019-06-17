@@ -41,6 +41,10 @@
     <string name="transaction_delete_dialog_title">Вы уверены что хотите удалить эту транзакцию?</string>
     <string name="transactions_show_all">Показать все</string>
     <string name="no_transactions_stub">Здесь будет список недавних транзакций</string>
+    <string name="settings">Настройки</string>
+    <string name="settings_currency_title">Валюта</string>
+    <string name="settings_currency_subtitle">Показаны транзакции только с этой валютой</string>
+    <string name="settings_saved">Настройки сохранены</string>
 
     <!-- Gain -->
     <string name="gain_salary">Зарплата</string>

@@ -9,6 +9,7 @@ import com.alex_aladdin.cash.utils.currentLocale
 import com.alex_aladdin.cash.viewmodels.DayTransactionsViewModel
 import com.alex_aladdin.cash.viewmodels.MainViewModel
 import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel
+import com.alex_aladdin.cash.viewmodels.SettingsViewModel
 import com.alex_aladdin.cash.viewmodels.cache.CacheLogic
 import com.alex_aladdin.cash.viewmodels.cache.CacheLogicAdapter
 import com.alex_aladdin.cash.viewmodels.cache.DataSource
@@ -21,6 +22,7 @@ val viewModelsModule = module {
     viewModel { MainViewModel(androidApplication()) }
     viewModel { NewTransactionViewModel(androidApplication()) }
     viewModel { DayTransactionsViewModel(androidApplication()) }
+    viewModel { SettingsViewModel(androidApplication()) }
 }
 
 val sharedPreferencesModule = module {

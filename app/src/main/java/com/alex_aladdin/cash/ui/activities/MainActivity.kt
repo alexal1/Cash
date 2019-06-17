@@ -85,6 +85,9 @@ class MainActivity : AppCompatActivity() {
                 setImageResource(R.drawable.ic_settings_white)
 
                 setSelectableBackground(true)
+                setOnClickListenerWithThrottle {
+                    SettingsActivity.start(this@MainActivity)
+                }.cache(dc)
             }.lparams(wrapContent, wrapContent) {
                 leftMargin = dip(2)
             }

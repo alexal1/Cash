@@ -22,7 +22,7 @@ class CurrencyManager(private val sharedPreferences: SharedPreferences, private 
     }
 
 
-    private var currentIndex = -1
+    @Volatile private var currentIndex = -1
 
     private val decimalFormat = DecimalFormat("#.##").apply {
         roundingMode = RoundingMode.CEILING
