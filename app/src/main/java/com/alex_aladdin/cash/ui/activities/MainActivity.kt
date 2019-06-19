@@ -1,6 +1,8 @@
 package com.alex_aladdin.cash.ui.activities
 
+import android.app.Activity
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.PixelFormat
 import android.graphics.Point
@@ -41,6 +43,12 @@ import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity() {
 
+    companion object {
+
+        const val NEW_TRANSACTION_REQUEST_CODE = 1
+
+    }
+
     private val viewModel: MainViewModel by viewModel()
     private val currencyManager: CurrencyManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
@@ -78,6 +86,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (savedInstanceState == null) {
+            viewModel.checkCurrencyMismatch()
+        }
+
+        viewModel.showMismatchedCurrencyDialogObservable.subscribeOnUi { currency ->
+            showMismatchedCurrencyDialog(currency)
+        }.cache(dc)
 
         constraintLayout {
             datesRecyclerView = datesRecyclerView {
@@ -250,10 +266,6 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
-
-        viewModel.showMismatchedCurrencyDialogObservable.subscribeOnUi { currency ->
-            showMismatchedCurrencyDialog(currency)
-        }.cache(dc)
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
@@ -322,9 +334,10 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.onActivityResume()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == NEW_TRANSACTION_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            viewModel.checkCurrencyMismatch()
+        }
     }
 
     override fun onDestroy() {

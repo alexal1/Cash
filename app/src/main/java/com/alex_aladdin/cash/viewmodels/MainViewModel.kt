@@ -63,7 +63,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
     }
 
 
-    fun onActivityResume() {
+    fun checkCurrencyMismatch() {
         repository
             .query(LastTransactionAnyCurrencySpecification())
             .map { it.first() }

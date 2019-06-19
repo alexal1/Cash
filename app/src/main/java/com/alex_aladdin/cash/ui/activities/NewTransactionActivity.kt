@@ -23,6 +23,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.alex_aladdin.cash.R
+import com.alex_aladdin.cash.ui.activities.MainActivity.Companion.NEW_TRANSACTION_REQUEST_CODE
 import com.alex_aladdin.cash.ui.fragments.CalculatorFragment
 import com.alex_aladdin.cash.ui.fragments.CategoriesFragment
 import com.alex_aladdin.cash.utils.*
@@ -57,7 +58,7 @@ class NewTransactionActivity : AppCompatActivity() {
                 R.anim.slide_out_up
             ).toBundle()
 
-            activity.startActivity(intent, options)
+            activity.startActivityForResult(intent, NEW_TRANSACTION_REQUEST_CODE, options)
         }
 
     }
@@ -89,11 +90,14 @@ class NewTransactionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setResult(RESULT_CANCELED) // default result
+
         viewModel.setTransactionType(type)
         viewModel.isDoneObservable.subscribeOnUi { isDone ->
             largeButton.isEnabled = true
 
             if (isDone) {
+                setResult(RESULT_OK)
                 finish()
             } else {
                 shakeAmount()
@@ -181,7 +185,7 @@ class NewTransactionActivity : AppCompatActivity() {
                 backgroundColorResource = R.color.deepDark
 
                 setNavigationOnClickListener {
-                    onBackPressed()
+                    finish()
                 }
 
                 textView {
@@ -277,11 +281,12 @@ class NewTransactionActivity : AppCompatActivity() {
             viewPager.currentItem = 0
         } else {
             super.onBackPressed()
-            overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down)
         }
     }
 
     override fun onDestroy() {
+        overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down)
+
         super.onDestroy()
         dc.drain()
         viewPager.removeOnPageChangeListener(pageChangeListener)
