@@ -126,7 +126,7 @@ class ShortTransactionsList(context: Context) : _ConstraintLayout(context), Koin
 
                 val sign = if (transaction0.isGain) "+" else "-"
                 val amount =
-                    "$sign ${currencyManager.formatMoney(transaction0.amount, transaction0.account!!.currencyIndex)}"
+                    "$sign ${currencyManager.formatMoney(transaction0.getAmountPerDay(), transaction0.account!!.currencyIndex)}"
                 block0.amount.text = amount
             } else {
                 block0.isVisible = false
@@ -140,7 +140,7 @@ class ShortTransactionsList(context: Context) : _ConstraintLayout(context), Koin
 
                 val sign = if (transaction1.isGain) "+" else "-"
                 val amount =
-                    "$sign ${currencyManager.formatMoney(transaction1.amount, transaction1.account!!.currencyIndex)}"
+                    "$sign ${currencyManager.formatMoney(transaction1.getAmountPerDay(), transaction1.account!!.currencyIndex)}"
                 block1.amount.text = amount
             } else {
                 block1.isVisible = false

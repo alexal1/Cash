@@ -115,7 +115,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
                 category to filter { transaction ->
                     transaction.categoryId == category.id
                 }.sumByDouble { transaction ->
-                    transaction.amount
+                    transaction.getAmountPerDay()
                 }.toFloat()
             }
             .filter { it.second > 0f }
@@ -126,7 +126,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
                 category to filter { transaction ->
                     transaction.categoryId == category.id
                 }.sumByDouble { transaction ->
-                    transaction.amount
+                    transaction.getAmountPerDay()
                 }.toFloat()
             }
             .filter { it.second > 0f }
