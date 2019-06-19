@@ -1,6 +1,7 @@
 package com.alex_aladdin.cash.ui.activities
 
 import android.app.DatePickerDialog
+import android.content.SharedPreferences
 import android.graphics.PixelFormat
 import android.graphics.Point
 import android.graphics.PointF
@@ -8,11 +9,16 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.graphics.contains
+import com.alex_aladdin.cash.CashApp.Companion.PREFS_AUTO_SWITCH_CURRENCY
 import com.alex_aladdin.cash.R
+import com.alex_aladdin.cash.helpers.CurrencyManager
+import com.alex_aladdin.cash.ui.DialogCheckBox
 import com.alex_aladdin.cash.ui.chart.ChartView
 import com.alex_aladdin.cash.ui.dates.DatesRecyclerView
 import com.alex_aladdin.cash.utils.*
@@ -27,6 +33,7 @@ import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.matchConstraint
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 import kotlin.math.pow
@@ -35,6 +42,8 @@ import kotlin.math.sqrt
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModel()
+    private val currencyManager: CurrencyManager by inject()
+    private val sharedPreferences: SharedPreferences by inject()
     private val dc = DisposableCache()
     private val maxClickRadius by lazy { dip(10).toFloat() }
     private val chartHitRect by lazy {
@@ -64,6 +73,7 @@ class MainActivity : AppCompatActivity() {
 
     private var touchStart: PointF? = null
     private var calendarDialog: DatePickerDialog? = null
+    private var mismatchedCurrencyDialog: AlertDialog? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -240,6 +250,10 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+
+        viewModel.showMismatchedCurrencyDialogObservable.subscribeOnUi { currency ->
+            showMismatchedCurrencyDialog(currency)
+        }.cache(dc)
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
@@ -278,10 +292,46 @@ class MainActivity : AppCompatActivity() {
         calendarDialog = DatePickerDialog(this, calendarListener, year, month, day).also { it.show() }
     }
 
+    private fun showMismatchedCurrencyDialog(transactionCurrencyIndex: Int) {
+        val transactionCurrency = currencyManager.getCurrenciesList()[transactionCurrencyIndex]
+        val checkBox = DialogCheckBox(this@MainActivity, R.string.mismatched_currency_remember_choice)
+
+        mismatchedCurrencyDialog?.dismiss()
+        mismatchedCurrencyDialog = AlertDialog.Builder(this@MainActivity)
+            .setMessage(getString(R.string.mismatched_currency_message, transactionCurrency, transactionCurrency))
+            .setView(checkBox)
+            .setPositiveButton(R.string.yes) { dialog, _ ->
+                viewModel.switchToCurrency(transactionCurrencyIndex)
+                if (checkBox.isChecked) {
+                    sharedPreferences.edit {
+                        putInt(PREFS_AUTO_SWITCH_CURRENCY, 0)
+                    }
+                }
+
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.no) { dialog, _ ->
+                if (checkBox.isChecked) {
+                    sharedPreferences.edit {
+                        putInt(PREFS_AUTO_SWITCH_CURRENCY, 1)
+                    }
+                }
+
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.onActivityResume()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         dc.drain()
         calendarDialog?.dismiss()
+        mismatchedCurrencyDialog?.dismiss()
     }
 
 }

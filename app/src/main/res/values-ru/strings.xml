@@ -15,6 +15,7 @@
     <string name="cancel">Отмена</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
+    <string name="ask">Спрашивать</string>
     <string name="choose_category">Выбрать категорию</string>
     <string name="ready">Готово</string>
     <string name="day_transactions_title">Транзакции %s</string>
@@ -44,7 +45,11 @@
     <string name="settings">Настройки</string>
     <string name="settings_currency_title">Валюта</string>
     <string name="settings_currency_subtitle">Показаны транзакции только с этой валютой</string>
+    <string name="settings_auto_switch_title">Автопереключение валюты</string>
+    <string name="settings_auto_switch_subtitle">При добавлении транзакции в другой валюте</string>
     <string name="settings_saved">Настройки сохранены</string>
+    <string name="mismatched_currency_message">Последняя транзакция была в %s.\nХотите переключить отображаемую валюту на %s?</string>
+    <string name="mismatched_currency_remember_choice">Запомнить выбор</string>
 
     <!-- Gain -->
     <string name="gain_salary">Зарплата</string>

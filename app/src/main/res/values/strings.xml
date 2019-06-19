@@ -15,6 +15,7 @@
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="ask">Ask</string>
     <string name="choose_category">Choose category</string>
     <string name="ready">Ready</string>
     <string name="day_transactions_title">Transactions on %s</string>
@@ -44,7 +45,12 @@
     <string name="settings">Settings</string>
     <string name="settings_currency_title">Currency</string>
     <string name="settings_currency_subtitle">Transactions with only this currency are shown</string>
+    <string name="settings_auto_switch_title">Auto switch currency</string>
+    <string name="settings_auto_switch_subtitle">When adding transaction in a different currency</string>
     <string name="settings_saved">Settings are saved</string>
+    <string name="mismatched_currency_message">Last transaction was in %s.\nDo you want to switch shown currency to %s?</string>
+    <string name="mismatched_currency_remember_choice">Remember choice</string>
+
     <!-- Gain -->
     <string name="gain_salary">Salary</string>
 

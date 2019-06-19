@@ -24,6 +24,7 @@ class CashApp : Application() {
         const val PREFS_CATEGORIES_PREFIX = "category_"
         const val PREFS_DEFAULT_LOSS_CATEGORY = "default_loss_category"
         const val PREFS_DEFAULT_GAIN_CATEGORY = "default_gain_category"
+        const val PREFS_AUTO_SWITCH_CURRENCY = "auto_switch_currency"
 
         const val millisInDay = 24 * 60 * 60 * 1000L
 
