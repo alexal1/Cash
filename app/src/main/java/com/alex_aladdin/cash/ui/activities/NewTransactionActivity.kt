@@ -281,12 +281,16 @@ class NewTransactionActivity : AppCompatActivity() {
             viewPager.currentItem = 0
         } else {
             super.onBackPressed()
+            overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down)
         }
     }
 
-    override fun onDestroy() {
+    override fun finish() {
+        super.finish()
         overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down)
+    }
 
+    override fun onDestroy() {
         super.onDestroy()
         dc.drain()
         viewPager.removeOnPageChangeListener(pageChangeListener)
