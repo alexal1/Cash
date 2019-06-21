@@ -130,19 +130,17 @@ class SettingsActivity : AppCompatActivity() {
             R.string.settings_currency_title,
             R.string.settings_currency_subtitle,
             true,
-            controlViewInflater = {
-                textView {
-                    id = View.generateViewId()
-                    textColorResource = R.color.blue
-                    textSize = 16f
-                    backgroundColor = Color.TRANSPARENT
+            controlView = textView {
+                id = View.generateViewId()
+                textColorResource = R.color.blue
+                textSize = 16f
+                backgroundColor = Color.TRANSPARENT
 
-                    viewModel.currencyObservable.subscribeOnUi {
-                        text = it
-                    }.cache(dc)
-                }.lparams(wrapContent, wrapContent) {
-                    rightMargin = dip(24)
-                }
+                viewModel.currencyObservable.subscribeOnUi {
+                    text = it
+                }.cache(dc)
+            }.lparams(wrapContent, wrapContent) {
+                rightMargin = dip(24)
             },
             onClickListener = {
                 showCurrenciesDialog()
@@ -153,19 +151,17 @@ class SettingsActivity : AppCompatActivity() {
             R.string.settings_auto_switch_title,
             R.string.settings_auto_switch_subtitle,
             true,
-            controlViewInflater = {
-                textView {
-                    id = View.generateViewId()
-                    textColorResource = R.color.blue
-                    textSize = 14f
-                    backgroundColor = Color.TRANSPARENT
+            controlView = textView {
+                id = View.generateViewId()
+                textColorResource = R.color.blue
+                textSize = 14f
+                backgroundColor = Color.TRANSPARENT
 
-                    viewModel.autoSwitchCurrencyObservable.subscribeOnUi {
-                        text = it
-                    }.cache(dc)
-                }.lparams(wrapContent, wrapContent) {
-                    rightMargin = dip(24)
-                }
+                viewModel.autoSwitchCurrencyObservable.subscribeOnUi {
+                    text = it
+                }.cache(dc)
+            }.lparams(wrapContent, wrapContent) {
+                rightMargin = dip(24)
             },
             onClickListener = {
                 showAutoSwitchCurrencyDialog()
@@ -187,12 +183,12 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    private inline fun _ConstraintLayout.getSettingsItem(
+    private fun _ConstraintLayout.getSettingsItem(
         @StringRes titleRes: Int,
         @StringRes subtitleRes: Int,
         showSeparator: Boolean,
-        controlViewInflater: (_ConstraintLayout) -> View,
-        crossinline onClickListener: () -> Unit
+        controlView: View,
+        onClickListener: () -> Unit
     ): View {
         val backgroundView = view {
             id = View.generateViewId()
@@ -225,8 +221,6 @@ class SettingsActivity : AppCompatActivity() {
             leftMargin = dip(24)
             rightMargin = dip(24)
         }
-
-        val controlView = controlViewInflater(this)
 
         val separator = view {
             id = View.generateViewId()
