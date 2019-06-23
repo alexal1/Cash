@@ -47,9 +47,18 @@
     <string name="settings_currency_subtitle">Показаны транзакции только с этой валютой</string>
     <string name="settings_auto_switch_title">Автопереключение валюты</string>
     <string name="settings_auto_switch_subtitle">При добавлении транзакции в другой валюте</string>
+    <string name="settings_push_notifications_title">Пуш-уведомления</string>
+    <string name="settings_push_notifications_subtitle">Ежедневные отчеты с итоговым балансом за день</string>
+    <string name="settings_push_notifications_dialog_message">Пуш-уведмоления этого приложения запрещены в настройках устройства. Открыть настройки?</string>
     <string name="settings_saved">Настройки сохранены</string>
     <string name="mismatched_currency_message">Последняя транзакция была в %s.\nХотите переключить отображаемую валюту на %s?</string>
     <string name="mismatched_currency_remember_choice">Запомнить выбор</string>
+    <string name="push_notifications_channel_name">Ежедневные отчеты</string>
+    <string name="push_notifications_channel_description">Ваш итоговый баланс за день</string>
+    <string name="push_notification_title_positive">+%s – ваша прибыль за сегодня</string>
+    <string name="push_notification_title_negative">-%s – ваш убыток за сегодня</string>
+    <string name="push_notification_title_empty">Нет данных за сегодня</string>
+    <string name="push_notification_subtitle">Нажмите чтобы добавить больше транзакций</string>
 
     <!-- Gain -->
     <string name="gain_salary">Зарплата</string>

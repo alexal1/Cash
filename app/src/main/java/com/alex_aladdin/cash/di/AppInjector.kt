@@ -4,12 +4,10 @@ import android.content.Context
 import com.alex_aladdin.cash.CashApp.Companion.CASH_APP_PREFERENCES
 import com.alex_aladdin.cash.helpers.CategoriesManager
 import com.alex_aladdin.cash.helpers.CurrencyManager
+import com.alex_aladdin.cash.helpers.push.PushManager
 import com.alex_aladdin.cash.repository.TransactionsRepository
 import com.alex_aladdin.cash.utils.currentLocale
-import com.alex_aladdin.cash.viewmodels.DayTransactionsViewModel
-import com.alex_aladdin.cash.viewmodels.MainViewModel
-import com.alex_aladdin.cash.viewmodels.NewTransactionViewModel
-import com.alex_aladdin.cash.viewmodels.SettingsViewModel
+import com.alex_aladdin.cash.viewmodels.*
 import com.alex_aladdin.cash.viewmodels.cache.CacheLogic
 import com.alex_aladdin.cash.viewmodels.cache.CacheLogicAdapter
 import com.alex_aladdin.cash.viewmodels.cache.DataSource
@@ -23,6 +21,7 @@ val viewModelsModule = module {
     viewModel { NewTransactionViewModel(androidApplication()) }
     viewModel { DayTransactionsViewModel(androidApplication()) }
     viewModel { SettingsViewModel(androidApplication()) }
+    viewModel { DebugSettingsViewModel(androidApplication()) }
 }
 
 val sharedPreferencesModule = module {
@@ -32,6 +31,7 @@ val sharedPreferencesModule = module {
 val helpersModule = module {
     single { CategoriesManager(get()) }
     single { CurrencyManager(get(), androidContext().currentLocale()) }
+    single { PushManager(androidContext()) }
 }
 
 val repositoryModule = module {

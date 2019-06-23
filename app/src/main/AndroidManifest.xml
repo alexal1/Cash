@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.alex_aladdin.cash">
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <application
             android:name=".CashApp"
             android:allowBackup="true"
@@ -11,7 +13,7 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
 
-        <activity android:name=".ui.activities.MainActivity">
+        <activity android:name=".ui.activities.MainActivity" android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -19,13 +21,23 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.activities.NewTransactionActivity" />
+        <activity android:name=".ui.activities.NewTransactionActivity"/>
 
-        <activity android:name=".ui.activities.DayTransactionsActivity" />
+        <activity android:name=".ui.activities.DayTransactionsActivity"/>
 
-        <activity android:name=".ui.activities.DetailedTransactionActivity" />
+        <activity android:name=".ui.activities.DetailedTransactionActivity"/>
 
-        <activity android:name=".ui.activities.SettingsActivity" />
+        <activity android:name=".ui.activities.SettingsActivity"/>
+
+        <activity android:name=".ui.activities.DebugSettingsActivity"/>
+
+        <receiver android:name=".helpers.push.BootReceiver" android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".helpers.push.AlarmReceiver" android:enabled="true"/>
     </application>
 
 </manifest>

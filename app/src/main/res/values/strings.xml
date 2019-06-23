@@ -47,9 +47,21 @@
     <string name="settings_currency_subtitle">Transactions with only this currency are shown</string>
     <string name="settings_auto_switch_title">Auto switch currency</string>
     <string name="settings_auto_switch_subtitle">When adding transaction in a different currency</string>
+    <string name="settings_push_notifications_title">Push notifications</string>
+    <string name="settings_push_notifications_subtitle">Daily reports with your day balance summary</string>
+    <string name="settings_push_notifications_dialog_message">Push notifications are disabled for this app in device Settings. Do you want to open Settings?</string>
     <string name="settings_saved">Settings are saved</string>
     <string name="mismatched_currency_message">Last transaction was in %s.\nDo you want to switch shown currency to %s?</string>
     <string name="mismatched_currency_remember_choice">Remember choice</string>
+    <string name="debug_settings" translatable="false">Debug</string>
+    <string name="debug_settings_show_push_title" translatable="false">Show push</string>
+    <string name="debug_settings_show_push_subtitle" translatable="false">Forced push notification for today data</string>
+    <string name="push_notifications_channel_name">Daily reports</string>
+    <string name="push_notifications_channel_description">Your day balance summary</string>
+    <string name="push_notification_title_positive">+%s is your net income today</string>
+    <string name="push_notification_title_negative">-%s is your net loss today</string>
+    <string name="push_notification_title_empty">No data for today</string>
+    <string name="push_notification_subtitle">Tap to add more transactions</string>
 
     <!-- Gain -->
     <string name="gain_salary">Salary</string>
