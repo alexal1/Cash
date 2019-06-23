@@ -74,7 +74,10 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         val isEnabledInSettings = pushManager.checkIfNotificationsEnabled()
 
         if (!isEnabledInSettings) {
-            disableNotifications()
+            sharedPreferences.edit {
+                putBoolean(PREFS_SHOW_PUSH_NOTIFICATIONS, false)
+            }
+            pushManager.cancelPushNotifications()
             return false
         }
 
@@ -85,8 +88,8 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         sharedPreferences.edit {
             putBoolean(PREFS_SHOW_PUSH_NOTIFICATIONS, false)
         }
-
         pushManager.cancelPushNotifications()
+        areSettingsChanged = true
     }
 
     fun tryEnableNotifications(): Boolean {
@@ -97,8 +100,8 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         sharedPreferences.edit {
             putBoolean(PREFS_SHOW_PUSH_NOTIFICATIONS, true)
         }
-
         pushManager.schedulePushNotifications()
+        areSettingsChanged = true
 
         return true
     }
