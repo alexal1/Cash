@@ -108,7 +108,14 @@ class SettingsActivity : AppCompatActivity() {
 
                 clicks()
                     .scanWith({ 0 }, { sum, _ -> sum + 1 })
-                    .filter { it >= 5 }
+                    .filter {
+                        @Suppress("ConstantConditionIf")
+                        if (BuildConfig.BUILD_TYPE == "debug") {
+                            it >= 1
+                        } else {
+                            it >= 5
+                        }
+                    }
                     .throttleFirst(1, TimeUnit.SECONDS)
                     .subscribeOnUi {
                         DebugSettingsActivity.start(this@SettingsActivity)
