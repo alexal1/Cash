@@ -6,8 +6,10 @@ import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import com.alex_aladdin.cash.CashApp
 import com.alex_aladdin.cash.CashApp.Companion.PREFS_AUTO_SWITCH_CURRENCY
+import com.alex_aladdin.cash.CashApp.Companion.PREFS_SHOW_PUSH_NOTIFICATIONS
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.helpers.CurrencyManager
+import com.alex_aladdin.cash.helpers.push.PushManager
 import com.alex_aladdin.cash.utils.DisposableCache
 import com.alex_aladdin.cash.utils.cache
 import com.alex_aladdin.cash.viewmodels.cache.CacheLogicAdapter
@@ -22,6 +24,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     private val currencyManager: CurrencyManager by inject()
     private val cache: CacheLogicAdapter by inject()
     private val sharedPreferences: SharedPreferences by inject()
+    private val pushManager: PushManager by inject()
     private val dc = DisposableCache()
 
     private val currencyIndexSubject = BehaviorSubject.createDefault(currencyManager.getCurrentCurrencyIndex())
@@ -59,6 +62,45 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             .andThen(cache.requestDate(app.currentDate.value!!))
             .subscribe()
             .cache(dc)
+    }
+
+    fun getNotificationsEnabled(): Boolean {
+        val isEnabled = sharedPreferences.getBoolean(PREFS_SHOW_PUSH_NOTIFICATIONS, true)
+
+        if (!isEnabled) {
+            return false
+        }
+
+        val isEnabledInSettings = pushManager.checkIfNotificationsEnabled()
+
+        if (!isEnabledInSettings) {
+            disableNotifications()
+            return false
+        }
+
+        return true
+    }
+
+    fun disableNotifications() {
+        sharedPreferences.edit {
+            putBoolean(PREFS_SHOW_PUSH_NOTIFICATIONS, false)
+        }
+
+        pushManager.cancelPushNotifications()
+    }
+
+    fun tryEnableNotifications(): Boolean {
+        if (!pushManager.checkIfNotificationsEnabled()) {
+            return false
+        }
+
+        sharedPreferences.edit {
+            putBoolean(PREFS_SHOW_PUSH_NOTIFICATIONS, true)
+        }
+
+        pushManager.schedulePushNotifications()
+
+        return true
     }
 
     override fun onCleared() {

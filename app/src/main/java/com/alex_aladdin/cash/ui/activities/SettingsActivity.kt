@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
 import android.view.Gravity
 import android.view.Gravity.CENTER
 import android.view.View
@@ -21,6 +23,7 @@ import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.helpers.CurrencyManager
 import com.alex_aladdin.cash.utils.*
 import com.alex_aladdin.cash.viewmodels.SettingsViewModel
+import com.jakewharton.rxbinding3.view.clicks
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout._ConstraintLayout
@@ -29,6 +32,7 @@ import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.matchConstraint
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.concurrent.TimeUnit
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -56,6 +60,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private var currenciesDialog: AlertDialog? = null
     private var autoSwitchCurrencyDialog: AlertDialog? = null
+    private var enableNotficationsInSettingsDialog: AlertDialog? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,13 +98,21 @@ class SettingsActivity : AppCompatActivity() {
 
             val versionText = textView {
                 id = View.generateViewId()
-                backgroundColorResource = R.color.soft_dark
+                backgroundResource = R.drawable.bg_debug_settings_button
                 textColorResource = R.color.palladium
                 textSize = 12f
                 gravity = CENTER
 
                 @SuppressLint("SetTextI18n")
                 text = "${getString(R.string.app_name)}  v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
+
+                clicks()
+                    .scanWith({ 0 }, { sum, _ -> sum + 1 })
+                    .filter { it >= 5 }
+                    .throttleFirst(1, TimeUnit.SECONDS)
+                    .subscribeOnUi {
+                        DebugSettingsActivity.start(this@SettingsActivity)
+                    }.cache(dc)
             }.lparams(matchConstraint, dip(32))
 
             applyConstraintSet {
@@ -129,7 +142,8 @@ class SettingsActivity : AppCompatActivity() {
         val currencyItem = getSettingsItem(
             R.string.settings_currency_title,
             R.string.settings_currency_subtitle,
-            true,
+            showSeparator = true,
+            throttleClicks = true,
             controlView = textView {
                 id = View.generateViewId()
                 textColorResource = R.color.blue
@@ -150,7 +164,8 @@ class SettingsActivity : AppCompatActivity() {
         val autoSwitchItem = getSettingsItem(
             R.string.settings_auto_switch_title,
             R.string.settings_auto_switch_subtitle,
-            true,
+            showSeparator = true,
+            throttleClicks = true,
             controlView = textView {
                 id = View.generateViewId()
                 textColorResource = R.color.blue
@@ -168,6 +183,33 @@ class SettingsActivity : AppCompatActivity() {
             }
         )
 
+        val pushNotificationsSwitch = switch {
+            id = View.generateViewId()
+            isChecked = viewModel.getNotificationsEnabled()
+        }.lparams(wrapContent, wrapContent) {
+            rightMargin = dip(16)
+        }
+
+        val pushNotificationsItem = getSettingsItem(
+            R.string.settings_push_notifications_title,
+            R.string.settings_push_notifications_subtitle,
+            showSeparator = true,
+            throttleClicks = false,
+            controlView = pushNotificationsSwitch,
+            onClickListener = {
+                if (pushNotificationsSwitch.isChecked) {
+                    viewModel.disableNotifications()
+                    pushNotificationsSwitch.isChecked = false
+                } else {
+                    if (viewModel.tryEnableNotifications()) {
+                        pushNotificationsSwitch.isChecked = true
+                    } else {
+                        showEnableNotificationsInSettingsDialog()
+                    }
+                }
+            }
+        )
+
         applyConstraintSet {
             connect(
                 START of currencyItem to START of PARENT_ID,
@@ -180,6 +222,12 @@ class SettingsActivity : AppCompatActivity() {
                 END of autoSwitchItem to END of PARENT_ID,
                 TOP of autoSwitchItem to BOTTOM of currencyItem
             )
+
+            connect(
+                START of pushNotificationsItem to START of PARENT_ID,
+                END of pushNotificationsItem to END of PARENT_ID,
+                TOP of pushNotificationsItem to BOTTOM of autoSwitchItem
+            )
         }
     }
 
@@ -187,6 +235,7 @@ class SettingsActivity : AppCompatActivity() {
         @StringRes titleRes: Int,
         @StringRes subtitleRes: Int,
         showSeparator: Boolean,
+        throttleClicks: Boolean,
         controlView: View,
         onClickListener: () -> Unit
     ): View {
@@ -194,9 +243,16 @@ class SettingsActivity : AppCompatActivity() {
             id = View.generateViewId()
 
             setSelectableBackground()
-            setOnClickListenerWithThrottle {
-                onClickListener()
-            }.cache(dc)
+
+            if (throttleClicks) {
+                setOnClickListenerWithThrottle {
+                    onClickListener()
+                }.cache(dc)
+            } else {
+                setOnClickListener {
+                    onClickListener()
+                }
+            }
         }.lparams(matchConstraint, matchConstraint)
 
         val title = textView {
@@ -299,6 +355,33 @@ class SettingsActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun showEnableNotificationsInSettingsDialog() {
+        enableNotficationsInSettingsDialog?.dismiss()
+        enableNotficationsInSettingsDialog = AlertDialog.Builder(this@SettingsActivity)
+            .setMessage(R.string.settings_push_notifications_dialog_message)
+            .setPositiveButton(R.string.yes) { dialog, _ ->
+                dialog.dismiss()
+                openDeviceSettings()
+            }
+            .setNegativeButton(R.string.no) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun openDeviceSettings() {
+        val intent = Intent()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            intent.action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+            intent.putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+        } else {
+            intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
+            intent.putExtra("app_package", packageName)
+            intent.putExtra("app_uid", applicationInfo.uid)
+        }
+        startActivity(intent)
+    }
+
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down)
@@ -311,6 +394,8 @@ class SettingsActivity : AppCompatActivity() {
     override fun onDestroy() {
         dc.drain()
         currenciesDialog?.dismiss()
+        autoSwitchCurrencyDialog?.dismiss()
+        enableNotficationsInSettingsDialog?.dismiss()
         super.onDestroy()
     }
 
