@@ -249,7 +249,6 @@ class MainActivity : AppCompatActivity() {
                 connect(
                     START of shortTransactionsList to START of PARENT_ID,
                     END of shortTransactionsList to END of PARENT_ID,
-                    TOP of shortTransactionsList to BOTTOM of chartView,
                     BOTTOM of shortTransactionsList to TOP of buttonLoss
                 )
 
