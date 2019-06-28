@@ -17,7 +17,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.view.isVisible
+import androidx.core.view.isInvisible
 import com.alex_aladdin.cash.BuildConfig
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.helpers.CurrencyManager
@@ -288,7 +288,7 @@ class SettingsActivity : AppCompatActivity() {
         val separator = view {
             id = View.generateViewId()
             backgroundColorResource = R.color.palladium_80
-            isVisible = showSeparator
+            isInvisible = !showSeparator
         }.lparams(matchConstraint, dip(1)) {
             topMargin = dip(12)
             leftMargin = dip(24)

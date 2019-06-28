@@ -48,6 +48,24 @@ class TransactionsRepository {
             }
         }
 
+    fun removeAllTransactions(): Completable = Completable
+        .create { emitter ->
+            realm().use { realm ->
+                realm.executeTransaction {
+                    try {
+                        realm
+                            .where(Transaction::class.java)
+                            .findAll()
+                            .deleteAllFromRealm()
+
+                        emitter.onComplete()
+                    } catch (e: Exception) {
+                        emitter.onError(e)
+                    }
+                }
+            }
+        }
+
     fun query(specification: RealmSpecification): Single<List<Transaction>> = Single
         .create<List<Transaction>> { emitter ->
             realm().use { realm ->

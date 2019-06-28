@@ -11,7 +11,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.view.isVisible
+import androidx.core.view.isInvisible
 import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.utils.setSelectableBackground
 import com.alex_aladdin.cash.viewmodels.DebugSettingsViewModel
@@ -107,11 +107,65 @@ class DebugSettingsActivity : AppCompatActivity() {
             }
         )
 
+        val addTransactionsToCurrentDateItem = getSettingsItem(
+            R.string.debug_settings_add_transactions_to_current_date_title,
+            R.string.debug_settings_add_transactions_to_current_date_subtitle,
+            true,
+            controlView = space {
+                id = View.generateViewId()
+            },
+            onClickListener = {
+                viewModel.addTransactionsToCurrentDate()
+            }
+        )
+
+        val addTransactionsToCurrentMonthItem = getSettingsItem(
+            R.string.debug_settings_add_transactions_to_current_month_title,
+            R.string.debug_settings_add_transactions_to_current_month_subtitle,
+            true,
+            controlView = space {
+                id = View.generateViewId()
+            },
+            onClickListener = {
+                viewModel.addTransactionsToCurrentMonth()
+            }
+        )
+
+        val wipeItem = getSettingsItem(
+            R.string.debug_settings_wipe_title,
+            R.string.debug_settings_wipe_subtitle,
+            false,
+            controlView = space {
+                id = View.generateViewId()
+            },
+            onClickListener = {
+                viewModel.wipe()
+            }
+        )
+
         applyConstraintSet {
             connect(
                 START of showPushItem to START of PARENT_ID,
                 END of showPushItem to END of PARENT_ID,
                 TOP of showPushItem to TOP of PARENT_ID
+            )
+
+            connect(
+                START of addTransactionsToCurrentDateItem to START of PARENT_ID,
+                END of addTransactionsToCurrentDateItem to END of PARENT_ID,
+                TOP of addTransactionsToCurrentDateItem to BOTTOM of showPushItem
+            )
+
+            connect(
+                START of addTransactionsToCurrentMonthItem to START of PARENT_ID,
+                END of addTransactionsToCurrentMonthItem to END of PARENT_ID,
+                TOP of addTransactionsToCurrentMonthItem to BOTTOM of addTransactionsToCurrentDateItem
+            )
+
+            connect(
+                START of wipeItem to START of PARENT_ID,
+                END of wipeItem to END of PARENT_ID,
+                TOP of wipeItem to BOTTOM of addTransactionsToCurrentMonthItem
             )
         }
     }
@@ -159,7 +213,7 @@ class DebugSettingsActivity : AppCompatActivity() {
         val separator = view {
             id = View.generateViewId()
             backgroundColorResource = R.color.palladium_80
-            isVisible = showSeparator
+            isInvisible = !showSeparator
         }.lparams(matchConstraint, dip(1)) {
             topMargin = dip(12)
             leftMargin = dip(24)
