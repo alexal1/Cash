@@ -37,11 +37,12 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
         setPadding(0, dimen(R.dimen.day_transactions_list_padding), 0, dimen(R.dimen.day_transactions_list_padding))
         clipToPadding = false
         layoutManager = LinearLayoutManager(context, VERTICAL, false)
+        adapter = EmptyAdapter()
     }
 
 
     fun setData(data: List<Transaction>, total: Double, onTransactionClick: (Transaction) -> Unit) = post {
-        if (adapter == null) {
+        if (adapter is EmptyAdapter) {
             adapter = TransactionsAdapter(data, total, get(), onTransactionClick, context.currentLocale())
         } else {
             val transactionsAdapter = adapter as TransactionsAdapter
@@ -367,6 +368,20 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = when {
             oldData.isNotEmpty() && newData.isNotEmpty() && newItemPosition >= newData.size - 1 -> false
             else -> true
+        }
+
+    }
+
+    private class EmptyAdapter : RecyclerView.Adapter<ViewHolder>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            throw NotImplementedError()
+        }
+
+        override fun getItemCount(): Int = 0
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            throw NotImplementedError()
         }
 
     }
