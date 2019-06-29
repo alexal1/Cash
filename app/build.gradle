@@ -6,6 +6,13 @@ apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 28
+
+    // To avoid changes in misc.xml
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
         applicationId "com.alex_aladdin.cash"
         minSdkVersion 21
