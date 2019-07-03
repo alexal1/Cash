@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
             android:name=".CashApp"
             android:allowBackup="true"
@@ -36,6 +38,8 @@
         <activity android:name=".ui.activities.SettingsActivity"/>
 
         <activity android:name=".ui.activities.DebugSettingsActivity"/>
+
+        <activity android:name=".ui.activities.WebPageActivity"/>
 
         <receiver android:name=".helpers.push.BootReceiver" android:enabled="true">
             <intent-filter>

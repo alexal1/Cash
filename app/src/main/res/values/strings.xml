@@ -50,6 +50,8 @@
     <string name="settings_push_notifications_title">Push notifications</string>
     <string name="settings_push_notifications_subtitle">Daily reports with your day balance summary</string>
     <string name="settings_push_notifications_dialog_message">Push notifications are disabled for this app in device Settings. Do you want to open Settings?</string>
+    <string name="settings_privacy_policy_title">Privacy Policy</string>
+    <string name="settings_privacy_policy_subtitle">Open web page with the document</string>
     <string name="settings_saved">Settings are saved</string>
     <string name="mismatched_currency_message">Last transaction was in %s.\nDo you want to switch shown currency to %s?</string>
     <string name="mismatched_currency_remember_choice">Remember choice</string>
@@ -68,6 +70,8 @@
     <string name="push_notification_title_negative">-%s is your net loss today</string>
     <string name="push_notification_title_empty">No data for today</string>
     <string name="push_notification_subtitle">Tap to add more transactions</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="connection_error">No connection</string>
 
     <!-- Gain -->
     <string name="gain_salary">Salary</string>

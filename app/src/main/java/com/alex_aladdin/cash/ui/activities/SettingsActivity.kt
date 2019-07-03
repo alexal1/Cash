@@ -99,9 +99,10 @@ class SettingsActivity : AppCompatActivity() {
             val versionText = textView {
                 id = View.generateViewId()
                 backgroundResource = R.drawable.bg_debug_settings_button
-                textColorResource = R.color.palladium
+                textColorResource = R.color.smoke
                 textSize = 12f
                 gravity = CENTER
+                letterSpacing = 0.01f
 
                 @SuppressLint("SetTextI18n")
                 text = "${getString(R.string.app_name)}  v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
@@ -217,6 +218,19 @@ class SettingsActivity : AppCompatActivity() {
             }
         )
 
+        val privacyPolicyItem = getSettingsItem(
+            R.string.settings_privacy_policy_title,
+            R.string.settings_privacy_policy_subtitle,
+            showSeparator = true,
+            throttleClicks = true,
+            controlView = space {
+                id = View.generateViewId()
+            },
+            onClickListener = {
+                WebPageActivity.start(this@SettingsActivity, "https://daybalance.github.io/privacy_policy.html")
+            }
+        )
+
         applyConstraintSet {
             connect(
                 START of currencyItem to START of PARENT_ID,
@@ -234,6 +248,12 @@ class SettingsActivity : AppCompatActivity() {
                 START of pushNotificationsItem to START of PARENT_ID,
                 END of pushNotificationsItem to END of PARENT_ID,
                 TOP of pushNotificationsItem to BOTTOM of autoSwitchItem
+            )
+
+            connect(
+                START of privacyPolicyItem to START of PARENT_ID,
+                END of privacyPolicyItem to END of PARENT_ID,
+                TOP of privacyPolicyItem to BOTTOM of pushNotificationsItem
             )
         }
     }

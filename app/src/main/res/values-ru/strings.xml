@@ -50,6 +50,8 @@
     <string name="settings_push_notifications_title">Пуш-уведомления</string>
     <string name="settings_push_notifications_subtitle">Ежедневные отчеты с итоговым балансом за день</string>
     <string name="settings_push_notifications_dialog_message">Пуш-уведмоления этого приложения запрещены в настройках устройства. Открыть настройки?</string>
+    <string name="settings_privacy_policy_title">Политика конфиденциальности</string>
+    <string name="settings_privacy_policy_subtitle">Открыть веб-страницу с документом</string>
     <string name="settings_saved">Настройки сохранены</string>
     <string name="mismatched_currency_message">Последняя транзакция была в %s.\nХотите переключить отображаемую валюту на %s?</string>
     <string name="mismatched_currency_remember_choice">Запомнить выбор</string>
@@ -59,6 +61,8 @@
     <string name="push_notification_title_negative">-%s – ваш убыток за сегодня</string>
     <string name="push_notification_title_empty">Нет данных за сегодня</string>
     <string name="push_notification_subtitle">Нажмите чтобы добавить больше транзакций</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
+    <string name="connection_error">Нет соединения</string>
 
     <!-- Gain -->
     <string name="gain_salary">Зарплата</string>
