@@ -180,6 +180,8 @@ class DayTransactionsActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
         if (requestCode == DETAILED_TRANSACTION_REQUEST_CODE && resultCode == DETAILED_TRANSACTION_RESULT_DELETE) {
             val transactionId = data!!.getStringExtra(DETAILED_TRANSACTION_EXTRA_ID)
             viewModel.deleteTransaction(transactionId)
@@ -201,7 +203,10 @@ class DayTransactionsActivity : AppCompatActivity() {
     }
 
 
-    private inner class SectionsPagerAdapter : FragmentStatePagerAdapter(supportFragmentManager) {
+    private inner class SectionsPagerAdapter : FragmentStatePagerAdapter(
+        supportFragmentManager,
+        BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
+    ) {
 
         override fun getItem(position: Int) = when (position) {
             0 -> DayTransactionsFragment.create(DayTransactionsFragment.Type.GAIN)

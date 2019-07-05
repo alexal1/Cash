@@ -297,7 +297,10 @@ class NewTransactionActivity : AppCompatActivity() {
     }
 
 
-    private class ViewPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
+    private class ViewPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(
+        fragmentManager,
+        BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
+    ) {
 
         private val calculatorFragment = CalculatorFragment()
         private val categoriesFragment = CategoriesFragment()
