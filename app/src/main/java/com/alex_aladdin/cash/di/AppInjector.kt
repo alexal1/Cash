@@ -29,7 +29,7 @@ val sharedPreferencesModule = module {
 }
 
 val helpersModule = module {
-    single { CategoriesManager(get()) }
+    single { CategoriesManager(androidContext(), get()) }
     single { CurrencyManager(get(), androidContext().currentLocale()) }
     single { PushManager(androidContext()) }
 }

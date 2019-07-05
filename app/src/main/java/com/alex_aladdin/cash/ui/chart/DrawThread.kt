@@ -5,6 +5,7 @@ import android.graphics.*
 import android.view.SurfaceHolder
 import androidx.core.content.ContextCompat
 import com.alex_aladdin.cash.R
+import com.alex_aladdin.cash.helpers.CategoriesManager
 import com.alex_aladdin.cash.helpers.CurrencyManager
 import com.alex_aladdin.cash.ui.chart.ChartDrawer.CENTRAL_CHART_WIDTH
 import com.alex_aladdin.cash.ui.chart.ChartDrawer.SIDE_CHART_WIDTH
@@ -40,6 +41,7 @@ class DrawThread(
     var checkedCategory: Categories? = null
 
     private val currencyManager: CurrencyManager by inject()
+    private val categoriesManager: CategoriesManager by inject()
 
     private val backgroundPaint = Paint().apply {
         color = ContextCompat.getColor(context, R.color.palladium)
@@ -47,10 +49,10 @@ class DrawThread(
     }
 
     private val gainPaints: Map<GainCategories, Paint> = GainCategories.values()
-        .map { it to Paint().apply { color = ContextCompat.getColor(context, it.colorRes); isAntiAlias = false } }
+        .map { it to Paint().apply { color = categoriesManager.categoriesColors.getValue(it); isAntiAlias = false } }
         .toMap()
     private val lossPaints: Map<LossCategories, Paint> = LossCategories.values()
-        .map { it to Paint().apply { color = ContextCompat.getColor(context, it.colorRes); isAntiAlias = false } }
+        .map { it to Paint().apply { color = categoriesManager.categoriesColors.getValue(it); isAntiAlias = false } }
         .toMap()
 
     private val textPaint = Paint().apply {

@@ -7,7 +7,6 @@ enum class GainCategories : Categories {
     SALARY {
         override val id: String = name
         override val isGain = true
-        override val colorRes = R.color.green
         override val stringRes = R.string.gain_salary
     }
 

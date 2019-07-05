@@ -8,12 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import com.alex_aladdin.cash.R
+import com.alex_aladdin.cash.helpers.CategoriesManager
 import com.alex_aladdin.cash.utils.ColorUtils
 import com.alex_aladdin.cash.utils.DisposableCache
 import com.alex_aladdin.cash.utils.cache
@@ -25,6 +25,8 @@ import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 class CategoryPicker(context: Context) : _FrameLayout(context) {
 
@@ -135,11 +137,12 @@ class CategoryPicker(context: Context) : _FrameLayout(context) {
 
     private class CategoryScrollListener(
         var categories: List<Categories>,
-        private val context: Context,
+        context: Context,
         private val layoutManager: RecyclerView.LayoutManager,
         private val onAverageUpdated: (width: Float, color: Int) -> Unit
-    ) : RecyclerView.OnScrollListener() {
+    ) : RecyclerView.OnScrollListener(), KoinComponent {
 
+        private val categoriesManager: CategoriesManager by inject()
         private val itemHeight = context.dimen(R.dimen.category_picker_item_height).toFloat()
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -168,8 +171,8 @@ class CategoryPicker(context: Context) : _FrameLayout(context) {
                 val bottomCategory = categories.getOrNull(bottomChildPos)
 
                 val averageColor = if (topCategory != null && bottomCategory != null) {
-                    val topColor = ContextCompat.getColor(context, topCategory.colorRes)
-                    val bottomColor = ContextCompat.getColor(context, bottomCategory.colorRes)
+                    val topColor = categoriesManager.categoriesColors.getValue(topCategory)
+                    val bottomColor = categoriesManager.categoriesColors.getValue(bottomCategory)
                     ColorUtils.mix(topColor, bottomColor, (parentMidpoint - topChild.midPoint()) / itemHeight)
                 } else {
                     Color.TRANSPARENT

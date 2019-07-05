@@ -1,18 +1,63 @@
 package com.alex_aladdin.cash.helpers
 
+import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.graphics.ColorUtils
 import com.alex_aladdin.cash.CashApp.Companion.PREFS_CATEGORIES_PREFIX
 import com.alex_aladdin.cash.CashApp.Companion.PREFS_DEFAULT_GAIN_CATEGORY
 import com.alex_aladdin.cash.CashApp.Companion.PREFS_DEFAULT_LOSS_CATEGORY
+import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.helpers.enums.Periods
 import com.alex_aladdin.cash.viewmodels.enums.Categories
 import com.alex_aladdin.cash.viewmodels.enums.GainCategories
 import com.alex_aladdin.cash.viewmodels.enums.LossCategories
 
-class CategoriesManager(private val sharedPreferences: SharedPreferences) {
+class CategoriesManager(context: Context, private val sharedPreferences: SharedPreferences) {
+
+    companion object {
+
+        private const val COLOR_LIGHT_MIN = 0.2f
+        private const val COLOR_LIGHT_MAX = 0.8f
+
+    }
+
+
+    val categoriesColors: Map<Categories, Int>
+
+    private val defaultLossColorHsl = FloatArray(3).apply {
+        val defaultColor = ContextCompat.getColor(context, R.color.red)
+        ColorUtils.colorToHSL(defaultColor, this)
+    }
+
+    private val defaultGainColorHsl = FloatArray(3).apply {
+        val defaultColor = ContextCompat.getColor(context, R.color.green)
+        ColorUtils.colorToHSL(defaultColor, this)
+    }
 
     private var categoriesToPeriods = HashMap<Categories, Periods>()
+
+
+    init {
+        val categoriesColorsMutable = HashMap<Categories, Int>()
+
+        val lossCategoriesCount = LossCategories.values().size.toFloat()
+        LossCategories.values().forEachIndexed { index, lossCategory ->
+            val light = COLOR_LIGHT_MIN + (COLOR_LIGHT_MAX - COLOR_LIGHT_MIN) * (index + 1).toFloat() / lossCategoriesCount
+            defaultLossColorHsl[2] = light
+            categoriesColorsMutable[lossCategory] = ColorUtils.HSLToColor(defaultLossColorHsl)
+        }
+
+        val gainCategoriesCount = GainCategories.values().size.toFloat()
+        GainCategories.values().forEachIndexed { index, lossCategory ->
+            val light = COLOR_LIGHT_MIN + (COLOR_LIGHT_MAX - COLOR_LIGHT_MIN) * (index + 1).toFloat() / gainCategoriesCount
+            defaultGainColorHsl[2] = light
+            categoriesColorsMutable[lossCategory] = ColorUtils.HSLToColor(defaultGainColorHsl)
+        }
+
+        categoriesColors = categoriesColorsMutable
+    }
 
 
     fun getDefaultLossCategory(): LossCategories {

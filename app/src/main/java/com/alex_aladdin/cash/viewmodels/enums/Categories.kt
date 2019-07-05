@@ -14,7 +14,6 @@ interface Categories {
 
     val id: String
     val isGain: Boolean
-    val colorRes: Int
     val stringRes: Int
 
 }
