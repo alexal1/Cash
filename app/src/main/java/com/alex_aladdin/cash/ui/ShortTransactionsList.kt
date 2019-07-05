@@ -122,9 +122,9 @@ class ShortTransactionsList(context: Context) : _ConstraintLayout(context), Koin
             if (transaction0 != null) {
                 block0.isVisible = true
 
-                block0.category.textResource = Categories.findById(transaction0.categoryId, transaction0.isGain).stringRes
+                block0.category.textResource = Categories.findById(transaction0.categoryId, transaction0.isGain()).stringRes
 
-                val sign = if (transaction0.isGain) "+" else "-"
+                val sign = if (transaction0.isGain()) "+" else "-"
                 val amount =
                     "$sign ${currencyManager.formatMoney(transaction0.getAmountPerDay(), transaction0.account!!.currencyIndex)}"
                 block0.amount.text = amount
@@ -136,9 +136,9 @@ class ShortTransactionsList(context: Context) : _ConstraintLayout(context), Koin
             if (transaction1 != null) {
                 block1.isVisible = true
 
-                block1.category.textResource = Categories.findById(transaction1.categoryId, transaction1.isGain).stringRes
+                block1.category.textResource = Categories.findById(transaction1.categoryId, transaction1.isGain()).stringRes
 
-                val sign = if (transaction1.isGain) "+" else "-"
+                val sign = if (transaction1.isGain()) "+" else "-"
                 val amount =
                     "$sign ${currencyManager.formatMoney(transaction1.getAmountPerDay(), transaction1.account!!.currencyIndex)}"
                 block1.amount.text = amount

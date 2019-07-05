@@ -2,6 +2,7 @@ package com.alex_aladdin.cash.repository
 
 import android.os.HandlerThread
 import com.alex_aladdin.cash.repository.entities.Transaction
+import com.alex_aladdin.cash.repository.specifications.NumberSpecification
 import com.alex_aladdin.cash.repository.specifications.RealmSpecification
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -72,6 +73,20 @@ class TransactionsRepository {
                 realm.executeTransaction {
                     try {
                         emitter.onSuccess(realm.copyFromRealm(specification.toRealmResults(realm)))
+                    } catch (e: Exception) {
+                        emitter.onError(e)
+                    }
+                }
+            }
+        }
+        .subscribeOn(realmScheduler)
+
+    fun query(specification: NumberSpecification): Single<Number> = Single
+        .create<Number> { emitter ->
+            realm().use { realm ->
+                realm.executeTransaction {
+                    try {
+                        emitter.onSuccess(specification.toNumber(realm))
                     } catch (e: Exception) {
                         emitter.onError(e)
                     }

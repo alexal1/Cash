@@ -237,8 +237,8 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
     private fun String.isValidAmount() = this.matches(amountPattern) && this.toDouble() > 0
 
     private fun getCurrentTransaction() = Transaction().apply {
-        isGain = type == Type.GAIN
-        amount = amountSubject.value!!.toDouble()
+        val sign = if (type == Type.GAIN) 1.0 else -1.0
+        amount = amountSubject.value!!.toDouble() * sign
         categoryId = currentCategory.id
         period = categoriesManager.getPeriod(currentCategory).name
         startTimestamp = app.currentDate.value!!.time

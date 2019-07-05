@@ -5,7 +5,6 @@ import android.util.SparseArray
 import androidx.core.util.forEach
 import androidx.core.util.set
 import com.alex_aladdin.cash.CashApp
-import com.alex_aladdin.cash.repository.entities.Transaction
 import com.alex_aladdin.cash.utils.DisposableCache
 import com.alex_aladdin.cash.utils.cache
 import com.alex_aladdin.cash.utils.onNextConsumer
@@ -33,11 +32,11 @@ class CacheLogic(private val dataSource: DataSource) {
 
 
     /**
-     * Request data at given index. Returns Observable that emits first loaded data list and all subsequent data lists
-     * that could be emitted after clearing cache. It also preloads LOAD_DELTA moments on both sides if and only if
-     * there is at least one NOT ACTUAL moment in DETECT_DELTA radius.
+     * Request MomentData at given index. Returns Observable that emits first loaded MomentData and all subsequent
+     * MomentDatas that could be emitted after clearing cache. It also preloads LOAD_DELTA moments on both sides if and
+     * only if there is at least one NOT ACTUAL Moment in DETECT_DELTA radius.
      */
-    fun requestMoment(index: Int): Observable<List<Transaction>> = Single
+    fun requestMoment(index: Int): Observable<MomentData> = Single
         .fromCallable {
             obtainMoment(index).also { it.actualize() }
         }
@@ -89,7 +88,7 @@ class CacheLogic(private val dataSource: DataSource) {
         private val dataSource: DataSource,
         private val cacheLogicScheduler: Scheduler,
         private val dc: DisposableCache,
-        val data: BehaviorSubject<List<Transaction>> = BehaviorSubject.create(),
+        val data: BehaviorSubject<MomentData> = BehaviorSubject.create(),
         @Volatile var isActual: Boolean = false
     ) {
 

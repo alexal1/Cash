@@ -72,6 +72,7 @@
     <string name="push_notification_subtitle">Tap to add more transactions</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="connection_error">No connection</string>
+    <string name="real_balance">Real balance: %s</string>
 
     <!-- Gain -->
     <string name="gain_salary">Salary</string>

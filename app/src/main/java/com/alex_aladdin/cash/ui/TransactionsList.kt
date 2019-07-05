@@ -119,10 +119,10 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                         )
 
                         categoryText.textResource =
-                            Categories.findById(transaction.categoryId, transaction.isGain).stringRes
+                            Categories.findById(transaction.categoryId, transaction.isGain()).stringRes
 
                         if (transaction.getDaysCount() == 1) {
-                            periodText.textResource = if (transaction.isGain) {
+                            periodText.textResource = if (transaction.isGain()) {
                                 R.string.gain_transaction_period_one_day
                             } else {
                                 R.string.loss_transaction_period_one_day
@@ -147,7 +147,7 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
         private fun Context.getPeriod(transaction: Transaction): SpannableStringBuilder {
             val dateReplacement = "{date}"
             val text = getString(
-                if (transaction.isGain) {
+                if (transaction.isGain()) {
                     R.string.gain_transaction_period_couple_of_days
                 } else {
                     R.string.loss_transaction_period_couple_of_days

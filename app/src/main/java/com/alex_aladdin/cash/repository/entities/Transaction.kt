@@ -5,13 +5,12 @@ import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import java.io.Serializable
 import java.util.*
+import kotlin.math.abs
 
 open class Transaction : RealmObject(), Serializable {
 
     @PrimaryKey
     var id: String = UUID.randomUUID().toString()
-
-    var isGain: Boolean = false
 
     var amount: Double = 0.0
 
@@ -28,8 +27,10 @@ open class Transaction : RealmObject(), Serializable {
     var account: Account? = null
 
 
+    fun isGain(): Boolean = amount > 0.0
+
     fun getDaysCount(): Int = ((endTimestamp - startTimestamp) / CashApp.millisInDay).toInt()
 
-    fun getAmountPerDay(): Double = amount / getDaysCount().toDouble()
+    fun getAmountPerDay(): Double = abs(amount) / getDaysCount().toDouble()
 
 }

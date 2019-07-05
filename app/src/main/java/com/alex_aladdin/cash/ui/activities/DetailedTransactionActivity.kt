@@ -24,8 +24,8 @@ import com.alex_aladdin.cash.repository.entities.Transaction
 import com.alex_aladdin.cash.ui.activities.DayTransactionsActivity.Companion.DETAILED_TRANSACTION_EXTRA_ID
 import com.alex_aladdin.cash.ui.activities.DayTransactionsActivity.Companion.DETAILED_TRANSACTION_REQUEST_CODE
 import com.alex_aladdin.cash.ui.activities.DayTransactionsActivity.Companion.DETAILED_TRANSACTION_RESULT_DELETE
-import com.alex_aladdin.cash.utils.anko.appCompatTextView
 import com.alex_aladdin.cash.utils.*
+import com.alex_aladdin.cash.utils.anko.appCompatTextView
 import com.alex_aladdin.cash.utils.spans.VerticalOffsetSpan
 import com.alex_aladdin.cash.viewmodels.enums.Categories
 import org.jetbrains.anko.*
@@ -36,6 +36,7 @@ import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.matchConstraint
 import org.koin.android.ext.android.inject
 import java.text.DateFormat
+import kotlin.math.abs
 
 class DetailedTransactionActivity : AppCompatActivity() {
 
@@ -81,7 +82,7 @@ class DetailedTransactionActivity : AppCompatActivity() {
         val backButton = createBackButton()
 
         val block1 = createBlock(
-            currencyManager.formatMoney(transaction.amount, transaction.account!!.currencyIndex),
+            currencyManager.formatMoney(abs(transaction.amount), transaction.account!!.currencyIndex),
             getAmountSubtitle()
         ).lparams(matchConstraint, matchConstraint) {
             topMargin = dip(32)
@@ -140,7 +141,7 @@ class DetailedTransactionActivity : AppCompatActivity() {
         val backButton = createBackButton()
 
         val block1 = createBlock(
-            currencyManager.formatMoney(transaction.amount, transaction.account!!.currencyIndex),
+            currencyManager.formatMoney(abs(transaction.amount), transaction.account!!.currencyIndex),
             getAmountSubtitle()
         ).lparams(matchConstraint, matchConstraint) {
             topMargin = dip(32)
@@ -287,7 +288,7 @@ class DetailedTransactionActivity : AppCompatActivity() {
         val dateReplacement = "{date}"
         val categoryReplacement = "{category}"
         val text = getString(
-            if (transaction.isGain) {
+            if (transaction.isGain()) {
                 R.string.transaction_amount_subtitle_gain
             } else {
                 R.string.transaction_amount_subtitle_loss
@@ -296,7 +297,7 @@ class DetailedTransactionActivity : AppCompatActivity() {
             categoryReplacement
         )
         val formattedDate = dateFormatter.format(transaction.startTimestamp)
-        val category = getString(Categories.findById(transaction.categoryId, transaction.isGain).stringRes)
+        val category = getString(Categories.findById(transaction.categoryId, transaction.isGain()).stringRes)
 
         return text
             .asSpannableBuilder()
@@ -304,14 +305,14 @@ class DetailedTransactionActivity : AppCompatActivity() {
             .replace(categoryReplacement, category, StyleSpan(BOLD))
     }
 
-    private fun getPeriodSubtitle(): String = if (transaction.isGain) {
+    private fun getPeriodSubtitle(): String = if (transaction.isGain()) {
         getString(R.string.transaction_period_subtitle_gain)
     } else {
         getString(R.string.transaction_period_subtitle_loss)
     }
 
     private fun getFormulaTitle(): SpannableStringBuilder {
-        val fullAmount = currencyManager.formatMoney(transaction.amount, transaction.account!!.currencyIndex)
+        val fullAmount = currencyManager.formatMoney(abs(transaction.amount), transaction.account!!.currencyIndex)
         val period = getString(Periods.getByName(transaction.period).shortString)
         val dayAmount = currencyManager.formatMoney(transaction.getAmountPerDay(), transaction.account!!.currencyIndex)
 
@@ -323,7 +324,7 @@ class DetailedTransactionActivity : AppCompatActivity() {
             .add(getString(R.string.transaction_formula_tail), 0, StyleSpan(BOLD))
     }
 
-    private fun getFormulaSubtitle(): String = if (transaction.isGain) {
+    private fun getFormulaSubtitle(): String = if (transaction.isGain()) {
         getString(R.string.transaction_formula_subtitle_gain)
     } else {
         getString(R.string.transaction_formula_subtitle_loss)

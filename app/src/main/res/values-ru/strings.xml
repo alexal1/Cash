@@ -63,6 +63,7 @@
     <string name="push_notification_subtitle">Нажмите чтобы добавить больше транзакций</string>
     <string name="privacy_policy">Политика конфиденциальности</string>
     <string name="connection_error">Нет соединения</string>
+    <string name="real_balance">Реальный баланс: %s</string>
 
     <!-- Gain -->
     <string name="gain_salary">Зарплата</string>

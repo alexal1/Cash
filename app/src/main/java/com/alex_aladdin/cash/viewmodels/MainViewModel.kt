@@ -16,6 +16,7 @@ import com.alex_aladdin.cash.utils.cache
 import com.alex_aladdin.cash.utils.currentLocale
 import com.alex_aladdin.cash.utils.onNextConsumer
 import com.alex_aladdin.cash.viewmodels.cache.CacheLogicAdapter
+import com.alex_aladdin.cash.viewmodels.cache.MomentData
 import com.alex_aladdin.cash.viewmodels.enums.GainCategories
 import com.alex_aladdin.cash.viewmodels.enums.LossCategories
 import io.reactivex.Observable
@@ -40,9 +41,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
     private val weekdaySubject = BehaviorSubject.create<Weekday>()
     val weekdayObservable: Observable<Weekday> = weekdaySubject
 
-    private val dayTransactionsSubject = BehaviorSubject.create<List<Transaction>>()
-    val shortTransactionsListObservable: Observable<List<Transaction>> = dayTransactionsSubject.map { it.take(2) }
-    val chartDataObservable: Observable<ChartData> = dayTransactionsSubject.map { it.toChartData() }
+    private val dayDataSubject = BehaviorSubject.create<MomentData>()
+    val shortTransactionsListObservable: Observable<List<Transaction>> = dayDataSubject.map { it.transactions.take(2) }
+    val chartDataObservable: Observable<ChartData> = dayDataSubject.map { it.transactions.toChartData() }
+    val realBalanceObservable: Observable<String> = dayDataSubject.map { currencyManager.formatMoney(it.realBalance) }
 
     private val showMismatchedCurrencyDialogSubject = PublishSubject.create<Int>()
     val showMismatchedCurrencyDialogObservable: Observable<Int> = showMismatchedCurrencyDialogSubject
@@ -58,7 +60,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
             weekdaySubject.onNext(date.toWeekday())
 
             dataLoadingDisposable?.dispose()
-            dataLoadingDisposable = cache.requestDate(date).subscribe(dayTransactionsSubject.onNextConsumer())
+            dataLoadingDisposable = cache.requestDate(date).subscribe(dayDataSubject.onNextConsumer())
         }.cache(dc)
     }
 

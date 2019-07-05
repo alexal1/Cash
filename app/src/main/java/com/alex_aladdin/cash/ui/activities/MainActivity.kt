@@ -4,11 +4,9 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.PixelFormat
-import android.graphics.Point
-import android.graphics.PointF
-import android.graphics.Rect
+import android.graphics.*
 import android.os.Bundle
+import android.view.Gravity.CENTER
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -187,7 +185,7 @@ class MainActivity : AppCompatActivity() {
                     NewTransactionActivity.start(this@MainActivity, NewTransactionViewModel.Type.GAIN)
                 }.cache(dc)
             }.lparams(matchConstraint, dip(70)) {
-                bottomMargin = dip(4)
+                bottomMargin = dip(8)
                 leftMargin = dip(4)
             }
 
@@ -204,9 +202,30 @@ class MainActivity : AppCompatActivity() {
                     NewTransactionActivity.start(this@MainActivity, NewTransactionViewModel.Type.LOSS)
                 }.cache(dc)
             }.lparams(matchConstraint, dip(70)) {
-                bottomMargin = dip(4)
+                bottomMargin = dip(8)
                 rightMargin = dip(4)
             }
+
+            val realBalanceBackground = view {
+                id = View.generateViewId()
+                backgroundResource = R.color.soft_dark
+            }.lparams(matchConstraint, dip(32))
+
+            val realBalanceText = textView {
+                id = View.generateViewId()
+                backgroundColor = Color.TRANSPARENT
+                textColorResource = R.color.smoke
+                textSize = 12f
+                gravity = CENTER
+                letterSpacing = 0.01f
+                compoundDrawablePadding = dip(8)
+
+                setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_coins_stack, 0, 0, 0)
+
+                viewModel.realBalanceObservable.subscribeOnUi { realBalance ->
+                    text = getString(R.string.real_balance, realBalance)
+                }.cache(dc)
+            }.lparams(wrapContent, wrapContent)
 
 
             applyConstraintSet {
@@ -255,13 +274,26 @@ class MainActivity : AppCompatActivity() {
                 connect(
                     START of buttonGain to START of PARENT_ID,
                     END of buttonGain to START of buttonLoss,
-                    BOTTOM of buttonGain to BOTTOM of PARENT_ID
+                    BOTTOM of buttonGain to TOP of realBalanceBackground
                 )
 
                 connect(
                     START of buttonLoss to END of buttonGain,
                     END of buttonLoss to END of PARENT_ID,
-                    BOTTOM of buttonLoss to BOTTOM of PARENT_ID
+                    BOTTOM of buttonLoss to TOP of realBalanceBackground
+                )
+
+                connect(
+                    START of realBalanceBackground to START of PARENT_ID,
+                    END of realBalanceBackground to END of PARENT_ID,
+                    BOTTOM of realBalanceBackground to BOTTOM of PARENT_ID
+                )
+
+                connect(
+                    START of realBalanceText to START of realBalanceBackground,
+                    END of realBalanceText to END of realBalanceBackground,
+                    TOP of realBalanceText to TOP of realBalanceBackground,
+                    BOTTOM of realBalanceText to BOTTOM of realBalanceBackground
                 )
             }
         }
@@ -334,8 +366,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
         if (requestCode == NEW_TRANSACTION_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             viewModel.checkCurrencyMismatch()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (!chartView.onBackPressed()) {
+            super.onBackPressed()
         }
     }
 

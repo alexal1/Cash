@@ -85,8 +85,8 @@ class PushManager(private val context: Context) : KoinComponent {
         repository
             .query(DaySpecification(currentDate, currentCurrencyIndex))
             .map { transactions ->
-                val totalGain = transactions.filter { it.isGain }.sumByDouble { it.getAmountPerDay() }
-                val totalLoss = transactions.filter { !it.isGain }.sumByDouble { it.getAmountPerDay() }
+                val totalGain = transactions.filter { it.isGain() }.sumByDouble { it.getAmountPerDay() }
+                val totalLoss = transactions.filter { !it.isGain() }.sumByDouble { it.getAmountPerDay() }
                 totalGain to totalLoss
             }
             .subscribeOnUi { (totalGain, totalLoss) ->

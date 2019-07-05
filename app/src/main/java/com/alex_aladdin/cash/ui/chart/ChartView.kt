@@ -2,7 +2,6 @@ package com.alex_aladdin.cash.ui.chart
 
 import android.content.Context
 import android.graphics.PointF
-import android.util.Log.e
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.core.graphics.contains
@@ -14,7 +13,6 @@ class ChartView(context: Context) : SurfaceView(context), SurfaceHolder.Callback
 
     companion object {
 
-        private const val TAG = "CashChartView"
         private const val FPS = 60L
         private const val LATENCY = 1000L / FPS
         private const val ANIMATION_DURATION = 1000L
@@ -63,7 +61,7 @@ class ChartView(context: Context) : SurfaceView(context), SurfaceHolder.Callback
                     join()
                     retry = false
                 } catch (exception: InterruptedException) {
-                    e(TAG, "Error when trying to stop draw thread", exception)
+                    Timber.e(exception, "Error when trying to stop draw thread")
                 }
             }
         }
@@ -78,6 +76,15 @@ class ChartView(context: Context) : SurfaceView(context), SurfaceHolder.Callback
             }
         }
     }
+
+    fun onBackPressed(): Boolean = drawThread?.let { drawThread ->
+        if (drawThread.checkedCategory != null) {
+            drawThread.checkedCategory = null
+            true
+        } else {
+            false
+        }
+    } ?: false
 
     private fun findCategoryByClick(point: PointF): Categories? = lastChartAnimator?.let { chartAnimator ->
         var resultCategory: Categories? = null

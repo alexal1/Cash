@@ -10,8 +10,8 @@ class DayLossSpecification(private val date: Date, private val currencyIndex: In
 
     override fun toRealmResults(realm: Realm): RealmResults<Transaction> = realm
         .where(Transaction::class.java)
-        .equalTo("isGain", false)
         .equalTo("account.currencyIndex", currencyIndex)
+        .lessThan("amount", 0.0)
         .lessThanOrEqualTo("startTimestamp", date.time)
         .greaterThan("endTimestamp", date.time)
         .sort("addedTimestamp", Sort.DESCENDING)
