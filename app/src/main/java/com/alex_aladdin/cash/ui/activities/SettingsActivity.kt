@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -114,7 +115,7 @@ class SettingsActivity : AppCompatActivity() {
                         if (BuildConfig.BUILD_TYPE == "debug") {
                             it >= 1
                         } else {
-                            it >= 5
+                            it >= 10
                         }
                     }
                     .throttleFirst(1, TimeUnit.SECONDS)
@@ -231,6 +232,23 @@ class SettingsActivity : AppCompatActivity() {
             }
         )
 
+        val googlePlayItem = getSettingsItem(
+            R.string.settings_google_play_title,
+            R.string.settings_google_play_subtitle,
+            showSeparator = false,
+            throttleClicks = true,
+            controlView = space {
+                id = View.generateViewId()
+            },
+            onClickListener = {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+                    setPackage("com.android.vending")
+                }
+                startActivity(intent)
+            }
+        )
+
         applyConstraintSet {
             connect(
                 START of currencyItem to START of PARENT_ID,
@@ -254,6 +272,12 @@ class SettingsActivity : AppCompatActivity() {
                 START of privacyPolicyItem to START of PARENT_ID,
                 END of privacyPolicyItem to END of PARENT_ID,
                 TOP of privacyPolicyItem to BOTTOM of pushNotificationsItem
+            )
+
+            connect(
+                START of googlePlayItem to START of PARENT_ID,
+                END of googlePlayItem to END of PARENT_ID,
+                TOP of googlePlayItem to BOTTOM of privacyPolicyItem
             )
         }
     }

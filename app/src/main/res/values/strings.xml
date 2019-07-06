@@ -52,6 +52,8 @@
     <string name="settings_push_notifications_dialog_message">Push notifications are disabled for this app in device Settings. Do you want to open Settings?</string>
     <string name="settings_privacy_policy_title">Privacy Policy</string>
     <string name="settings_privacy_policy_subtitle">Open web page with the document</string>
+    <string name="settings_google_play_title">Leave a review</string>
+    <string name="settings_google_play_subtitle">Open the app page in Google Play</string>
     <string name="settings_saved">Settings are saved</string>
     <string name="mismatched_currency_message">Last transaction was in %s.\nDo you want to switch shown currency to %s?</string>
     <string name="mismatched_currency_remember_choice">Remember choice</string>

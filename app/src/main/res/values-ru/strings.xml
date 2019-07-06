@@ -52,6 +52,8 @@
     <string name="settings_push_notifications_dialog_message">Пуш-уведмоления этого приложения запрещены в настройках устройства. Открыть настройки?</string>
     <string name="settings_privacy_policy_title">Политика конфиденциальности</string>
     <string name="settings_privacy_policy_subtitle">Открыть веб-страницу с документом</string>
+    <string name="settings_google_play_title">Оставить отзыв</string>
+    <string name="settings_google_play_subtitle">Открыть страницу приложения в Google Play</string>
     <string name="settings_saved">Настройки сохранены</string>
     <string name="mismatched_currency_message">Последняя транзакция была в %s.\nХотите переключить отображаемую валюту на %s?</string>
     <string name="mismatched_currency_remember_choice">Запомнить выбор</string>
