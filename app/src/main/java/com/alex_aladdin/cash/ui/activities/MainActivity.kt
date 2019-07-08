@@ -12,6 +12,7 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.graphics.contains
@@ -45,7 +46,21 @@ class MainActivity : AppCompatActivity() {
 
         const val NEW_TRANSACTION_REQUEST_CODE = 1
 
+
+        fun start(activity: Activity) {
+            val intent = Intent(activity, MainActivity::class.java)
+
+            val options = ActivityOptionsCompat.makeCustomAnimation(
+                activity,
+                R.anim.fade_in,
+                R.anim.fade_out
+            ).toBundle()
+
+            activity.startActivity(intent, options)
+        }
+
     }
+
 
     private val viewModel: MainViewModel by viewModel()
     private val currencyManager: CurrencyManager by inject()

@@ -2,4 +2,5 @@
 <resources>
     <integer name="activity_anim_duration_vertical">300</integer>
     <integer name="activity_anim_duration_horizontal">200</integer>
+    <integer name="activity_anim_duration_fade">500</integer>
 </resources>

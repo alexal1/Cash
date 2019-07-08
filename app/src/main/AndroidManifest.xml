@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
             android:name=".CashApp"
@@ -16,18 +16,12 @@
             android:theme="@style/AppTheme">
 
         <!-- Disable Advertising ID collection -->
-        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
+        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false"/>
 
         <!-- Disable SSAID collection -->
-        <meta-data android:name="google_analytics_ssaid_collection_enabled" android:value="false" />
+        <meta-data android:name="google_analytics_ssaid_collection_enabled" android:value="false"/>
 
-        <activity android:name=".ui.activities.MainActivity" android:launchMode="singleTask">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
+        <activity android:name=".ui.activities.MainActivity" android:launchMode="singleTask"/>
 
         <activity android:name=".ui.activities.NewTransactionActivity"/>
 
@@ -40,6 +34,14 @@
         <activity android:name=".ui.activities.DebugSettingsActivity"/>
 
         <activity android:name=".ui.activities.WebPageActivity"/>
+
+        <activity android:name=".ui.activities.SplashActivity" android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
 
         <receiver android:name=".helpers.push.BootReceiver" android:enabled="true">
             <intent-filter>

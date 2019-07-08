@@ -13,7 +13,7 @@ import com.alex_aladdin.cash.R
 import com.alex_aladdin.cash.helpers.CurrencyManager
 import com.alex_aladdin.cash.repository.TransactionsRepository
 import com.alex_aladdin.cash.repository.specifications.DaySpecification
-import com.alex_aladdin.cash.ui.activities.MainActivity
+import com.alex_aladdin.cash.ui.activities.SplashActivity
 import com.alex_aladdin.cash.utils.subscribeOnUi
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -39,7 +39,7 @@ class PushManager(private val context: Context) : KoinComponent {
     }
 
     private val pushPendingIntent by lazy {
-        val intent = Intent(context, MainActivity::class.java)
+        val intent = Intent(context, SplashActivity::class.java)
         PendingIntent.getActivity(context, 0, intent, 0)
     }
 
