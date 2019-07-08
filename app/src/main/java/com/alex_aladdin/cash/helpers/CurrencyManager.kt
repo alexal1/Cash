@@ -39,8 +39,8 @@ class CurrencyManager(private val sharedPreferences: SharedPreferences, private 
 
     fun getCurrencyIndexByLocale(): Int = when (locale.country) {
         // TODO: maintain more countries
-        "RU" -> 1
-        else -> 0
+        "RU" -> 3
+        else -> 1
     }
 
     fun getCurrentCurrencyIndex(): Int {
