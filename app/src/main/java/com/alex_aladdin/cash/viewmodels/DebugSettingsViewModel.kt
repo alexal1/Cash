@@ -10,8 +10,6 @@ import com.alex_aladdin.cash.helpers.push.PushManager
 import com.alex_aladdin.cash.repository.TransactionsRepository
 import com.alex_aladdin.cash.repository.entities.Account
 import com.alex_aladdin.cash.repository.entities.Transaction
-import com.alex_aladdin.cash.utils.DisposableCache
-import com.alex_aladdin.cash.utils.cache
 import com.alex_aladdin.cash.utils.currentLocale
 import com.alex_aladdin.cash.viewmodels.cache.CacheLogicAdapter
 import com.alex_aladdin.cash.viewmodels.enums.Categories
@@ -40,27 +38,27 @@ class DebugSettingsViewModel(application: Application) : AndroidViewModel(applic
     private val categoriesManager: CategoriesManager by inject()
     private val currencyManager: CurrencyManager by inject()
     private val random = Random()
-    private val dc = DisposableCache()
 
 
     fun showPush() {
         pushManager.showPushNotification(true)
     }
 
-    fun addTransactionsToCurrentDate() {
+    fun addTransactionsToCurrentDate(): Completable {
         val completables = Array(TRANSACTIONS_COUNT) {
             addRandomTransactionToDate(currentDate)
         }
 
-        cache
+        return cache
             .clear()
             .andThen(Completable.mergeArray(*completables))
             .andThen(cache.requestDate(app.currentDate.value!!))
-            .subscribe()
-            .cache(dc)
+            .take(1)
+            .singleOrError()
+            .ignoreElement()
     }
 
-    fun addTransactionsToCurrentMonth() {
+    fun addTransactionsToCurrentMonth(): Completable {
         val completables = arrayListOf<Completable>()
 
         val calendar = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT+0000")).apply {
@@ -80,22 +78,22 @@ class DebugSettingsViewModel(application: Application) : AndroidViewModel(applic
             calendar.add(DAY_OF_MONTH, 1)
         }
 
-        cache
+        return cache
             .clear()
             .andThen(Completable.mergeArray(*completables.toTypedArray()))
             .andThen(cache.requestDate(app.currentDate.value!!))
-            .subscribe()
-            .cache(dc)
+            .take(1)
+            .singleOrError()
+            .ignoreElement()
     }
 
-    fun wipe() {
-        cache
-            .clear()
-            .andThen(repository.removeAllTransactions())
-            .andThen(cache.requestDate(app.currentDate.value!!))
-            .subscribe()
-            .cache(dc)
-    }
+    fun wipe(): Completable = cache
+        .clear()
+        .andThen(repository.removeAllTransactions())
+        .andThen(cache.requestDate(app.currentDate.value!!))
+        .take(1)
+        .singleOrError()
+        .ignoreElement()
 
 
     private fun addRandomTransactionToDate(date: Date): Completable {
@@ -129,10 +127,6 @@ class DebugSettingsViewModel(application: Application) : AndroidViewModel(applic
         }
 
         return repository.addTransaction(transaction)
-    }
-
-    override fun onCleared() {
-        dc.drain()
     }
 
 }

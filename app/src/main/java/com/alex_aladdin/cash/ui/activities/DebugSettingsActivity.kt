@@ -13,7 +13,10 @@ import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.isInvisible
 import com.alex_aladdin.cash.R
+import com.alex_aladdin.cash.utils.DisposableCache
+import com.alex_aladdin.cash.utils.cache
 import com.alex_aladdin.cash.utils.setSelectableBackground
+import com.alex_aladdin.cash.utils.subscribeOnUi
 import com.alex_aladdin.cash.viewmodels.DebugSettingsViewModel
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
@@ -21,7 +24,7 @@ import org.jetbrains.anko.constraint.layout._ConstraintLayout
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.matchConstraint
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DebugSettingsActivity : AppCompatActivity() {
 
@@ -41,7 +44,8 @@ class DebugSettingsActivity : AppCompatActivity() {
     }
 
 
-    private val viewModel: DebugSettingsViewModel by inject()
+    private val viewModel: DebugSettingsViewModel by viewModel()
+    private val dc = DisposableCache()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,7 +119,9 @@ class DebugSettingsActivity : AppCompatActivity() {
                 id = View.generateViewId()
             },
             onClickListener = {
-                viewModel.addTransactionsToCurrentDate()
+                viewModel.addTransactionsToCurrentDate().subscribeOnUi {
+                    toast(R.string.debug_settings_done)
+                }.cache(dc)
             }
         )
 
@@ -127,7 +133,9 @@ class DebugSettingsActivity : AppCompatActivity() {
                 id = View.generateViewId()
             },
             onClickListener = {
-                viewModel.addTransactionsToCurrentMonth()
+                viewModel.addTransactionsToCurrentMonth().subscribeOnUi {
+                    toast(R.string.debug_settings_done)
+                }.cache(dc)
             }
         )
 
@@ -139,7 +147,9 @@ class DebugSettingsActivity : AppCompatActivity() {
                 id = View.generateViewId()
             },
             onClickListener = {
-                viewModel.wipe()
+                viewModel.wipe().subscribeOnUi {
+                    toast(R.string.debug_settings_done)
+                }.cache(dc)
             }
         )
 
@@ -255,6 +265,11 @@ class DebugSettingsActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down)
+    }
+
+    override fun onDestroy() {
+        dc.drain()
+        super.onDestroy()
     }
 
 }
