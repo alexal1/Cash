@@ -16,7 +16,6 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.isVisible
@@ -30,7 +29,7 @@ import org.jetbrains.anko.constraint.layout.matchConstraint
 import org.jetbrains.anko.support.v4.swipeRefreshLayout
 import timber.log.Timber
 
-class WebPageActivity : AppCompatActivity() {
+class WebPageActivity : BaseActivity() {
 
     companion object {
 

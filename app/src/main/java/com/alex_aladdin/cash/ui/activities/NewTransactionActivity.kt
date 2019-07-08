@@ -14,7 +14,6 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.solver.widgets.Guideline.VERTICAL
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
 import androidx.core.app.ActivityOptionsCompat
@@ -41,7 +40,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-class NewTransactionActivity : AppCompatActivity() {
+class NewTransactionActivity : BaseActivity() {
 
     companion object {
 

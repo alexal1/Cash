@@ -13,7 +13,6 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.LinearLayout.VERTICAL
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -35,7 +34,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DayTransactionsActivity : AppCompatActivity() {
+class DayTransactionsActivity : BaseActivity() {
 
     companion object {
 

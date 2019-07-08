@@ -10,7 +10,6 @@ import android.view.Gravity.CENTER
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
@@ -40,7 +39,7 @@ import java.util.*
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     companion object {
 

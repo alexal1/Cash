@@ -8,7 +8,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.isInvisible
@@ -26,7 +25,7 @@ import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.matchConstraint
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class DebugSettingsActivity : AppCompatActivity() {
+class DebugSettingsActivity : BaseActivity() {
 
     companion object {
 

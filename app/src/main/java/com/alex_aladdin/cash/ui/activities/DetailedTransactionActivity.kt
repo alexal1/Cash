@@ -12,7 +12,6 @@ import android.view.Gravity
 import android.view.View
 import android.widget.Space
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.CHAIN_PACKED
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
 import androidx.core.app.ActivityOptionsCompat
@@ -38,7 +37,7 @@ import org.koin.android.ext.android.inject
 import java.text.DateFormat
 import kotlin.math.abs
 
-class DetailedTransactionActivity : AppCompatActivity() {
+class DetailedTransactionActivity : BaseActivity() {
 
     companion object {
 

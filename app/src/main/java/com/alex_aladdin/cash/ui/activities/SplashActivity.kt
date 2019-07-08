@@ -1,14 +1,13 @@
 package com.alex_aladdin.cash.ui.activities
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.alex_aladdin.cash.utils.DisposableCache
 import com.alex_aladdin.cash.utils.cache
 import com.alex_aladdin.cash.utils.subscribeOnUi
 import com.alex_aladdin.cash.viewmodels.SplashViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : BaseActivity() {
 
     private val viewModel: SplashViewModel by viewModel()
     private val dc = DisposableCache()
