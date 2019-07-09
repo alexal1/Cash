@@ -8,6 +8,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.alex_aladdin.cash.di.*
+import com.alex_aladdin.cash.helpers.CashRealmMigration
 import com.alex_aladdin.cash.helpers.push.PushManager
 import com.alex_aladdin.cash.helpers.timber.CashDebugTree
 import io.reactivex.plugins.RxJavaPlugins
@@ -81,7 +82,7 @@ class CashApp : Application(), LifecycleObserver {
 
         val tree = when(BuildConfig.BUILD_TYPE) {
             "debug" -> CashDebugTree()
-            "release" -> TODO()
+            "release" -> CashDebugTree() // TODO: create a tree associated with Crashlytics
             else -> throw IllegalArgumentException("Unexpected build type: ${BuildConfig.BUILD_TYPE}")
         }
 
@@ -91,7 +92,8 @@ class CashApp : Application(), LifecycleObserver {
         Realm.init(this)
         val config = RealmConfiguration.Builder()
             .name("cash.realm")
-            .deleteRealmIfMigrationNeeded() // TODO: remove before production!
+            .schemaVersion(0)
+            .migration(CashRealmMigration())
             .build()
 
         Realm.setDefaultConfiguration(config)
