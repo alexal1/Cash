@@ -18,8 +18,8 @@ class CategoriesManager(context: Context, private val sharedPreferences: SharedP
 
     companion object {
 
-        private const val COLOR_LIGHT_MIN = 0.2f
-        private const val COLOR_LIGHT_MAX = 0.8f
+        private const val COLOR_LIGHT_MIN = 0.1f
+        private const val COLOR_LIGHT_MAX = 0.6f
 
     }
 
