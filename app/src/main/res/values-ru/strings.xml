@@ -68,30 +68,65 @@
     <string name="real_balance">Реальный баланс: %s</string>
 
     <!-- Gain -->
+    <string name="gain_inheritance">Наследство</string>
+    <string name="gain_lottery">Лотерея</string>
+    <string name="gain_gift">Подарок</string>
+    <string name="gain_sale_of_a_property">Продажа собственности</string>
+    <string name="gain_you_borrowed_some_money">Вы взяли в долг</string>
+    <string name="gain_your_loan_was_paid_back">Вам вернули долг</string>
+    <string name="gain_reward">Премия</string>
+    <string name="gain_passive_income">Пассивный доход</string>
+    <string name="gain_scholarship_and_grants">Стипендия и гранты</string>
+    <string name="gain_alimony">Алименты</string>
+    <string name="gain_dividends">Дивиденды</string>
+    <string name="gain_business">Бизнес</string>
+    <string name="gain_financial_aid">Матпомощь</string>
     <string name="gain_salary">Зарплата</string>
+    <string name="gain_renting_out_a_property">Сдача собственности в аренду</string>
+    <string name="gain_cashback">Кэшбек</string>
+    <string name="gain_deposit_interest">Проценты по вкладу</string>
+    <string name="gain_tutoring">Репетиторство</string>
+    <string name="gain_freelance">Фриланс</string>
+    <string name="gain_part_time_job">Подработка</string>
+    <string name="gain_other">Другое</string>
 
     <!-- Loss -->
     <string name="loss_real_estate_purchase">Покупка недвижимости</string>
     <string name="loss_furniture_and_renovation">Ремонт и мебель</string>
+    <string name="loss_car_purchase">Покупка машины</string>
+    <string name="loss_jewelry_and_accessories">Украшения и аксессуары</string>
     <string name="loss_devices">Техника</string>
-    <string name="loss_banks_and_services">Банки и государство</string>
-    <string name="loss_some_stuff">Вещи</string>
+    <string name="loss_household_stuff">Вещи для дома</string>
+    <string name="loss_taxes">Налоги</string>
+    <string name="loss_banking_service">Банковские услуги</string>
     <string name="loss_clothes_and_shoes">Одежда и обувь</string>
-    <string name="loss_sport">Спорт</string>
+    <string name="loss_software">Программы</string>
+    <string name="loss_you_lent_some_money">Вы дали денег в долг</string>
+    <string name="loss_you_paid_a_loan_back">Вы вернули долг</string>
+    <string name="loss_education">Образование</string>
+    <string name="loss_expendable_materials">Расходные материалы</string>
+    <string name="loss_technical_service">Сервис, техобслуживание</string>
     <string name="loss_books_films_games">Книги, фильмы, игры</string>
-    <string name="loss_accommodation">Аренда жилья</string>
+    <string name="loss_sport">Спорт</string>
+    <string name="loss_accommodation">Проживание</string>
+    <string name="loss_housekeeping_service">Услуги по уходу за домом</string>
     <string name="loss_internet_and_communication">Связь и интернет</string>
-    <string name="loss_travel_passes">Проездные билеты</string>
+    <string name="loss_public_transport_passes">Проездной на общественный транспорт</string>
     <string name="loss_business">Бизнес</string>
-    <string name="loss_travelling">Путешествия</string>
-    <string name="loss_health">Здоровье</string>
+    <string name="loss_credit_interest">Проценты по кредиту</string>
+    <string name="loss_trips">Путешествия и походы</string>
+    <string name="loss_car_rental">Аренда машины</string>
+    <string name="loss_health_and_bodu_care">Здоровье и уход за телом</string>
     <string name="loss_foodstuff">Продукты</string>
     <string name="loss_cafes_and_restaurants">Кафе и рестораны</string>
     <string name="loss_fastfood">Фастфуд</string>
     <string name="loss_gifts">Подарки</string>
-    <string name="loss_philantropy">Благотврительность</string>
+    <string name="loss_philantropy">Благотворительность</string>
+    <string name="loss_travel_tickets">Билеты на транспорт</string>
     <string name="loss_taxi_and_carsharing">Такси и каршеринг</string>
+    <string name="loss_museums_and_exhibitions">Музеи и выставки</string>
     <string name="loss_enterntainment">Развлечения</string>
+    <string name="loss_other">Другое</string>
 
     <!-- Periods -->
     <string name="period_twenty_years">20 лет</string>

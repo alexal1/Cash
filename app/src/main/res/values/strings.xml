@@ -78,30 +78,65 @@
     <string name="real_balance">Real balance: %s</string>
 
     <!-- Gain -->
+    <string name="gain_inheritance">Inheritance</string>
+    <string name="gain_lottery">Lottery</string>
+    <string name="gain_gift">Gift</string>
+    <string name="gain_sale_of_a_property">Sale of a Property</string>
+    <string name="gain_you_borrowed_some_money">You Borrowed Some Money</string>
+    <string name="gain_your_loan_was_paid_back">Your Loan Was Paid Back</string>
+    <string name="gain_reward">Reward</string>
+    <string name="gain_passive_income">Passive Income</string>
+    <string name="gain_scholarship_and_grants">Scholarship and Grants</string>
+    <string name="gain_alimony">Alimony</string>
+    <string name="gain_dividends">Dividends</string>
+    <string name="gain_business">Business</string>
+    <string name="gain_financial_aid">Financial Aid</string>
     <string name="gain_salary">Salary</string>
+    <string name="gain_renting_out_a_property">Renting out a Property</string>
+    <string name="gain_cashback">Cashback</string>
+    <string name="gain_deposit_interest">Deposit Interest</string>
+    <string name="gain_tutoring">Tutoring</string>
+    <string name="gain_freelance">Freelance</string>
+    <string name="gain_part_time_job">Part-time Job</string>
+    <string name="gain_other">Other</string>
 
     <!-- Loss -->
     <string name="loss_real_estate_purchase">Real Estate Purchase</string>
     <string name="loss_furniture_and_renovation">Furniture and Renovation</string>
+    <string name="loss_car_purchase">Car Purchase</string>
+    <string name="loss_jewelry_and_accessories">Jewelry and Accessories</string>
     <string name="loss_devices">Devices</string>
-    <string name="loss_banks_and_services">Banks and Services</string>
-    <string name="loss_some_stuff">Some Stuff</string>
+    <string name="loss_household_stuff">Household Stuff</string>
+    <string name="loss_taxes">Taxes</string>
+    <string name="loss_banking_service">Banking Service</string>
     <string name="loss_clothes_and_shoes">Clothes and Shoes</string>
+    <string name="loss_software">Software</string>
+    <string name="loss_you_lent_some_money">You Lent Some Money</string>
+    <string name="loss_you_paid_a_loan_back">You Paid a Loan Back</string>
+    <string name="loss_education">Education</string>
+    <string name="loss_expendable_materials">Expendable Materials</string>
+    <string name="loss_technical_service">Technical Service</string>
+    <string name="loss_books_films_games">Books, Films, Games</string>
     <string name="loss_sport">Sport</string>
-    <string name="loss_books_films_games">Books, films, games</string>
     <string name="loss_accommodation">Accommodation</string>
+    <string name="loss_housekeeping_service">Housekeeping Service</string>
     <string name="loss_internet_and_communication">Internet and Communication</string>
-    <string name="loss_travel_passes">Travel Passes</string>
+    <string name="loss_public_transport_passes">Public Transport Passes</string>
     <string name="loss_business">Business</string>
-    <string name="loss_travelling">Travelling</string>
-    <string name="loss_health">Health</string>
+    <string name="loss_credit_interest">Credit Interest</string>
+    <string name="loss_trips">Trips</string>
+    <string name="loss_car_rental">Car Rental</string>
+    <string name="loss_health_and_bodu_care">Health and Body Care</string>
     <string name="loss_foodstuff">Foodstuff</string>
     <string name="loss_cafes_and_restaurants">Cafes and Restaurants</string>
     <string name="loss_fastfood">Fastfood</string>
     <string name="loss_gifts">Gifts</string>
     <string name="loss_philantropy">Philanthropy</string>
+    <string name="loss_travel_tickets">Travel Tickets</string>
     <string name="loss_taxi_and_carsharing">Taxi and Carsharing</string>
+    <string name="loss_museums_and_exhibitions">Museums and Exhibitions</string>
     <string name="loss_enterntainment">Entertainment</string>
+    <string name="loss_other">Other</string>
 
     <!-- Periods -->
     <string name="period_twenty_years">20 yrs.</string>

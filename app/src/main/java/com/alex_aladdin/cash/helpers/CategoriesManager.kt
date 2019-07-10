@@ -135,29 +135,64 @@ class CategoriesManager(context: Context, private val sharedPreferences: SharedP
         is LossCategories -> when (category) {
             LossCategories.REAL_ESTATE_PURCHASE -> Periods.TWENTY_YEARS
             LossCategories.FURNITURE_AND_RENOVATION -> Periods.TEN_YEARS
+            LossCategories.CAR_PURCHASE -> Periods.THREE_YEARS
+            LossCategories.JEWELRY_AND_ACCESSORIES -> Periods.THREE_YEARS
             LossCategories.DEVICES -> Periods.THREE_YEARS
-            LossCategories.BANKS_AND_SERVICES -> Periods.ONE_YEAR
-            LossCategories.SOME_STUFF -> Periods.ONE_YEAR
+            LossCategories.HOUSEHOLD_STUFF -> Periods.THREE_YEARS
+            LossCategories.TAXES -> Periods.ONE_YEAR
+            LossCategories.BANKING_SERVICE -> Periods.ONE_YEAR
             LossCategories.CLOTHES_AND_SHOES -> Periods.ONE_YEAR
-            LossCategories.SPORT -> Periods.THREE_MONTHS
+            LossCategories.SOFTWARE -> Periods.ONE_YEAR
+            LossCategories.YOU_LENT_SOME_MONEY -> Periods.ONE_YEAR
+            LossCategories.YOU_PAID_A_LOAN_BACK -> Periods.ONE_YEAR
+            LossCategories.EDUCATION -> Periods.ONE_YEAR
+            LossCategories.EXPENDABLE_MATERIALS -> Periods.THREE_MONTHS
+            LossCategories.TECHNICAL_SERVICE -> Periods.THREE_MONTHS
             LossCategories.BOOKS_FILMS_GAMES -> Periods.THREE_MONTHS
+            LossCategories.SPORT -> Periods.ONE_MONTH
             LossCategories.ACCOMMODATION -> Periods.ONE_MONTH
+            LossCategories.HOUSEKEEPING_SERVICE -> Periods.ONE_MONTH
             LossCategories.INTERNET_AND_COMMUNICATION -> Periods.ONE_MONTH
-            LossCategories.TRAVEL_PASSES -> Periods.ONE_MONTH
+            LossCategories.PUBLIC_TRANSPORT_PASSES -> Periods.ONE_MONTH
             LossCategories.BUSINESS -> Periods.ONE_MONTH
-            LossCategories.TRAVELLING -> Periods.TWO_WEEKS
-            LossCategories.HEALTH -> Periods.ONE_WEEK
+            LossCategories.CREDIT_INTEREST -> Periods.ONE_MONTH
+            LossCategories.TRIPS -> Periods.TWO_WEEKS
+            LossCategories.CAR_RENTAL -> Periods.TWO_WEEKS
+            LossCategories.HEALTH_AND_BODY_CARE -> Periods.ONE_WEEK
             LossCategories.FOODSTUFF -> Periods.ONE_WEEK
             LossCategories.CAFES_AND_RESTAURANTS -> Periods.ONE_DAY
             LossCategories.FASTFOOD -> Periods.ONE_DAY
             LossCategories.GIFTS -> Periods.ONE_DAY
             LossCategories.PHILANTHROPY -> Periods.ONE_DAY
+            LossCategories.TRAVEL_TICKETS -> Periods.ONE_DAY
             LossCategories.TAXI_AND_CARSHARING -> Periods.ONE_DAY
+            LossCategories.MUSEUMS_AND_EXHIBITIONS -> Periods.ONE_DAY
             LossCategories.ENTERTAINMENT -> Periods.ONE_DAY
+            LossCategories.OTHER -> Periods.ONE_DAY
         }
 
         is GainCategories -> when (category) {
+            GainCategories.INHERITANCE -> Periods.TWENTY_YEARS
+            GainCategories.LOTTERY -> Periods.TWENTY_YEARS
+            GainCategories.GIFT -> Periods.TEN_YEARS
+            GainCategories.SALE_OF_A_PROPERTY -> Periods.ONE_YEAR
+            GainCategories.YOU_BORROWED_SOME_MONEY -> Periods.ONE_YEAR
+            GainCategories.YOUR_LOAN_WAS_PAID_BACK -> Periods.ONE_YEAR
+            GainCategories.REWARD -> Periods.THREE_MONTHS
+            GainCategories.PASSIVE_INCOME -> Periods.THREE_MONTHS
+            GainCategories.SCHOLARSHIP_AND_GRANTS -> Periods.THREE_MONTHS
+            GainCategories.ALIMONY -> Periods.ONE_MONTH
+            GainCategories.DIVIDENDS -> Periods.ONE_MONTH
+            GainCategories.BUSINESS -> Periods.ONE_MONTH
+            GainCategories.FINANCIAL_AID -> Periods.ONE_MONTH
             GainCategories.SALARY -> Periods.ONE_MONTH
+            GainCategories.RENTING_OUT_A_PROPERTY -> Periods.ONE_MONTH
+            GainCategories.CASHBACK -> Periods.ONE_MONTH
+            GainCategories.DEPOSIT_INTEREST -> Periods.ONE_MONTH
+            GainCategories.TUTORING -> Periods.ONE_WEEK
+            GainCategories.FREELANCE -> Periods.ONE_WEEK
+            GainCategories.PART_TIME_JOB -> Periods.ONE_DAY
+            GainCategories.OTHER -> Periods.ONE_DAY
         }
 
         else -> null
