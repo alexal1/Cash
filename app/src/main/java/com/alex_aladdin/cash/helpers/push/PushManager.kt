@@ -132,7 +132,7 @@ class PushManager(private val context: Context) : KoinComponent {
     ): Notification = NotificationCompat.Builder(context, CHANNEL_ID)
         .setContentTitle(title)
         .setContentText(text)
-        .setSmallIcon(R.mipmap.ic_launcher)
+        .setSmallIcon(R.drawable.ic_notification)
         .setPriority(NotificationCompat.PRIORITY_MAX)
         .setContentIntent(pushPendingIntent)
         .setAutoCancel(true)
