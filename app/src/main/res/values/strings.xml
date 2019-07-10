@@ -6,8 +6,6 @@
     <string name="tap_to_return">( Tap to return )</string>
     <string name="new_gain_on">New income on</string>
     <string name="new_loss_on">New expense on</string>
-    <string name="gain_name_hint">Name of income</string>
-    <string name="loss_name_hint">Payee or item purchased</string>
     <string name="period_title_gain">In what time will this earning be repeated?</string>
     <string name="period_title_loss">How long will you utilize this purchase?</string>
     <string name="period_modify">Modify</string>
