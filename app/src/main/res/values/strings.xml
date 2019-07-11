@@ -126,13 +126,13 @@
     <string name="loss_car_rental">Car Rental</string>
     <string name="loss_health_and_bodu_care">Health and Body Care</string>
     <string name="loss_foodstuff">Foodstuff</string>
-    <string name="loss_cafes_and_restaurants">Cafes and Restaurants</string>
-    <string name="loss_fastfood">Fastfood</string>
-    <string name="loss_gifts">Gifts</string>
+    <string name="loss_museums_and_exhibitions">Museums and Exhibitions</string>
     <string name="loss_philantropy">Philanthropy</string>
+    <string name="loss_gifts">Gifts</string>
     <string name="loss_travel_tickets">Travel Tickets</string>
     <string name="loss_taxi_and_carsharing">Taxi and Carsharing</string>
-    <string name="loss_museums_and_exhibitions">Museums and Exhibitions</string>
+    <string name="loss_cafes_and_restaurants">Cafes and Restaurants</string>
+    <string name="loss_fastfood">Fastfood</string>
     <string name="loss_enterntainment">Entertainment</string>
     <string name="loss_other">Other</string>
 

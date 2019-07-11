@@ -116,13 +116,13 @@
     <string name="loss_car_rental">Аренда машины</string>
     <string name="loss_health_and_bodu_care">Здоровье и уход за телом</string>
     <string name="loss_foodstuff">Продукты</string>
-    <string name="loss_cafes_and_restaurants">Кафе и рестораны</string>
-    <string name="loss_fastfood">Фастфуд</string>
-    <string name="loss_gifts">Подарки</string>
+    <string name="loss_museums_and_exhibitions">Музеи и выставки</string>
     <string name="loss_philantropy">Благотворительность</string>
+    <string name="loss_gifts">Подарки</string>
     <string name="loss_travel_tickets">Билеты на транспорт</string>
     <string name="loss_taxi_and_carsharing">Такси и каршеринг</string>
-    <string name="loss_museums_and_exhibitions">Музеи и выставки</string>
+    <string name="loss_cafes_and_restaurants">Кафе и рестораны</string>
+    <string name="loss_fastfood">Фастфуд</string>
     <string name="loss_enterntainment">Развлечения</string>
     <string name="loss_other">Другое</string>
 

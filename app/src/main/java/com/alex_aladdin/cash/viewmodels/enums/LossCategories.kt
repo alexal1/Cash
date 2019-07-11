@@ -166,28 +166,22 @@ enum class LossCategories : Categories {
         override val stringRes = R.string.loss_foodstuff
     },
 
-    CAFES_AND_RESTAURANTS {
+    MUSEUMS_AND_EXHIBITIONS {
         override val id: String = name
         override val isGain = false
-        override val stringRes = R.string.loss_cafes_and_restaurants
-    },
-
-    FASTFOOD {
-        override val id: String = name
-        override val isGain = false
-        override val stringRes = R.string.loss_fastfood
-    },
-
-    GIFTS {
-        override val id: String = name
-        override val isGain = false
-        override val stringRes = R.string.loss_gifts
+        override val stringRes = R.string.loss_museums_and_exhibitions
     },
 
     PHILANTHROPY {
         override val id: String = name
         override val isGain = false
         override val stringRes = R.string.loss_philantropy
+    },
+
+    GIFTS {
+        override val id: String = name
+        override val isGain = false
+        override val stringRes = R.string.loss_gifts
     },
 
     TRAVEL_TICKETS {
@@ -202,10 +196,16 @@ enum class LossCategories : Categories {
         override val stringRes = R.string.loss_taxi_and_carsharing
     },
 
-    MUSEUMS_AND_EXHIBITIONS {
+    CAFES_AND_RESTAURANTS {
         override val id: String = name
         override val isGain = false
-        override val stringRes = R.string.loss_museums_and_exhibitions
+        override val stringRes = R.string.loss_cafes_and_restaurants
+    },
+
+    FASTFOOD {
+        override val id: String = name
+        override val isGain = false
+        override val stringRes = R.string.loss_fastfood
     },
 
     ENTERTAINMENT {
