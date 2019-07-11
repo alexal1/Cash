@@ -2,6 +2,7 @@ package com.alex_aladdin.cash
 
 import android.app.Application
 import android.content.SharedPreferences
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -108,6 +109,10 @@ class CashApp : Application(), LifecycleObserver {
             }
             pushManager.schedulePushNotifications()
         }
+
+
+        // Night mode always enabled
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
     }
 
     @Suppress("unused")
