@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.alex_aladdin.cash">
+          package="com.madewithlove.daybalance">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-            android:name=".CashApp"
+            android:name="com.madewithlove.daybalance.CashApp"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -21,21 +21,21 @@
         <!-- Disable SSAID collection -->
         <meta-data android:name="google_analytics_ssaid_collection_enabled" android:value="false"/>
 
-        <activity android:name=".ui.activities.MainActivity" android:launchMode="singleTask"/>
+        <activity android:name="com.madewithlove.daybalance.ui.activities.MainActivity" android:launchMode="singleTask"/>
 
-        <activity android:name=".ui.activities.NewTransactionActivity"/>
+        <activity android:name="com.madewithlove.daybalance.ui.activities.NewTransactionActivity"/>
 
-        <activity android:name=".ui.activities.DayTransactionsActivity"/>
+        <activity android:name="com.madewithlove.daybalance.ui.activities.DayTransactionsActivity"/>
 
-        <activity android:name=".ui.activities.DetailedTransactionActivity"/>
+        <activity android:name="com.madewithlove.daybalance.ui.activities.DetailedTransactionActivity"/>
 
-        <activity android:name=".ui.activities.SettingsActivity"/>
+        <activity android:name="com.madewithlove.daybalance.ui.activities.SettingsActivity"/>
 
-        <activity android:name=".ui.activities.DebugSettingsActivity"/>
+        <activity android:name="com.madewithlove.daybalance.ui.activities.DebugSettingsActivity"/>
 
-        <activity android:name=".ui.activities.WebPageActivity"/>
+        <activity android:name="com.madewithlove.daybalance.ui.activities.WebPageActivity"/>
 
-        <activity android:name=".ui.activities.SplashActivity" android:theme="@style/SplashTheme">
+        <activity android:name="com.madewithlove.daybalance.ui.activities.SplashActivity" android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -43,13 +43,13 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".helpers.push.BootReceiver" android:enabled="true">
+        <receiver android:name="com.madewithlove.daybalance.helpers.push.BootReceiver" android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".helpers.push.AlarmReceiver" android:enabled="true"/>
+        <receiver android:name="com.madewithlove.daybalance.helpers.push.AlarmReceiver" android:enabled="true"/>
     </application>
 
 </manifest>
