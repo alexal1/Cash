@@ -64,6 +64,8 @@
     <string name="debug_settings_add_transactions_to_current_month_subtitle" translatable="false">Add 100 random transactions to each day of this month</string>
     <string name="debug_settings_wipe_title" translatable="false">Wipe database</string>
     <string name="debug_settings_wipe_subtitle" translatable="false">Delete all transactions</string>
+    <string name="debug_settings_crash_title" translatable="false">Force a crash</string>
+    <string name="debug_settings_crash_subtitle" translatable="false">To check if Crashlytics is working</string>
     <string name="debug_settings_done" translatable="false">Done!</string>
     <string name="push_notifications_channel_name">Daily reports</string>
     <string name="push_notifications_channel_description">Your day balance summary</string>

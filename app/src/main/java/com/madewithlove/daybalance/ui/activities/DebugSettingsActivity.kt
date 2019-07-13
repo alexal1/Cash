@@ -11,6 +11,7 @@ import androidx.annotation.StringRes
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.isInvisible
+import com.crashlytics.android.Crashlytics
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
@@ -141,7 +142,7 @@ class DebugSettingsActivity : BaseActivity() {
         val wipeItem = getSettingsItem(
             R.string.debug_settings_wipe_title,
             R.string.debug_settings_wipe_subtitle,
-            false,
+            true,
             controlView = space {
                 id = View.generateViewId()
             },
@@ -149,6 +150,18 @@ class DebugSettingsActivity : BaseActivity() {
                 viewModel.wipe().subscribeOnUi {
                     toast(R.string.debug_settings_done)
                 }.cache(dc)
+            }
+        )
+
+        val crashItem = getSettingsItem(
+            R.string.debug_settings_crash_title,
+            R.string.debug_settings_crash_subtitle,
+            false,
+            controlView = space {
+                id = View.generateViewId()
+            },
+            onClickListener = {
+                Crashlytics.getInstance().crash()
             }
         )
 
@@ -175,6 +188,12 @@ class DebugSettingsActivity : BaseActivity() {
                 START of wipeItem to START of PARENT_ID,
                 END of wipeItem to END of PARENT_ID,
                 TOP of wipeItem to BOTTOM of addTransactionsToCurrentMonthItem
+            )
+
+            connect(
+                START of crashItem to START of PARENT_ID,
+                END of crashItem to END of PARENT_ID,
+                TOP of crashItem to BOTTOM of wipeItem
             )
         }
     }
