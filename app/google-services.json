@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "696141489438",
+    "firebase_url": "https://day-balance.firebaseio.com",
+    "project_id": "day-balance",
+    "storage_bucket": "day-balance.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:696141489438:android:0a3a93bf306c719e",
+        "android_client_info": {
+          "package_name": "com.madewithlove.daybalance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "696141489438-mqb0neco2dbhu8k74ch70kfmeeso7k52.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwpmkNXJV1VThfJ0FBpzlt_1tMzNakt2Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "696141489438-mqb0neco2dbhu8k74ch70kfmeeso7k52.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
