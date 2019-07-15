@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keepattributes *Annotation*                      # Keep Crashlytics annotations
+-keepattributes SourceFile,LineNumberTable        # Keep file names/line numbers
+-keep public class * extends java.lang.Exception  # Keep custom exceptions (opt)

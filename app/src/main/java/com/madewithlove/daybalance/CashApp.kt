@@ -12,13 +12,14 @@ import com.madewithlove.daybalance.di.*
 import com.madewithlove.daybalance.helpers.CashRealmMigration
 import com.madewithlove.daybalance.helpers.push.PushManager
 import com.madewithlove.daybalance.helpers.timber.CashDebugTree
+import com.madewithlove.daybalance.helpers.timber.CashReleaseTree
+import com.madewithlove.daybalance.helpers.timber.KoinLogger
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.subjects.BehaviorSubject
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import timber.log.Timber
 import java.util.*
@@ -74,20 +75,19 @@ class CashApp : Application(), LifecycleObserver {
     override fun onCreate() {
         super.onCreate()
 
-        startKoin {
-            androidLogger()
-            androidContext(this@CashApp)
-            modules(viewModelsModule, sharedPreferencesModule, helpersModule, repositoryModule, cacheModule)
-        }
-
-
-        val tree = when(BuildConfig.BUILD_TYPE) {
+        val tree = when (BuildConfig.BUILD_TYPE) {
             "debug" -> CashDebugTree()
-            "release" -> CashDebugTree() // TODO: create a tree associated with Crashlytics
-            else -> throw IllegalArgumentException("Unexpected build type: ${BuildConfig.BUILD_TYPE}")
+            else -> CashReleaseTree()
         }
 
         Timber.plant(tree)
+
+
+        startKoin {
+            logger(KoinLogger())
+            androidContext(this@CashApp)
+            modules(viewModelsModule, sharedPreferencesModule, helpersModule, repositoryModule, cacheModule)
+        }
 
 
         Realm.init(this)

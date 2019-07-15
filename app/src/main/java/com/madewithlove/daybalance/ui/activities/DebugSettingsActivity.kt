@@ -18,6 +18,8 @@ import com.madewithlove.daybalance.utils.cache
 import com.madewithlove.daybalance.utils.setSelectableBackground
 import com.madewithlove.daybalance.utils.subscribeOnUi
 import com.madewithlove.daybalance.viewmodels.DebugSettingsViewModel
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout._ConstraintLayout
@@ -25,6 +27,7 @@ import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.matchConstraint
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class DebugSettingsActivity : BaseActivity() {
 
@@ -161,7 +164,17 @@ class DebugSettingsActivity : BaseActivity() {
                 id = View.generateViewId()
             },
             onClickListener = {
-                Crashlytics.getInstance().crash()
+                Observable
+                    .fromCallable {
+                        Timber.i("Forced crash for testing Crashlytics...")
+                        Crashlytics.getInstance().crash()
+                    }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doFinally {
+                        toast(R.string.debug_settings_done)
+                    }
+                    .subscribe()
+                    .cache(dc)
             }
         )
 
