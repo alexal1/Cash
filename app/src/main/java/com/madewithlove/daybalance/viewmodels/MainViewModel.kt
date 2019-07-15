@@ -68,6 +68,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
     fun checkCurrencyMismatch() {
         repository
             .query(LastTransactionAnyCurrencySpecification())
+            .filter { it.isNotEmpty() }
             .map { it.first() }
             .subscribe { lastTransaction ->
                 val transactionCurrencyIndex = lastTransaction.account!!.currencyIndex
