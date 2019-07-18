@@ -98,7 +98,7 @@ class DebugSettingsViewModel(application: Application) : AndroidViewModel(applic
 
     private fun addRandomTransactionToDate(date: Date): Completable {
         val transaction = Transaction().apply {
-            amount = random.nextDouble() * 2000 - 1000
+            amount = random.nextDouble() * 200 - 100
 
             val category: Categories = if (isGain()) {
                 random.nextInt(GainCategories.values().count()).let { index ->
