@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.*
 import android.view.SurfaceHolder
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.helpers.CategoriesManager
 import com.madewithlove.daybalance.helpers.CurrencyManager
@@ -60,6 +61,7 @@ class DrawThread(
         textSize = context.dip(12).toFloat()
         isAntiAlias = true
         alpha = (0.8f * 255).toInt()
+        typeface = ResourcesCompat.getFont(context, R.font.currencies)
     }
 
     private val checkedTextPaint = Paint().apply {
@@ -69,6 +71,7 @@ class DrawThread(
         alpha = (0.8f * 255).toInt()
         isFakeBoldText = true
         letterSpacing = 0.02f
+        typeface = ResourcesCompat.getFont(context, R.font.currencies)
     }
 
     private val tapToReturnTextPaint = Paint().apply {

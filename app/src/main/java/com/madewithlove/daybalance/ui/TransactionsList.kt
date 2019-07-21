@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.CHAIN_PACKED
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -194,6 +195,7 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                     id = R.id.transaction_text_amount
                     textColorResource = R.color.white
                     textSize = 16f
+                    typeface = ResourcesCompat.getFont(context, R.font.currencies)
                 }.lparams(wrapContent, wrapContent) {
                     rightMargin = dip(8)
                 }
@@ -293,6 +295,7 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                     id = R.id.transaction_total_amount
                     textSize = 16f
                     textColorResource = R.color.white
+                    typeface = ResourcesCompat.getFont(context, R.font.currencies)
                 }.lparams(wrapContent, wrapContent) {
                     rightMargin = dip(24)
                     topMargin = dip(16)

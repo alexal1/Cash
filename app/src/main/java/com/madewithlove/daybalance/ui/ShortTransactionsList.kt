@@ -8,15 +8,16 @@ import android.view.View
 import android.widget.Space
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.contains
 import androidx.core.view.isVisible
+import com.jakewharton.rxbinding3.view.clicks
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.utils.anko.dashedLineView
 import com.madewithlove.daybalance.utils.getRect
 import com.madewithlove.daybalance.viewmodels.enums.Categories
-import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.Observable
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
@@ -167,6 +168,7 @@ class ShortTransactionsList(context: Context) : _ConstraintLayout(context), Koin
             textSize = 14f
             textColorResource = R.color.smoke
             includeFontPadding = false
+            typeface = ResourcesCompat.getFont(context, R.font.currencies)
         }.lparams(wrapContent, wrapContent)
 
         val line = dashedLineView {

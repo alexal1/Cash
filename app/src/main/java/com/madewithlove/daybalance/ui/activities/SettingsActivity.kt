@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.provider.Settings
+import android.text.SpannableString
 import android.view.Gravity
 import android.view.Gravity.CENTER
 import android.view.View
@@ -17,13 +18,15 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isInvisible
+import com.jakewharton.rxbinding3.view.clicks
 import com.madewithlove.daybalance.BuildConfig
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.utils.*
+import com.madewithlove.daybalance.utils.spans.TypefaceSpan
 import com.madewithlove.daybalance.viewmodels.SettingsViewModel
-import com.jakewharton.rxbinding3.view.clicks
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout._ConstraintLayout
@@ -157,6 +160,7 @@ class SettingsActivity : BaseActivity() {
                 textColorResource = R.color.blue
                 textSize = 16f
                 backgroundColor = Color.TRANSPARENT
+                typeface = ResourcesCompat.getFont(context, R.font.currencies)
 
                 viewModel.currencyObservable.subscribeOnUi {
                     text = it
@@ -371,11 +375,20 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun showCurrenciesDialog() {
+        val typeface = ResourcesCompat.getFont(this, R.font.currencies)!!
+        val typefaceSpan = TypefaceSpan(typeface)
+
         currenciesDialog?.dismiss()
         currenciesDialog = AlertDialog.Builder(this@SettingsActivity)
             .setTitle(R.string.settings_currency_title)
             .setSingleChoiceItems(
-                currencyManager.getCurrenciesList().toTypedArray(),
+                currencyManager.getCurrenciesList()
+                    .map { currency ->
+                        SpannableString(currency).apply {
+                            setSpan(typefaceSpan, 0, currency.length, 0)
+                        }
+                    }
+                    .toTypedArray(),
                 currencyManager.getCurrentCurrencyIndex()
             ) { dialog, index ->
                 currencyManager.setCurrentCurrencyIndex(index)

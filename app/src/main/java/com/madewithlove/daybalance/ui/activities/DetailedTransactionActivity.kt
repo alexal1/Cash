@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.CHAIN_PACKED
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.TextViewCompat
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.helpers.CurrencyManager
@@ -196,6 +197,8 @@ class DetailedTransactionActivity : BaseActivity() {
             gravity = Gravity.CENTER
             maxLines = 1
             includeFontPadding = false
+            typeface = ResourcesCompat.getFont(context, R.font.currencies)
+
             TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
                 this@appCompatTextView,
                 12,

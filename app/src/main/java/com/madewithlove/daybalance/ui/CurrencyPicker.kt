@@ -7,6 +7,7 @@ import android.view.Gravity.CENTER_VERTICAL
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -94,6 +95,7 @@ class CurrencyPicker(context: Context) : _FrameLayout(context) {
                 textColorResource = R.color.white
                 includeFontPadding = false
                 backgroundColor = Color.TRANSPARENT
+                typeface = ResourcesCompat.getFont(context, R.font.currencies)
             }
         }
 

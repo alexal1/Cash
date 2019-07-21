@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.*
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.Gravity.CENTER
 import android.view.MotionEvent
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.contains
 import com.madewithlove.daybalance.CashApp.Companion.PREFS_AUTO_SWITCH_CURRENCY
 import com.madewithlove.daybalance.R
@@ -26,6 +28,7 @@ import com.madewithlove.daybalance.utils.anko.chartView
 import com.madewithlove.daybalance.utils.anko.datesRecyclerView
 import com.madewithlove.daybalance.utils.anko.fancyButton
 import com.madewithlove.daybalance.utils.anko.shortTransactionsList
+import com.madewithlove.daybalance.utils.spans.TypefaceSpan
 import com.madewithlove.daybalance.viewmodels.MainViewModel
 import com.madewithlove.daybalance.viewmodels.NewTransactionViewModel
 import org.jetbrains.anko.*
@@ -233,6 +236,7 @@ class MainActivity : BaseActivity() {
                 gravity = CENTER
                 letterSpacing = 0.01f
                 compoundDrawablePadding = dip(8)
+                typeface = ResourcesCompat.getFont(context, R.font.currencies)
 
                 setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_coins_stack, 0, 0, 0)
 
@@ -353,9 +357,20 @@ class MainActivity : BaseActivity() {
         val transactionCurrency = currencyManager.getCurrenciesList()[transactionCurrencyIndex]
         val checkBox = DialogCheckBox(this@MainActivity, R.string.mismatched_currency_remember_choice)
 
+        val typeface = ResourcesCompat.getFont(this, R.font.currencies)!!
+        val message = SpannableStringBuilder(
+            getString(
+                R.string.mismatched_currency_message,
+                transactionCurrency,
+                transactionCurrency
+            )
+        ).setSpanForAll(transactionCurrency) {
+            TypefaceSpan(typeface)
+        }
+
         mismatchedCurrencyDialog?.dismiss()
         mismatchedCurrencyDialog = AlertDialog.Builder(this@MainActivity)
-            .setMessage(getString(R.string.mismatched_currency_message, transactionCurrency, transactionCurrency))
+            .setMessage(message)
             .setView(checkBox)
             .setPositiveButton(R.string.yes) { dialog, _ ->
                 viewModel.switchToCurrency(transactionCurrencyIndex)
