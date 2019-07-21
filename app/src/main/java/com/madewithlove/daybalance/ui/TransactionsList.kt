@@ -204,6 +204,7 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                     id = R.id.transaction_category
                     textColorResource = R.color.fog_white
                     textSize = 16f
+                    maxLines = 2
                     ellipsize = TextUtils.TruncateAt.END
                 }.lparams(matchConstraint, wrapContent) {
                     verticalChainStyle = CHAIN_PACKED

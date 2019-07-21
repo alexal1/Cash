@@ -2,6 +2,7 @@ package com.madewithlove.daybalance.ui
 
 import android.content.Context
 import android.graphics.Point
+import android.text.TextUtils
 import android.view.Gravity.CENTER
 import android.view.MotionEvent
 import android.view.View
@@ -161,7 +162,9 @@ class ShortTransactionsList(context: Context) : _ConstraintLayout(context), Koin
             textSize = 14f
             textColorResource = R.color.smoke
             includeFontPadding = false
-        }.lparams(wrapContent, wrapContent)
+            maxLines = 1
+            ellipsize = TextUtils.TruncateAt.END
+        }.lparams(matchConstraint, wrapContent)
 
         val amountText = textView {
             id = View.generateViewId()
@@ -192,6 +195,7 @@ class ShortTransactionsList(context: Context) : _ConstraintLayout(context), Koin
         applyConstraintSet {
             connect(
                 START of categoryText to START of space,
+                END of categoryText to START of amountText,
                 TOP of categoryText to TOP of space,
                 BOTTOM of categoryText to BOTTOM of space
             )

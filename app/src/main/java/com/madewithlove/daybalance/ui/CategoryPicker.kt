@@ -2,6 +2,7 @@ package com.madewithlove.daybalance.ui
 
 import android.content.Context
 import android.graphics.Color
+import android.text.TextUtils
 import android.view.Gravity
 import android.view.Gravity.CENTER
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
+import com.jakewharton.rxbinding3.view.globalLayouts
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.helpers.CategoriesManager
 import com.madewithlove.daybalance.utils.ColorUtils
@@ -19,7 +21,6 @@ import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
 import com.madewithlove.daybalance.utils.subscribeOnUi
 import com.madewithlove.daybalance.viewmodels.enums.Categories
-import com.jakewharton.rxbinding3.view.globalLayouts
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
@@ -129,6 +130,8 @@ class CategoryPicker(context: Context) : _FrameLayout(context) {
                 gravity = Gravity.CENTER_VERTICAL
                 includeFontPadding = false
                 backgroundColor = Color.TRANSPARENT
+                maxLines = 2
+                ellipsize = TextUtils.TruncateAt.END
                 setPadding(dip(12), 0, dip(12), 0)
             }
         }
