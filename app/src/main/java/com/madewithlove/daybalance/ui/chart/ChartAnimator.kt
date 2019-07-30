@@ -1,3 +1,7 @@
+/**
+ * Created by Alexander Mishchenko in 2019
+ */
+
 package com.madewithlove.daybalance.ui.chart
 
 import com.madewithlove.daybalance.viewmodels.enums.Categories

@@ -1,3 +1,7 @@
+/**
+ * Created by Alexander Mishchenko in 2019
+ */
+
 package com.madewithlove.daybalance.viewmodels.enums
 
 import com.madewithlove.daybalance.R

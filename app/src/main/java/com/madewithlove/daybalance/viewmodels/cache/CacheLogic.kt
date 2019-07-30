@@ -1,3 +1,7 @@
+/**
+ * Created by Alexander Mishchenko in 2019
+ */
+
 package com.madewithlove.daybalance.viewmodels.cache
 
 import android.os.HandlerThread
