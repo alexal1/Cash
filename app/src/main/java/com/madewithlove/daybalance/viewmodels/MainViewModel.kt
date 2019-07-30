@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.CashApp
 import com.madewithlove.daybalance.CashApp.Companion.PREFS_AUTO_SWITCH_CURRENCY
 import com.madewithlove.daybalance.helpers.CurrencyManager
+import com.madewithlove.daybalance.helpers.TipsManager
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.repository.specifications.LastTransactionAnyCurrencySpecification
@@ -19,6 +20,7 @@ import com.madewithlove.daybalance.viewmodels.cache.CacheLogicAdapter
 import com.madewithlove.daybalance.viewmodels.cache.MomentData
 import com.madewithlove.daybalance.viewmodels.enums.GainCategories
 import com.madewithlove.daybalance.viewmodels.enums.LossCategories
+import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
@@ -35,6 +37,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
     private val repository: TransactionsRepository by inject()
     private val currencyManager: CurrencyManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
+    private val tipsManager: TipsManager by inject()
     private val weekdayFormat = SimpleDateFormat("EEEE", application.currentLocale())
     private val dc = DisposableCache()
 
@@ -49,6 +52,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
     private val showMismatchedCurrencyDialogSubject = PublishSubject.create<Int>()
     val showMismatchedCurrencyDialogObservable: Observable<Int> = showMismatchedCurrencyDialogSubject
 
+    private val tipsDataSubject = BehaviorSubject.create<Maybe<TipsManager.Tip>>()
+    val tipsDataObservable: Observable<Maybe<TipsManager.Tip>> = tipsDataSubject
+
     private var dataLoadingDisposable: Disposable? = null
 
     val currentDate = app.currentDate
@@ -62,6 +68,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
             dataLoadingDisposable?.dispose()
             dataLoadingDisposable = cache.requestDate(date).subscribe(dayDataSubject.onNextConsumer())
         }.cache(dc)
+
+        dayDataSubject
+            .map { tipsManager.getTip(it.transactions) }
+            .subscribe(tipsDataSubject.onNextConsumer())
+            .cache(dc)
     }
 
 
@@ -106,6 +117,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
             .cache(dc)
     }
 
+    fun closeTip(tip: TipsManager.Tip) {
+        tipsDataSubject.onNext(Maybe.empty())
+        tipsManager.closeTip(tip)
+    }
+
     private fun Date.toWeekday(): Weekday {
         val name = weekdayFormat.format(this).capitalize()
         val isToday = DateUtils.isToday(time)
@@ -116,7 +132,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
         gain = GainCategories.values()
             .map { category ->
                 category to filter { transaction ->
-                    transaction.categoryId == category.id
+                    transaction.isGain() && transaction.categoryId == category.id
                 }.sumByDouble { transaction ->
                     transaction.getAmountPerDay()
                 }.toFloat()
@@ -127,7 +143,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
         loss = LossCategories.values()
             .map { category ->
                 category to filter { transaction ->
-                    transaction.categoryId == category.id
+                    !transaction.isGain() && transaction.categoryId == category.id
                 }.sumByDouble { transaction ->
                     transaction.getAmountPerDay()
                 }.toFloat()

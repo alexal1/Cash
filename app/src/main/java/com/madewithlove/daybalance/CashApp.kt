@@ -38,6 +38,7 @@ class CashApp : Application(), LifecycleObserver {
         const val PREFS_AUTO_SWITCH_CURRENCY = "auto_switch_currency"
         const val PREFS_IS_FIRST_LAUNCH = "is_first_launch"
         const val PREFS_SHOW_PUSH_NOTIFICATIONS = "show_push_notifications"
+        const val PREFS_TIPS_PREFIX = "tip_"
 
         const val millisInDay = 24 * 60 * 60 * 1000L
 

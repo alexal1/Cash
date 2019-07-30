@@ -1,5 +1,7 @@
 package com.madewithlove.daybalance.ui.activities
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
@@ -10,8 +12,12 @@ import android.text.SpannableStringBuilder
 import android.view.Gravity.CENTER
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.MeasureSpec.EXACTLY
+import android.view.View.MeasureSpec.UNSPECIFIED
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
+import androidx.core.animation.doOnCancel
+import androidx.core.animation.doOnEnd
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -21,13 +27,11 @@ import com.madewithlove.daybalance.CashApp.Companion.PREFS_AUTO_SWITCH_CURRENCY
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.ui.DialogCheckBox
+import com.madewithlove.daybalance.ui.TipsView
 import com.madewithlove.daybalance.ui.chart.ChartView
 import com.madewithlove.daybalance.ui.dates.DatesRecyclerView
 import com.madewithlove.daybalance.utils.*
-import com.madewithlove.daybalance.utils.anko.chartView
-import com.madewithlove.daybalance.utils.anko.datesRecyclerView
-import com.madewithlove.daybalance.utils.anko.fancyButton
-import com.madewithlove.daybalance.utils.anko.shortTransactionsList
+import com.madewithlove.daybalance.utils.anko.*
 import com.madewithlove.daybalance.utils.spans.TypefaceSpan
 import com.madewithlove.daybalance.viewmodels.MainViewModel
 import com.madewithlove.daybalance.viewmodels.NewTransactionViewModel
@@ -93,10 +97,13 @@ class MainActivity : BaseActivity() {
 
     private lateinit var datesRecyclerView: DatesRecyclerView
     private lateinit var chartView: ChartView
+    private lateinit var tipsView: TipsView
 
     private var touchStart: PointF? = null
     private var calendarDialog: DatePickerDialog? = null
     private var mismatchedCurrencyDialog: AlertDialog? = null
+    private var chartViewMarginAnimator: Animator? = null
+    private var tipVisibilityAnimator: Animator? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -163,6 +170,33 @@ class MainActivity : BaseActivity() {
             val datesSpace = space {
                 id = View.generateViewId()
             }.lparams(matchConstraint, dimen(R.dimen.date_height))
+
+            tipsView = tipsView {
+                id = View.generateViewId()
+                alpha = 0f
+                translationY = -dimen(R.dimen.tip_margin_bottom).toFloat()
+
+                viewModel.tipsDataObservable.subscribeOnUi {
+                    val tip = it.blockingGet()
+                    if (tip != null) {
+                        setData(tip)
+
+                        val widthSpec = View.MeasureSpec.makeMeasureSpec(screenSize().x, EXACTLY)
+                        val heightSpec = View.MeasureSpec.makeMeasureSpec(0, UNSPECIFIED)
+                        this@tipsView.measure(widthSpec, heightSpec)
+
+                        animateChartViewMargin(this@tipsView.measuredHeight) {
+                            animateTipVisibility(1f)
+                        }
+                    } else {
+                        animateTipVisibility(0f) {
+                            animateChartViewMargin(0)
+                        }
+                    }
+                }.cache(dc)
+
+                closeClick.subscribe(viewModel::closeTip).cache(dc)
+            }.lparams(matchConstraint, wrapContent)
 
             chartView = chartView {
                 id = View.generateViewId()
@@ -277,6 +311,12 @@ class MainActivity : BaseActivity() {
                 )
 
                 connect(
+                    START of tipsView to START of PARENT_ID,
+                    END of tipsView to END of PARENT_ID,
+                    TOP of tipsView to BOTTOM of datesSpace
+                )
+
+                connect(
                     START of chartView to START of PARENT_ID,
                     END of chartView to END of PARENT_ID,
                     TOP of chartView to BOTTOM of datesSpace,
@@ -321,7 +361,10 @@ class MainActivity : BaseActivity() {
         when (ev?.action) {
             MotionEvent.ACTION_DOWN -> {
                 if (chartHitRect.contains(Point(ev.x.toInt(), ev.y.toInt()))) {
-                    touchStart = PointF(ev.x, ev.y)
+                    // Another check for chartView's topPadding
+                    if (ev.y >= chartHitRect.top + chartView.topPadding) {
+                        touchStart = PointF(ev.x, ev.y)
+                    }
                 }
             }
 
@@ -394,6 +437,44 @@ class MainActivity : BaseActivity() {
             .show()
     }
 
+    private fun animateChartViewMargin(newMargin: Int, onEnd: () -> Unit = {}) {
+        var onEndCallback: (() -> Unit)? = onEnd
+
+        chartViewMarginAnimator?.cancel()
+        chartViewMarginAnimator = ValueAnimator.ofInt(chartView.topPadding, newMargin).apply {
+            addUpdateListener {
+                chartView.topPadding = it.animatedValue as Int
+            }
+            doOnCancel {
+                onEndCallback = null
+            }
+            doOnEnd {
+                onEndCallback?.invoke()
+            }
+            duration = 200
+            start()
+        }
+    }
+
+    private fun animateTipVisibility(newAlpha: Float, onEnd: () -> Unit = {}) {
+        var onEndCallback: (() -> Unit)? = onEnd
+
+        tipVisibilityAnimator?.cancel()
+        tipVisibilityAnimator = ValueAnimator.ofFloat(tipsView.alpha, newAlpha).apply {
+            addUpdateListener {
+                tipsView.alpha = it.animatedValue as Float
+            }
+            doOnCancel {
+                onEndCallback = null
+            }
+            doOnEnd {
+                onEndCallback?.invoke()
+            }
+            duration = 200
+            start()
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -413,6 +494,8 @@ class MainActivity : BaseActivity() {
         dc.drain()
         calendarDialog?.dismiss()
         mismatchedCurrencyDialog?.dismiss()
+        chartViewMarginAnimator?.cancel()
+        tipVisibilityAnimator?.cancel()
     }
 
 }

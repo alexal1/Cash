@@ -4,6 +4,7 @@ import android.content.Context
 import com.madewithlove.daybalance.CashApp.Companion.CASH_APP_PREFERENCES
 import com.madewithlove.daybalance.helpers.CategoriesManager
 import com.madewithlove.daybalance.helpers.CurrencyManager
+import com.madewithlove.daybalance.helpers.TipsManager
 import com.madewithlove.daybalance.helpers.push.PushManager
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.utils.currentLocale
@@ -33,6 +34,7 @@ val helpersModule = module {
     single { CategoriesManager(androidContext(), get()) }
     single { CurrencyManager(get(), androidContext().currentLocale()) }
     single { PushManager(androidContext()) }
+    single { TipsManager(androidContext(), get()) }
 }
 
 val repositoryModule = module {

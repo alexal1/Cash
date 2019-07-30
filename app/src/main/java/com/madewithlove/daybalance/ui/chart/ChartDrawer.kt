@@ -27,7 +27,7 @@ object ChartDrawer {
         var lastTop = 0f
         GainCategories.values().forEach { gainCategory ->
             val value = chartAnimator.nextGain(gainCategory)
-            val columnHeight = height * value / chartAnimator.maxValue
+            val columnHeight = if (chartAnimator.maxValue == 0f) 0f else height * value / chartAnimator.maxValue
 
             val rect1 = RectF(0f, height - lastTop - columnHeight, sideChartWidth, height - lastTop)
             val rect2 = RectF(columnLeft, height - lastTop - columnHeight, columnRight, height - lastTop)
@@ -41,7 +41,7 @@ object ChartDrawer {
         lastTop = 0f
         LossCategories.values().forEach { lossCategory ->
             val value = chartAnimator.nextLoss(lossCategory)
-            val columnHeight = height * value / chartAnimator.maxValue
+            val columnHeight = if (chartAnimator.maxValue == 0f) 0f else height * value / chartAnimator.maxValue
 
             val rect1 = RectF(width - sideChartWidth, height - lastTop - columnHeight, width, height - lastTop)
             val rect2 = RectF(columnLeft, height - lastTop - columnHeight, columnRight, height - lastTop)

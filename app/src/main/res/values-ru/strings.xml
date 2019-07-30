@@ -64,6 +64,9 @@
     <string name="privacy_policy">Политика конфиденциальности</string>
     <string name="connection_error">Нет соединения</string>
     <string name="real_balance">Реальный баланс: %s</string>
+    <string name="gain_insertion">доход</string>
+    <string name="loss_insertion">расход</string>
+    <string name="tip_empty">В левом столбике будет {gain} за день.\nВ правом столбике будет {loss} за день.\nПосередине будет расход поверх дохода.</string>
 
     <!-- Gain -->
     <string name="gain_inheritance">Наследство</string>

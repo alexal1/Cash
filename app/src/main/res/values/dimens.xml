@@ -2,6 +2,8 @@
 <resources>
     <dimen name="glow_size">8dp</dimen>
     <dimen name="date_height">128dp</dimen>
+    <dimen name="tip_padding">8dp</dimen>
+    <dimen name="tip_margin_bottom">16dp</dimen>
     <dimen name="toolbar_height">56dp</dimen>
     <dimen name="currency_picker_item_size">56dp</dimen>
     <dimen name="category_picker_item_height">48dp</dimen>

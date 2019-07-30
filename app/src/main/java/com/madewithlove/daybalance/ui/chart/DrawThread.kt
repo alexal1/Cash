@@ -41,6 +41,9 @@ class DrawThread(
     @Volatile
     var checkedCategory: Categories? = null
 
+    @Volatile
+    var topPadding = 0
+
     private val currencyManager: CurrencyManager by inject()
     private val categoriesManager: CategoriesManager by inject()
 
@@ -82,6 +85,10 @@ class DrawThread(
     }
 
     private val lineWidth = context.dip(1).toFloat()
+    private val textRect = Rect()
+    private val textNameRect = Rect()
+    private val textValueRect = Rect()
+    private val textTapToReturnRect = Rect()
 
     private var linePaint: Paint? = null
     private var prevFrameTime = 0L
@@ -118,12 +125,12 @@ class DrawThread(
         drawColor(0, PorterDuff.Mode.CLEAR)
 
         // Draw chart background
-        drawRect(0f, 0f, sideChartWidth, height, backgroundPaint)
-        drawRect(width - sideChartWidth, 0f, width, height, backgroundPaint)
+        drawRectWithPadding(0f, 0f, sideChartWidth, height, backgroundPaint)
+        drawRectWithPadding(width - sideChartWidth, 0f, width, height, backgroundPaint)
 
         val columnLeft = (width - centralChartWidth) / 2f
         val columnRight = (width + centralChartWidth) / 2f
-        drawRect(columnLeft, 0f, columnRight, height, backgroundPaint)
+        drawRectWithPadding(columnLeft, 0f, columnRight, height, backgroundPaint)
 
         chartAnimator?.let { chartAnimator ->
             ChartDrawer.categoriesRects(
@@ -133,15 +140,15 @@ class DrawThread(
                 forEachGain = { category, (rect1, rect2) ->
                     if (checkedCategory == null || checkedCategory == category) {
                         val paint = gainPaints.getValue(category)
-                        drawRect(rect1, paint)
-                        drawRect(rect2, paint)
+                        drawRectWithPadding(rect1, paint)
+                        drawRectWithPadding(rect2, paint)
                     }
                 },
                 forEachLoss = { category, (rect1, rect2) ->
                     if (checkedCategory == null || checkedCategory == category) {
                         val paint = lossPaints.getValue(category)
-                        drawRect(rect1, paint)
-                        drawRect(rect2, paint)
+                        drawRectWithPadding(rect1, paint)
+                        drawRectWithPadding(rect2, paint)
                     }
                 }
             )
@@ -155,53 +162,48 @@ class DrawThread(
             // Gain
             chartAnimator?.let { chartAnimator ->
                 val gain = currencyManager.formatMoney(chartAnimator.totalGain)
-                val textRect = Rect()
                 textPaint.getTextBounds(gain, 0, gain.length, textRect)
                 val top = minOf(
                     height * (1f - chartAnimator.totalGain / chartAnimator.maxValue) + textRect.height(),
                     height - textRect.height()
                 )
                 val left = sideChartWidth + TEXT_PADDING * width
-                drawText(gain, left, top, textPaint)
+                drawTextWithPadding(gain, left, top, textPaint, textRect)
             }
 
             // Loss
             chartAnimator?.let { chartAnimator ->
                 val loss = currencyManager.formatMoney(chartAnimator.totalLoss)
-                val textRect = Rect()
                 textPaint.getTextBounds(loss, 0, loss.length, textRect)
                 val top = minOf(
                     height * (1f - chartAnimator.totalLoss / chartAnimator.maxValue) + textRect.height(),
                     height - textRect.height()
                 )
                 val left = width - sideChartWidth - textRect.width() - TEXT_PADDING * width
-                drawText(loss, left, top, textPaint)
+                drawTextWithPadding(loss, left, top, textPaint, textRect)
             }
         } else {
             checkedCategory?.let { checkedCategory ->
                 val textName = context.getString(checkedCategory.stringRes)
-                val textNameRect = Rect()
                 checkedTextPaint.getTextBounds(textName, 0, textName.length, textNameRect)
 
                 val textValue = currencyManager.formatMoney(chartAnimator?.getCurrentValue(checkedCategory))
-                val textValueRect = Rect()
                 checkedTextPaint.getTextBounds(textValue, 0, textValue.length, textValueRect)
 
                 val textTapToReturn = context.getString(R.string.tap_to_return)
-                val textTapToReturnRect = Rect()
                 tapToReturnTextPaint.getTextBounds(textTapToReturn, 0, textTapToReturn.length, textTapToReturnRect)
 
                 val textNameTop = (height - textNameRect.height() - textValueRect.height()) / 2f
                 val textNameLeft = (width - textNameRect.width()) / 2f
-                drawText(textName, textNameLeft, textNameTop, checkedTextPaint)
+                drawTextWithPadding(textName, textNameLeft, textNameTop, checkedTextPaint, textNameRect)
 
                 val textValueTop = textNameTop + CHECKED_TEXT_PADDING * height + textNameRect.height()
                 val textValueLeft = (width - textValueRect.width()) / 2f
-                drawText(textValue, textValueLeft, textValueTop, checkedTextPaint)
+                drawTextWithPadding(textValue, textValueLeft, textValueTop, checkedTextPaint, textValueRect)
 
                 val textTapToReturnTop = textValueTop + TAP_TO_RETURN_TEXT_PADDING * height + textValueRect.height()
                 val textTapToReturnLeft = (width - textTapToReturnRect.width()) / 2f
-                drawText(textTapToReturn, textTapToReturnLeft, textTapToReturnTop, tapToReturnTextPaint)
+                drawTextWithPadding(textTapToReturn, textTapToReturnLeft, textTapToReturnTop, tapToReturnTextPaint, textTapToReturnRect)
             }
         }
     }
@@ -248,6 +250,23 @@ class DrawThread(
         }
 
         return linePaint!!
+    }
+
+    private fun Canvas.drawRectWithPadding(left: Float, top: Float, right: Float, bottom: Float, paint: Paint) {
+        if (top == bottom || left == right) {
+            return
+        }
+
+        drawRect(left, top + topPadding.toFloat(), right, maxOf(bottom, topPadding.toFloat()), paint)
+    }
+
+    private fun Canvas.drawRectWithPadding(rect: RectF, paint: Paint) {
+        drawRectWithPadding(rect.left, rect.top, rect.right, rect.bottom, paint)
+    }
+
+    private fun Canvas.drawTextWithPadding(text: String, left: Float, top: Float, paint: Paint, rect: Rect) {
+        val maxTop = height.toFloat() - rect.height()
+        drawText(text, left, minOf(top + topPadding.toFloat(), maxTop), paint)
     }
 
 }

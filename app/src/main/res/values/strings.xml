@@ -76,6 +76,9 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="connection_error">No connection</string>
     <string name="real_balance">Real balance: %s</string>
+    <string name="gain_insertion">income</string>
+    <string name="loss_insertion">expense</string>
+    <string name="tip_empty">The left bar shows {gain}.\nThe right bar shows {loss}.\nThe central bar shows expense over income.</string>
 
     <!-- Gain -->
     <string name="gain_inheritance">Inheritance</string>

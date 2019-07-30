@@ -31,6 +31,13 @@ class ChartView(context: Context) : SurfaceView(context), SurfaceHolder.Callback
         }
     }
 
+    @Volatile
+    var topPadding = 0
+        set(value) {
+            field = value
+            drawThread?.topPadding = value
+        }
+
     private var drawThread: DrawThread? = null
     private var lastChartAnimator: ChartAnimator? = null
 
@@ -44,6 +51,7 @@ class ChartView(context: Context) : SurfaceView(context), SurfaceHolder.Callback
         drawThread = DrawThread(holder, context, LATENCY).apply {
             chartAnimator = lastChartAnimator
             isRunning = true
+            topPadding = this@ChartView.topPadding
             start()
         }
     }

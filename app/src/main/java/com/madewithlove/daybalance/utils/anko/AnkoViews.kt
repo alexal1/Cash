@@ -3,10 +3,10 @@ package com.madewithlove.daybalance.utils.anko
 import android.app.Activity
 import android.view.ViewManager
 import androidx.appcompat.widget.AppCompatTextView
+import com.google.android.material.tabs.TabLayout
 import com.madewithlove.daybalance.ui.*
 import com.madewithlove.daybalance.ui.chart.ChartView
 import com.madewithlove.daybalance.ui.dates.DatesRecyclerView
-import com.google.android.material.tabs.TabLayout
 import org.jetbrains.anko.custom.ankoView
 
 inline fun ViewManager.fancyButton(init: FancyButton.() -> Unit = {}): FancyButton {
@@ -63,4 +63,8 @@ inline fun ViewManager.dashedLineView(init: DashedLineView.() -> Unit = {}): Das
 
 inline fun ViewManager.datesRecyclerView(init: DatesRecyclerView.() -> Unit = {}): DatesRecyclerView {
     return ankoView({ DatesRecyclerView(it) }, theme = 0, init = init)
+}
+
+inline fun ViewManager.tipsView(init: TipsView.() -> Unit = {}): TipsView {
+    return ankoView({ TipsView(it) }, theme = 0, init = init)
 }
