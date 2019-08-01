@@ -77,6 +77,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
             .map { tipsManager.getTip(it.transactions) }
             .subscribe(tipsDataSubject.onNextConsumer())
             .cache(dc)
+
+        tipsManager.resetObservable.subscribe {
+            val lastDayData = dayDataSubject.value ?: return@subscribe
+            val lastTip = tipsManager.getTip(lastDayData.transactions)
+            tipsDataSubject.onNext(lastTip)
+        }.cache(dc)
     }
 
 

@@ -13,6 +13,7 @@ import com.madewithlove.daybalance.CashApp.Companion.PREFS_AUTO_SWITCH_CURRENCY
 import com.madewithlove.daybalance.CashApp.Companion.PREFS_SHOW_PUSH_NOTIFICATIONS
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.helpers.CurrencyManager
+import com.madewithlove.daybalance.helpers.TipsManager
 import com.madewithlove.daybalance.helpers.push.PushManager
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
@@ -29,6 +30,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     private val cache: CacheLogicAdapter by inject()
     private val sharedPreferences: SharedPreferences by inject()
     private val pushManager: PushManager by inject()
+    private val tipsManager: TipsManager by inject()
     private val dc = DisposableCache()
 
     private val currencyIndexSubject = BehaviorSubject.createDefault(currencyManager.getCurrentCurrencyIndex())
@@ -108,6 +110,10 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         areSettingsChanged = true
 
         return true
+    }
+
+    fun resetTips() {
+        tipsManager.reset()
     }
 
     override fun onCleared() {

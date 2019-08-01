@@ -226,6 +226,26 @@ class SettingsActivity : BaseActivity() {
             }
         )
 
+        val tipsItem = getSettingsItem(
+            R.string.settings_tips_title,
+            R.string.settings_tips_subtitle,
+            showSeparator = true,
+            throttleClicks = true,
+            controlView = textView {
+                id = View.generateViewId()
+                textColorResource = R.color.blue
+                textSize = 14f
+                textResource = R.string.settings_tips_reset
+                backgroundColor = Color.TRANSPARENT
+            }.lparams(wrapContent, wrapContent) {
+                rightMargin = dip(24)
+            },
+            onClickListener = {
+                viewModel.resetTips()
+                toast(R.string.settings_tips_have_been_reset)
+            }
+        )
+
         val privacyPolicyItem = getSettingsItem(
             R.string.settings_privacy_policy_title,
             R.string.settings_privacy_policy_subtitle,
@@ -276,9 +296,15 @@ class SettingsActivity : BaseActivity() {
             )
 
             connect(
+                START of tipsItem to START of PARENT_ID,
+                END of tipsItem to END of PARENT_ID,
+                TOP of tipsItem to BOTTOM of pushNotificationsItem
+            )
+
+            connect(
                 START of privacyPolicyItem to START of PARENT_ID,
                 END of privacyPolicyItem to END of PARENT_ID,
-                TOP of privacyPolicyItem to BOTTOM of pushNotificationsItem
+                TOP of privacyPolicyItem to BOTTOM of tipsItem
             )
 
             connect(
