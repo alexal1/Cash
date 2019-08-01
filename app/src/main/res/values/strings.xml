@@ -79,6 +79,14 @@
     <string name="gain_insertion">income</string>
     <string name="loss_insertion">expense</string>
     <string name="tip_empty">The left bar shows {gain}.\nThe right bar shows {loss}.\nThe central bar shows expense over income.</string>
+    <string name="tip_single_loss_on_this_day_one_day_long">You\'ve added {loss} in the amount of {value}. Add some {gain} to see your day balance.</string>
+    <string name="tip_single_gain_on_this_day_one_day_long">You\'ve added {gain} in the amount of {value}. Add some {loss} to see your day balance.</string>
+    <string name="tip_single_loss_on_this_day_many_days_long">You\'ve added a {period} {loss}. Transactions are created for each of these days in the amount of {amount} / {period} = {amount_per_day}. Add some {gain} to see your day balance.</string>
+    <string name="tip_single_gain_on_this_day_many_days_long">You\'ve added a {period} {gain}. Transactions are created for each of these days in the amount of {amount} / {period} = {amount_per_day}. Add some {loss} to see your day balance.</string>
+    <string name="tip_losses_from_other_days_only">On this day you utilize expenses made earlier in the amount of {value}. Add some {gain} to see your day balance.</string>
+    <string name="tip_gains_from_other_days_only">On this day you obtain incomes earned earlier in the amount of {value}. Add some {loss} to see your day balance.</string>
+    <string name="tip_losses_and_gains_positive_result">You have {gains_value} income for this day and {losses_value} expense for this day. Your net income for this day is {total_value}.</string>
+    <string name="tip_losses_and_gains_negative_result">You have {gains_value} income for this day and {losses_value} expense for this day. Your net loss for this day is {total_value}.</string>
 
     <!-- Gain -->
     <string name="gain_inheritance">Inheritance</string>

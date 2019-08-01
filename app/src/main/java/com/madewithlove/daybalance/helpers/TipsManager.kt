@@ -37,13 +37,39 @@ class TipsManager(context: Context, private val sharedPreferences: SharedPrefere
                     && !transactions[0].isGain()
                     && transactions[0].getDaysCount() > 1
                     && transactions[0].startTimestamp == currentTimestamp
-            -> Tip.SingleLossOnThisDayManyDaysLong(transactions[0].getAmountPerDay())
+            -> Tip.SingleLossOnThisDayManyDaysLong(transactions[0])
 
             transactions.size == 1
                     && transactions[0].isGain()
                     && transactions[0].getDaysCount() > 1
                     && transactions[0].startTimestamp == currentTimestamp
-            -> Tip.SingleGainOnThisDayManyDaysLong(transactions[0].getAmountPerDay())
+            -> Tip.SingleGainOnThisDayManyDaysLong(transactions[0])
+
+            transactions.all { !it.isGain() }
+                    && transactions.all { it.startTimestamp != currentTimestamp }
+            -> Tip.LossesFromOtherDaysOnly(transactions.sumByDouble { it.getAmountPerDay() })
+
+            transactions.all { it.isGain() }
+                    && transactions.all { it.startTimestamp != currentTimestamp }
+            -> Tip.GainsFromOtherDaysOnly(transactions.sumByDouble { it.getAmountPerDay() })
+
+            transactions.any { !it.isGain() }
+                    && transactions.any { it.isGain() }
+                    && (transactions.filter { it.isGain() }.sumByDouble { it.getAmountPerDay() } - transactions.filter { !it.isGain() }.sumByDouble { it.getAmountPerDay() } >= 0)
+            -> Tip.LossesAndGainsPositiveResult(
+                lossesSum = transactions.filter { !it.isGain() }.sumByDouble { it.getAmountPerDay() },
+                gainsSum = transactions.filter { it.isGain() }.sumByDouble { it.getAmountPerDay() },
+                totalSum = transactions.filter { it.isGain() }.sumByDouble { it.getAmountPerDay() } - transactions.filter { !it.isGain() }.sumByDouble { it.getAmountPerDay() }
+            )
+
+            transactions.any { !it.isGain() }
+                    && transactions.any { it.isGain() }
+                    && (transactions.filter { it.isGain() }.sumByDouble { it.getAmountPerDay() } - transactions.filter { !it.isGain() }.sumByDouble { it.getAmountPerDay() } < 0)
+            -> Tip.LossesAndGainsNegativeResult(
+                lossesSum = transactions.filter { !it.isGain() }.sumByDouble { it.getAmountPerDay() },
+                gainsSum = transactions.filter { it.isGain() }.sumByDouble { it.getAmountPerDay() },
+                totalSum = transactions.filter { it.isGain() }.sumByDouble { it.getAmountPerDay() } - transactions.filter { !it.isGain() }.sumByDouble { it.getAmountPerDay() }
+            )
 
             else -> null
         } ?: return Maybe.empty()
@@ -84,12 +110,28 @@ class TipsManager(context: Context, private val sharedPreferences: SharedPrefere
             override val name: String = "single_gain_on_this_day_one_day_long"
         }
 
-        class SingleLossOnThisDayManyDaysLong(val amount: Double) : Tip() {
+        class SingleLossOnThisDayManyDaysLong(val transaction: Transaction) : Tip() {
             override val name: String = "single_loss_on_this_day_many_days_long"
         }
 
-        class SingleGainOnThisDayManyDaysLong(val amount: Double) : Tip() {
+        class SingleGainOnThisDayManyDaysLong(val transaction: Transaction) : Tip() {
             override val name: String = "single_gain_on_this_day_many_days_long"
+        }
+
+        class LossesFromOtherDaysOnly(val sum: Double) : Tip() {
+            override val name: String = "losses_from_other_days_only"
+        }
+
+        class GainsFromOtherDaysOnly(val sum: Double) : Tip() {
+            override val name: String = "gains_from_other_days_only"
+        }
+
+        class LossesAndGainsPositiveResult(val lossesSum: Double, val gainsSum: Double, val totalSum: Double) : Tip() {
+            override val name: String = "losses_and_gains_positive_result"
+        }
+
+        class LossesAndGainsNegativeResult(val lossesSum: Double, val gainsSum: Double, val totalSum: Double) : Tip() {
+            override val name: String = "losses_and_gains_negative_result"
         }
 
     }

@@ -200,6 +200,14 @@ class MainActivity : BaseActivity() {
                 }.cache(dc)
 
                 closeClick.subscribe(viewModel::closeTip).cache(dc)
+
+                lossClick.subscribeOnUi {
+                    NewTransactionActivity.start(this@MainActivity, NewTransactionViewModel.Type.LOSS)
+                }.cache(dc)
+
+                gainClick.subscribeOnUi {
+                    NewTransactionActivity.start(this@MainActivity, NewTransactionViewModel.Type.GAIN)
+                }.cache(dc)
             }.lparams(matchConstraint, wrapContent)
 
             chartView = chartView {
