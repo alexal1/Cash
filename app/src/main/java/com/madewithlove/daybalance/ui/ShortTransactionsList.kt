@@ -17,11 +17,15 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.contains
 import androidx.core.view.isVisible
 import com.jakewharton.rxbinding3.view.clicks
+import com.jakewharton.rxbinding3.view.layoutChanges
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.repository.entities.Transaction
+import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.anko.dashedLineView
+import com.madewithlove.daybalance.utils.cache
 import com.madewithlove.daybalance.utils.getRect
+import com.madewithlove.daybalance.utils.subscribeOnUi
 import com.madewithlove.daybalance.viewmodels.enums.Categories
 import io.reactivex.Observable
 import org.jetbrains.anko.*
@@ -36,11 +40,11 @@ import java.util.concurrent.TimeUnit
 class ShortTransactionsList(context: Context) : _ConstraintLayout(context), KoinComponent {
 
     private val currencyManager: CurrencyManager by inject()
-
     private val block0: Block
     private val block1: Block
     private val showAllView: View
     private val stubView: View
+    private val dc = DisposableCache()
 
 
     init {
@@ -168,7 +172,7 @@ class ShortTransactionsList(context: Context) : _ConstraintLayout(context), Koin
             includeFontPadding = false
             maxLines = 1
             ellipsize = TextUtils.TruncateAt.END
-        }.lparams(matchConstraint, wrapContent)
+        }.lparams(wrapContent, wrapContent)
 
         val amountText = textView {
             id = View.generateViewId()
@@ -199,7 +203,6 @@ class ShortTransactionsList(context: Context) : _ConstraintLayout(context), Koin
         applyConstraintSet {
             connect(
                 START of categoryText to START of space,
-                END of categoryText to START of amountText,
                 TOP of categoryText to TOP of space,
                 BOTTOM of categoryText to BOTTOM of space
             )
@@ -224,6 +227,24 @@ class ShortTransactionsList(context: Context) : _ConstraintLayout(context), Koin
         }
 
         return Block(space, categoryText, amountText, line)
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        block0.amount.layoutChanges().subscribeOnUi {
+            block0.category.maxWidth = this@ShortTransactionsList.width - block0.amount.width - dip(32)
+        }.cache(dc)
+
+        block1.amount.layoutChanges().subscribeOnUi {
+            block1.category.maxWidth = this@ShortTransactionsList.width - block1.amount.width - dip(32)
+        }.cache(dc)
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+
+        dc.drain()
     }
 
 
