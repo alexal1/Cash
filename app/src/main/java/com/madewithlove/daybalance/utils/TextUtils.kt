@@ -6,13 +6,19 @@ package com.madewithlove.daybalance.utils
 
 import android.text.SpannableStringBuilder
 import android.text.style.CharacterStyle
+import timber.log.Timber
 
 fun String.asSpannableBuilder() = SpannableStringBuilder(this)
 
 fun SpannableStringBuilder.replace(replacement: String, target: String, vararg spans: CharacterStyle): SpannableStringBuilder {
     val index = indexOf(replacement)
 
-    replace(index, index + replacement.length, target)
+    try {
+        replace(index, index + replacement.length, target)
+    } catch (e: IndexOutOfBoundsException) {
+        Timber.e(e, "No replacement \"$replacement\" in the string \"$this\"")
+        return this
+    }
 
     spans.forEach {
         setSpan(it, index, index + target.length, SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE)

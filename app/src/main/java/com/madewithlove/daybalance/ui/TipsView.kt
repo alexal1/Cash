@@ -296,7 +296,7 @@ class TipsView(context: Context) : _ConstraintLayout(context), KoinComponent {
             }
 
             is TipsManager.Tip.GainsFromOtherDaysOnly -> {
-                text.text = SpannableStringBuilder(context.getString(R.string.tip_losses_from_other_days_only))
+                text.text = SpannableStringBuilder(context.getString(R.string.tip_gains_from_other_days_only))
                     .replace(
                         "{value}",
                         currencyManager.formatMoney(tip.sum),
