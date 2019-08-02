@@ -13,6 +13,9 @@ object ChartDrawer {
     const val SIDE_CHART_WIDTH = 0.06f
     const val CENTRAL_CHART_WIDTH = 0.25f
 
+    private val currentLoss = HashMap<LossCategories, Float>()
+    private val currentGain = HashMap<GainCategories, Float>()
+
 
     fun categoriesRects(
         width: Float,
@@ -21,17 +24,33 @@ object ChartDrawer {
         forEachGain: (category: GainCategories, rects: Pair<RectF, RectF>) -> Unit,
         forEachLoss: (category: LossCategories, rects: Pair<RectF, RectF>) -> Unit) {
 
+        // Calculate X coordinates
+
         val sideChartWidth = SIDE_CHART_WIDTH * width
         val centralChartWidth = CENTRAL_CHART_WIDTH * width
 
         val columnLeft = (width - centralChartWidth) / 2f
         val columnRight = (width + centralChartWidth) / 2f
 
+        // Obtain loss and gain values for this frame
+
+        LossCategories.values().forEach { lossCategory ->
+            currentLoss[lossCategory] = chartAnimator.nextLoss(lossCategory)
+        }
+
+        GainCategories.values().forEach { gainCategory ->
+            currentGain[gainCategory] = chartAnimator.nextGain(gainCategory)
+        }
+
         // Draw gains
         var lastTop = 0f
-        GainCategories.values().forEach { gainCategory ->
-            val value = chartAnimator.nextGain(gainCategory)
-            val columnHeight = if (chartAnimator.maxValue == 0f) 0f else height * value / chartAnimator.maxValue
+        for (gainCategory in GainCategories.values()) {
+            val value = currentGain.getValue(gainCategory)
+            if (value == 0f) {
+                continue
+            }
+
+            val columnHeight = height * value / chartAnimator.maxValue
 
             val rect1 = RectF(0f, height - lastTop - columnHeight, sideChartWidth, height - lastTop)
             val rect2 = RectF(columnLeft, height - lastTop - columnHeight, columnRight, height - lastTop)
@@ -43,9 +62,13 @@ object ChartDrawer {
 
         // Draw losses
         lastTop = 0f
-        LossCategories.values().forEach { lossCategory ->
-            val value = chartAnimator.nextLoss(lossCategory)
-            val columnHeight = if (chartAnimator.maxValue == 0f) 0f else height * value / chartAnimator.maxValue
+        for (lossCategory in LossCategories.values()) {
+            val value = currentLoss.getValue(lossCategory)
+            if (value == 0f) {
+                continue
+            }
+
+            val columnHeight = height * value / chartAnimator.maxValue
 
             val rect1 = RectF(width - sideChartWidth, height - lastTop - columnHeight, width, height - lastTop)
             val rect2 = RectF(columnLeft, height - lastTop - columnHeight, columnRight, height - lastTop)

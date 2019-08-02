@@ -167,10 +167,7 @@ class DrawThread(
             chartAnimator?.let { chartAnimator ->
                 val gain = currencyManager.formatMoney(chartAnimator.totalGain)
                 textPaint.getTextBounds(gain, 0, gain.length, textRect)
-                val top = minOf(
-                    height * (1f - chartAnimator.totalGain / chartAnimator.maxValue) + textRect.height(),
-                    height - textRect.height()
-                )
+                val top = height * (1f - chartAnimator.totalGain / chartAnimator.maxValue) + textRect.height()
                 val left = sideChartWidth + TEXT_PADDING * width
                 drawTextWithPadding(gain, left, top, textPaint, textRect)
             }
@@ -179,10 +176,7 @@ class DrawThread(
             chartAnimator?.let { chartAnimator ->
                 val loss = currencyManager.formatMoney(chartAnimator.totalLoss)
                 textPaint.getTextBounds(loss, 0, loss.length, textRect)
-                val top = minOf(
-                    height * (1f - chartAnimator.totalLoss / chartAnimator.maxValue) + textRect.height(),
-                    height - textRect.height()
-                )
+                val top = height * (1f - chartAnimator.totalLoss / chartAnimator.maxValue) + textRect.height()
                 val left = width - sideChartWidth - textRect.width() - TEXT_PADDING * width
                 drawTextWithPadding(loss, left, top, textPaint, textRect)
             }
@@ -257,11 +251,11 @@ class DrawThread(
     }
 
     private fun Canvas.drawRectWithPadding(left: Float, top: Float, right: Float, bottom: Float, paint: Paint) {
-        if (top == bottom || left == right) {
-            return
-        }
+        val compressionCoefficient = (height - topPadding).toFloat() / height.toFloat()
+        val newTop = topPadding.toFloat() + top * compressionCoefficient
+        val newHeight = (bottom - top) * compressionCoefficient
 
-        drawRect(left, top + topPadding.toFloat(), right, maxOf(bottom, topPadding.toFloat()), paint)
+        drawRect(left, newTop, right, newTop + newHeight, paint)
     }
 
     private fun Canvas.drawRectWithPadding(rect: RectF, paint: Paint) {
@@ -269,8 +263,11 @@ class DrawThread(
     }
 
     private fun Canvas.drawTextWithPadding(text: String, left: Float, top: Float, paint: Paint, rect: Rect) {
+        val compressionCoefficient = (height - topPadding).toFloat() / height.toFloat()
+        val newTop = topPadding.toFloat() + top * compressionCoefficient
         val maxTop = height.toFloat() - rect.height()
-        drawText(text, left, minOf(top + topPadding.toFloat(), maxTop), paint)
+
+        drawText(text, left, minOf(newTop, maxTop), paint)
     }
 
 }
