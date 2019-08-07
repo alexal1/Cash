@@ -17,6 +17,7 @@ import com.madewithlove.daybalance.ui.chart.ChartDrawer.SIDE_CHART_WIDTH
 import com.madewithlove.daybalance.viewmodels.enums.Categories
 import com.madewithlove.daybalance.viewmodels.enums.GainCategories
 import com.madewithlove.daybalance.viewmodels.enums.LossCategories
+import org.jetbrains.anko.dimen
 import org.jetbrains.anko.dip
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -88,7 +89,27 @@ class DrawThread(
         alpha = (0.5f * 255).toInt()
     }
 
+    private val diffTextPaint = Paint().apply {
+        color = Color.WHITE
+        textSize = context.dip(12).toFloat()
+        isAntiAlias = true
+        typeface = ResourcesCompat.getFont(context, R.font.currencies)
+        isFakeBoldText = true
+    }
+
+    private val diffBackgroundPaintPositive = Paint().apply {
+        color = ContextCompat.getColor(context, R.color.green)
+        isAntiAlias = true
+    }
+
+    private val diffBackgroundPaintNegative = Paint().apply {
+        color = ContextCompat.getColor(context, R.color.red)
+        isAntiAlias = true
+    }
+
     private val lineWidth = context.dip(1).toFloat()
+    private val diffTextHorizontalPadding = context.dimen(R.dimen.chart_diff_text_horizontal_padding).toFloat()
+    private val diffTextVerticalPadding = context.dimen(R.dimen.chart_diff_text_vertical_padding).toFloat()
     private val textRect = Rect()
     private val textNameRect = Rect()
     private val textValueRect = Rect()
@@ -202,6 +223,57 @@ class DrawThread(
                 val textTapToReturnTop = textValueTop + TAP_TO_RETURN_TEXT_PADDING * height + textValueRect.height()
                 val textTapToReturnLeft = (width - textTapToReturnRect.width()) / 2f
                 drawTextWithPadding(textTapToReturn, textTapToReturnLeft, textTapToReturnTop, tapToReturnTextPaint, textTapToReturnRect)
+            }
+        }
+
+        // Draw diff text
+        chartAnimator?.let { chartAnimator ->
+            val diff = chartAnimator.totalGain - chartAnimator.totalLoss
+            val gainRatio = chartAnimator.totalGain / chartAnimator.maxValue
+            val lossRatio = chartAnimator.totalLoss / chartAnimator.maxValue
+
+            if (diff > 0) {
+                val centerX = (columnRight + width - sideChartWidth) / 2f
+                val centerY = topPadding.toFloat() + (height - topPadding.toFloat()) * (2 - gainRatio - lossRatio) / 2f
+
+                val text = "+ ${currencyManager.formatMoney(diff)}"
+                diffTextPaint.getTextBounds(text, 0, text.length, textRect)
+
+                val bgWidth = textRect.width().toFloat() + diffTextHorizontalPadding * 2
+                val bgHeight = textRect.height().toFloat() + diffTextVerticalPadding * 2
+
+                val bgLeft = centerX - bgWidth / 2f
+                val bgTop = minOf(maxOf(centerY - bgHeight / 2f, topPadding.toFloat()), height - bgHeight)
+                val bgRight = centerX + bgWidth / 2f
+                val bgBottom = bgTop + bgHeight
+
+                drawRoundRect(bgLeft, bgTop, bgRight, bgBottom, bgHeight / 2f, bgHeight / 2f, diffBackgroundPaintPositive)
+
+                val textLeft = centerX - textRect.width() / 2f
+                val textBottom = minOf(maxOf(centerY + textRect.height() / 2f, topPadding.toFloat() + diffTextVerticalPadding + textRect.height()), height - diffTextVerticalPadding)
+
+                drawText(text, textLeft, textBottom, diffTextPaint)
+            } else if (diff < 0) {
+                val centerX = (sideChartWidth + columnLeft) / 2f
+                val centerY = topPadding.toFloat() + (height - topPadding.toFloat()) * (2 - gainRatio - lossRatio) / 2f
+
+                val text = "- ${currencyManager.formatMoney(-diff)}"
+                diffTextPaint.getTextBounds(text, 0, text.length, textRect)
+
+                val bgWidth = textRect.width().toFloat() + diffTextHorizontalPadding * 2
+                val bgHeight = textRect.height().toFloat() + diffTextVerticalPadding * 2
+
+                val bgLeft = centerX - bgWidth / 2f
+                val bgTop = minOf(maxOf(centerY - bgHeight / 2f, topPadding.toFloat()), height - bgHeight)
+                val bgRight = centerX + bgWidth / 2f
+                val bgBottom = bgTop + bgHeight
+
+                drawRoundRect(bgLeft, bgTop, bgRight, bgBottom, bgHeight / 2f, bgHeight / 2f, diffBackgroundPaintNegative)
+
+                val textLeft = centerX - textRect.width() / 2f
+                val textBottom = minOf(maxOf(centerY + textRect.height() / 2f, topPadding.toFloat() + diffTextVerticalPadding + textRect.height()), height - diffTextVerticalPadding)
+
+                drawText(text, textLeft, textBottom, diffTextPaint)
             }
         }
     }
