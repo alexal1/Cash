@@ -73,7 +73,7 @@ class TipsManager(context: Context, private val sharedPreferences: SharedPrefere
             -> Tip.LossesAndGainsNegativeResult(
                 lossesSum = transactions.filter { !it.isGain() }.sumByDouble { it.getAmountPerDay() },
                 gainsSum = transactions.filter { it.isGain() }.sumByDouble { it.getAmountPerDay() },
-                totalSum = transactions.filter { it.isGain() }.sumByDouble { it.getAmountPerDay() } - transactions.filter { !it.isGain() }.sumByDouble { it.getAmountPerDay() }
+                totalSum = transactions.filter { !it.isGain() }.sumByDouble { it.getAmountPerDay() } - transactions.filter { it.isGain() }.sumByDouble { it.getAmountPerDay() }
             )
 
             else -> null
