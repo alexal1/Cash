@@ -84,6 +84,7 @@ class ChartAnimator(
 
         val step = step.gain[category] ?: 0f
         value += decelerator(step, counter)
+        value = maxOf(value, 0f)
         currentGain[category] = value
 
         counter++
@@ -108,6 +109,7 @@ class ChartAnimator(
 
         val step = step.loss[category] ?: 0f
         value += decelerator(step, counter)
+        value = maxOf(value, 0f)
         currentLoss[category] = value
 
         counter++
