@@ -228,6 +228,10 @@ class DrawThread(
 
         // Draw diff text
         chartAnimator?.let { chartAnimator ->
+            if (checkedCategory != null) {
+                return@let
+            }
+
             val diff = chartAnimator.totalGain - chartAnimator.totalLoss
             val gainRatio = chartAnimator.totalGain / chartAnimator.maxValue
             val lossRatio = chartAnimator.totalLoss / chartAnimator.maxValue
