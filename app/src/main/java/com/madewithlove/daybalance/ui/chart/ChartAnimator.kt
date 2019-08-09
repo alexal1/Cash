@@ -16,7 +16,9 @@ class ChartAnimator(
 ) {
 
     @Volatile
-    private var isRunning = true
+    var isRunning = true; private set
+
+    private val finishedCategoriesSet = FinishedCategoriesSet()
 
     private val currentGain = HashMap(prevChartData.gain)
     private val currentLoss = HashMap(prevChartData.loss)
@@ -79,6 +81,7 @@ class ChartAnimator(
         if (counter == framesCount - 1) {
             val finalGain = newChartData.gain[category] ?: 0f
             currentGain[category] = finalGain
+            finishedCategoriesSet.add(category)
             return finalGain
         }
 
@@ -104,6 +107,7 @@ class ChartAnimator(
         if (counter == framesCount - 1) {
             val finalLoss = newChartData.loss[category] ?: 0f
             currentLoss[category] = finalLoss
+            finishedCategoriesSet.add(category)
             return finalLoss
         }
 
@@ -127,6 +131,26 @@ class ChartAnimator(
         currentGain[category] ?: 0f
     } else {
         currentLoss[category] ?: 0f
+    }
+
+
+    private inner class FinishedCategoriesSet : HashSet<Categories>() {
+
+        private val totalCategoriesCount = GainCategories.values().size + LossCategories.values().size
+
+
+        override fun add(element: Categories): Boolean {
+            val wasChanged = super.add(element)
+            if (wasChanged) {
+                // Mark animator as not running if all categories have reached the end of animation
+                if (size == totalCategoriesCount) {
+                    isRunning = false
+                }
+            }
+
+            return wasChanged
+        }
+
     }
 
 }

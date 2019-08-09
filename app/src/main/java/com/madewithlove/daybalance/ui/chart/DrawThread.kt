@@ -26,7 +26,7 @@ class DrawThread(
     private val surfaceHolder: SurfaceHolder,
     private val context: Context,
     private val latency: Long
-) : Thread(), KoinComponent {
+) : Thread("DrawThread"), KoinComponent {
 
     companion object {
 
@@ -120,13 +120,32 @@ class DrawThread(
 
 
     override fun run() {
+        var isCanvasEmpty = true
+        var prevCheckedCategory = checkedCategory
+        var prevTopPadding = topPadding
+
         while (isRunning) {
             val now = System.currentTimeMillis()
             if (now >= prevFrameTime + latency) {
                 prevFrameTime = now
             } else {
+                sleep(prevFrameTime + latency - now)
                 continue
             }
+
+            if (
+                chartAnimator?.isRunning != true
+                && !isCanvasEmpty
+                && prevCheckedCategory == checkedCategory
+                && prevTopPadding == topPadding
+            ) {
+                sleep(latency)
+                continue
+            }
+
+            isCanvasEmpty = false
+            prevCheckedCategory = checkedCategory
+            prevTopPadding = topPadding
 
             var canvas: Canvas? = null
             try {
