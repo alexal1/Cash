@@ -18,6 +18,7 @@ import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.specifications.DaySpecification
 import com.madewithlove.daybalance.ui.activities.SplashActivity
+import com.madewithlove.daybalance.ui.activities.SplashActivity.Companion.OPENED_BY_PUSH
 import com.madewithlove.daybalance.utils.subscribeOnUi
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -43,7 +44,9 @@ class PushManager(private val context: Context) : KoinComponent {
     }
 
     private val pushPendingIntent by lazy {
-        val intent = Intent(context, SplashActivity::class.java)
+        val intent = Intent(context, SplashActivity::class.java).apply {
+            putExtra(OPENED_BY_PUSH, true)
+        }
         PendingIntent.getActivity(context, 0, intent, 0)
     }
 

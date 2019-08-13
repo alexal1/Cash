@@ -6,11 +6,12 @@ package com.madewithlove.daybalance.helpers
 
 import io.realm.DynamicRealm
 import io.realm.RealmMigration
+import timber.log.Timber
 
 class CashRealmMigration : RealmMigration {
 
     override fun migrate(realm: DynamicRealm, oldVersion: Long, newVersion: Long) {
-        TODO()
+        Timber.e("Realm migration missing from v$oldVersion to v$newVersion")
     }
 
 }

@@ -6,6 +6,7 @@ package com.madewithlove.daybalance.di
 
 import android.content.Context
 import com.madewithlove.daybalance.CashApp.Companion.CASH_APP_PREFERENCES
+import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.helpers.CategoriesManager
 import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.helpers.TipsManager
@@ -39,6 +40,7 @@ val helpersModule = module {
     single { CurrencyManager(get(), androidContext().currentLocale()) }
     single { PushManager(androidContext()) }
     single { TipsManager(androidContext(), get()) }
+    single { Analytics(androidContext()) }
 }
 
 val repositoryModule = module {

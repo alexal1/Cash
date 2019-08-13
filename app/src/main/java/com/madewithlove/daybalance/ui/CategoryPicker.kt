@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import com.jakewharton.rxbinding3.view.globalLayouts
 import com.madewithlove.daybalance.R
+import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.helpers.CategoriesManager
 import com.madewithlove.daybalance.utils.ColorUtils
 import com.madewithlove.daybalance.utils.DisposableCache
@@ -33,8 +34,9 @@ import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class CategoryPicker(context: Context) : _FrameLayout(context) {
+class CategoryPicker(context: Context) : _FrameLayout(context), KoinComponent {
 
+    private val analytics: Analytics by inject()
     private val recyclerView: RecyclerView
     private val dc = DisposableCache()
 
@@ -74,7 +76,10 @@ class CategoryPicker(context: Context) : _FrameLayout(context) {
 
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = CategoryAdapter(data, scrollListener)
-        CategorySnapHelper(data) { category -> itemPickedSubject.onNext(category) }.attachToRecyclerView(recyclerView)
+        CategorySnapHelper(data) { category ->
+            analytics.pickCategory(category)
+            itemPickedSubject.onNext(category)
+        }.attachToRecyclerView(recyclerView)
 
         post {
             layoutManager.scrollToPosition(startPos)

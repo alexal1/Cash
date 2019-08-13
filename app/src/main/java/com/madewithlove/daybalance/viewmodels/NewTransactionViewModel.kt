@@ -10,6 +10,7 @@ import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.CashApp
 import com.madewithlove.daybalance.CashApp.Companion.PREFS_DEFAULT_PICKER_CURRENCY_INDEX
+import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.helpers.CategoriesManager
 import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.helpers.enums.Periods
@@ -40,6 +41,7 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
     private val categoriesManager: CategoriesManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
     private val cache: CacheLogicAdapter by inject()
+    private val analytics: Analytics by inject()
     private val defaultCurrencyIndex = getDefaultCurrencyIndex()
     private val amountPattern = Regex("\\d+(\\.\\d+)?")
     private val dc = DisposableCache()
@@ -96,10 +98,13 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
     fun setPeriodIndex(index: Int) {
         val period = getAvailablePeriods()[index]
         categoriesManager.setPeriod(currentCategory, period)
+        analytics.changeCategoryPeriod(currentCategory, period)
         periodSubject.onNext(period)
     }
 
     fun done() {
+        analytics.createTransaction()
+
         val isInputValid = amountSubject.value!!.isValidAmount()
 
         if (isInputValid) {

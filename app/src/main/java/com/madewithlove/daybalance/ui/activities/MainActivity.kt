@@ -29,6 +29,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.contains
 import com.madewithlove.daybalance.CashApp.Companion.PREFS_AUTO_SWITCH_CURRENCY
 import com.madewithlove.daybalance.R
+import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.ui.DialogCheckBox
 import com.madewithlove.daybalance.ui.TipsView
@@ -75,6 +76,7 @@ class MainActivity : BaseActivity() {
     private val viewModel: MainViewModel by viewModel()
     private val currencyManager: CurrencyManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
+    private val analytics: Analytics by inject()
     private val dc = DisposableCache()
     private val maxClickRadius by lazy { dip(10).toFloat() }
     private val chartHitRect by lazy {
@@ -96,6 +98,7 @@ class MainActivity : BaseActivity() {
             }
             .time
 
+        analytics.pickCalendarDate()
         datesRecyclerView.setDate(date)
     }
 

@@ -9,11 +9,14 @@ import android.graphics.PointF
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.core.graphics.contains
+import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.viewmodels.enums.Categories
 import io.reactivex.functions.Consumer
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import timber.log.Timber
 
-class ChartView(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
+class ChartView(context: Context) : SurfaceView(context), SurfaceHolder.Callback, KoinComponent {
 
     companion object {
 
@@ -42,6 +45,7 @@ class ChartView(context: Context) : SurfaceView(context), SurfaceHolder.Callback
             drawThread?.topPadding = value
         }
 
+    private val analytics: Analytics by inject()
     private var drawThread: DrawThread? = null
     private var lastChartAnimator: ChartAnimator? = null
 
@@ -82,7 +86,11 @@ class ChartView(context: Context) : SurfaceView(context), SurfaceHolder.Callback
     fun click(point: PointF) {
         drawThread?.let { drawThread ->
             if (drawThread.checkedCategory == null) {
-                drawThread.checkedCategory = findCategoryByClick(point)
+                val clickedCategory = findCategoryByClick(point)
+                if (clickedCategory != null) {
+                    analytics.pickChartCategory(clickedCategory)
+                }
+                drawThread.checkedCategory = clickedCategory
             } else {
                 drawThread.checkedCategory = null
             }

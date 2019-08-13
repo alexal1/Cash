@@ -7,9 +7,12 @@ package com.madewithlove.daybalance.ui.dates
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.NO_POSITION
+import com.madewithlove.daybalance.helpers.Analytics
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import kotlin.math.abs
 
-class DatesSnapHelper : LinearSnapHelper() {
+class DatesSnapHelper : LinearSnapHelper(), KoinComponent {
 
 
     companion object {
@@ -18,6 +21,8 @@ class DatesSnapHelper : LinearSnapHelper() {
 
     }
 
+
+    private val analytics: Analytics by inject()
 
     var lastPos = -1
 
@@ -29,17 +34,26 @@ class DatesSnapHelper : LinearSnapHelper() {
     ): Int {
         val currentView = findSnapView(layoutManager)
         return if (currentView != null) {
-            val position = layoutManager.getPosition(currentView)
-            return if (position != lastPos) {
-                lastPos = position
-                lastPos
+            val actualPos = layoutManager.getPosition(currentView)
+            val targetPos = if (actualPos != lastPos) {
+                actualPos
             } else {
                 when {
-                    abs(velocityX) <= VELOCITY_MIN -> return lastPos
-                    velocityX < 0 -> --lastPos
-                    else -> ++lastPos
+                    abs(velocityX) <= VELOCITY_MIN -> lastPos
+                    velocityX < 0 -> lastPos - 1
+                    else -> lastPos + 1
                 }
             }
+
+            // Log analytics events
+            if (targetPos > lastPos) {
+                analytics.dateSwipeNext()
+            } else if (targetPos < lastPos) {
+                analytics.dateSwipePrev()
+            }
+
+            lastPos = targetPos
+            lastPos
         } else {
             NO_POSITION
         }

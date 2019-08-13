@@ -7,6 +7,7 @@ package com.madewithlove.daybalance.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.CashApp
+import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.entities.Transaction
@@ -30,6 +31,7 @@ class DayTransactionsViewModel(application: Application) : AndroidViewModel(appl
     private val currencyManager: CurrencyManager by inject()
     private val repository: TransactionsRepository by inject()
     private val cache: CacheLogicAdapter by inject()
+    private val analytics: Analytics by inject()
     private val currentCurrencyIndex get() = currencyManager.getCurrentCurrencyIndex()
     private val dc = DisposableCache()
 
@@ -57,6 +59,8 @@ class DayTransactionsViewModel(application: Application) : AndroidViewModel(appl
 
 
     fun deleteTransaction(transactionId: String) {
+        analytics.deleteTransaction()
+
         Completable
             .mergeArray(
                 cache.clear(),
