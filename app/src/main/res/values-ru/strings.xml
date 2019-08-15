@@ -49,9 +49,9 @@
     <string name="settings_push_notifications_subtitle">Ежедневные отчеты с итоговым балансом за день</string>
     <string name="settings_push_notifications_dialog_message">Пуш-уведмоления этого приложения запрещены в настройках устройства. Открыть настройки?</string>
     <string name="settings_tips_title">Подсказки</string>
-    <string name="settings_tips_subtitle">Нажмите чтобы показать подсказки ещё раз</string>
-    <string name="settings_tips_reset">Сброс</string>
-    <string name="settings_tips_have_been_reset">Подсказки сброшены</string>
+    <string name="settings_tips_subtitle">Нажмите чтобы показать все подсказки заново</string>
+    <string name="settings_tips_reset">Показать все</string>
+    <string name="settings_tips_have_been_reset">Подсказки показаны</string>
     <string name="settings_privacy_policy_title">Политика конфиденциальности</string>
     <string name="settings_privacy_policy_subtitle">Открыть веб-страницу с документом</string>
     <string name="settings_google_play_title">Оставить отзыв</string>
