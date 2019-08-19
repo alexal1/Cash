@@ -24,6 +24,7 @@ import io.reactivex.subjects.PublishSubject
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import java.util.*
+import kotlin.collections.ArrayList
 
 class DayTransactionsViewModel(application: Application) : AndroidViewModel(application), KoinComponent {
 
@@ -36,16 +37,10 @@ class DayTransactionsViewModel(application: Application) : AndroidViewModel(appl
     private val dc = DisposableCache()
 
     private val dayLossTransactionsSubject = BehaviorSubject.create<List<Transaction>>()
-    val dayLossTransactionsObservable: Observable<List<Transaction>> = dayLossTransactionsSubject
-    val dayLossTotalObservable: Observable<Double> = dayLossTransactionsSubject.map {
-        it.sumByDouble { transaction -> transaction.getAmountPerDay() }
-    }
+    val dayLossTransactionsItemsObservable: Observable<List<Item>> = dayLossTransactionsSubject.map(this::toItems)
 
     private val dayGainTransactionsSubject = BehaviorSubject.create<List<Transaction>>()
-    val dayGainTransactionsObservable: Observable<List<Transaction>> = dayGainTransactionsSubject
-    val dayGainTotalObservable: Observable<Double> = dayGainTransactionsSubject.map {
-        it.sumByDouble { transaction -> transaction.getAmountPerDay() }
-    }
+    val dayGainTransactionsItemsObservable: Observable<List<Item>> = dayGainTransactionsSubject.map(this::toItems)
 
     private val activityReadyToDrawSubject = PublishSubject.create<Unit>()
     val activityReadyToDrawListener = activityReadyToDrawSubject.onNextConsumer()
@@ -90,8 +85,68 @@ class DayTransactionsViewModel(application: Application) : AndroidViewModel(appl
             .cache(dc)
     }
 
+    private fun toItems(transactions: List<Transaction>): List<Item> {
+        if (transactions.isEmpty()) {
+            return listOf(Item.NoDataItem())
+        }
+
+        val result = ArrayList<Item>()
+        var prevTimestamp: Long? = null
+        var totalAmount = 0.0
+
+        for (transaction in transactions) {
+            if (transaction.startTimestamp != prevTimestamp) {
+                val dateItem = Item.DateItem(Date(transaction.startTimestamp))
+                result.add(dateItem)
+                prevTimestamp = transaction.startTimestamp
+            }
+
+            val transactionItem = Item.TransactionItem(transaction)
+            result.add(transactionItem)
+
+            totalAmount += transaction.getAmountPerDay()
+        }
+
+        val totalItem = Item.TotalItem(totalAmount)
+        result.add(totalItem)
+
+        return result
+    }
+
     override fun onCleared() {
         dc.drain()
+    }
+
+
+    sealed class Item(val type: Int) {
+
+        companion object {
+            const val TRANSACTION_TYPE = 0
+            const val DATE_TYPE = 1
+            const val TOTAL_TYPE = 2
+            const val NO_DATA_TYPE = 3
+        }
+
+        data class TransactionItem(val transaction: Transaction) : Item(TRANSACTION_TYPE)
+
+        data class DateItem(val date: Date) : Item(DATE_TYPE)
+
+        class TotalItem(val total: Double) : Item(TOTAL_TYPE) {
+            override fun equals(other: Any?): Boolean {
+                return this === other || javaClass == other?.javaClass
+            }
+
+            override fun hashCode(): Int = 0
+        }
+
+        class NoDataItem : Item(NO_DATA_TYPE) {
+            override fun equals(other: Any?): Boolean {
+                return this === other || javaClass == other?.javaClass
+            }
+
+            override fun hashCode(): Int = 0
+        }
+
     }
 
 }

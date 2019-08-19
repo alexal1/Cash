@@ -12,7 +12,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.madewithlove.daybalance.R
-import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.ui.activities.DetailedTransactionActivity
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.anko.transactionsList
@@ -20,8 +19,6 @@ import com.madewithlove.daybalance.utils.cache
 import com.madewithlove.daybalance.utils.screenSize
 import com.madewithlove.daybalance.utils.subscribeOnUi
 import com.madewithlove.daybalance.viewmodels.DayTransactionsViewModel
-import io.reactivex.Observable
-import io.reactivex.functions.BiFunction
 import org.jetbrains.anko.dimen
 import org.jetbrains.anko.frameLayout
 import org.jetbrains.anko.matchParent
@@ -63,35 +60,20 @@ class DayTransactionsFragment : Fragment() {
         transactionsList {
             id = R.id.transactions_list
 
-            val transactionsObservable = if (type == Type.LOSS) {
-                viewModel.dayLossTransactionsObservable
+            val transactionsItemsObservable = if (type == Type.LOSS) {
+                viewModel.dayLossTransactionsItemsObservable
             } else {
-                viewModel.dayGainTransactionsObservable
+                viewModel.dayGainTransactionsItemsObservable
             }
 
-            val transactionsTotal = if (type == Type.LOSS) {
-                viewModel.dayLossTotalObservable
-            } else {
-                viewModel.dayGainTotalObservable
-            }
-
-            Observable
-                .zip(
-                    transactionsObservable,
-                    transactionsTotal,
-                    BiFunction<List<Transaction>, Double, Pair<List<Transaction>, Double>> { transactions, total ->
-                        transactions to total
-                    }
-                )
-                .subscribeOnUi { (transactions, total) ->
-                    progressBar.isVisible = false
-                    setData(transactions, total) { transaction ->
-                        activity?.let {
-                            DetailedTransactionActivity.start(it, transaction)
-                        }
+            transactionsItemsObservable.subscribeOnUi { transactionsItems ->
+                progressBar.isVisible = false
+                setData(transactionsItems) { transaction ->
+                    activity?.let {
+                        DetailedTransactionActivity.start(it, transaction)
                     }
                 }
-                .cache(dc)
+            }.cache(dc)
         }.lparams(matchParent, matchParent)
     }
 

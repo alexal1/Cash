@@ -24,6 +24,11 @@ import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.utils.*
+import com.madewithlove.daybalance.viewmodels.DayTransactionsViewModel
+import com.madewithlove.daybalance.viewmodels.DayTransactionsViewModel.Item.Companion.DATE_TYPE
+import com.madewithlove.daybalance.viewmodels.DayTransactionsViewModel.Item.Companion.NO_DATA_TYPE
+import com.madewithlove.daybalance.viewmodels.DayTransactionsViewModel.Item.Companion.TOTAL_TYPE
+import com.madewithlove.daybalance.viewmodels.DayTransactionsViewModel.Item.Companion.TRANSACTION_TYPE
 import com.madewithlove.daybalance.viewmodels.enums.Categories
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
@@ -33,28 +38,27 @@ import org.jetbrains.anko.constraint.layout.matchConstraint
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import java.text.DateFormat
+import java.text.DateFormat.MEDIUM
 import java.text.DateFormat.SHORT
 import java.util.*
 
 class TransactionsList(context: Context) : RecyclerView(context), KoinComponent {
 
     init {
-        setPadding(0, dimen(R.dimen.day_transactions_list_padding), 0, dimen(R.dimen.day_transactions_list_padding))
         clipToPadding = false
         layoutManager = LinearLayoutManager(context, VERTICAL, false)
         adapter = EmptyAdapter()
     }
 
 
-    fun setData(data: List<Transaction>, total: Double, onTransactionClick: (Transaction) -> Unit) = post {
+    fun setData(data: List<DayTransactionsViewModel.Item>, onTransactionClick: (Transaction) -> Unit) = post {
         if (adapter is EmptyAdapter) {
-            adapter = TransactionsAdapter(data, total, get(), onTransactionClick, context.currentLocale())
+            adapter = TransactionsAdapter(data, get(), onTransactionClick, context.currentLocale())
         } else {
             val transactionsAdapter = adapter as TransactionsAdapter
 
             val oldData = transactionsAdapter.data.toList()
             transactionsAdapter.data = data
-            transactionsAdapter.total = total
 
             val transactionsDiff = TransactionsDiff(oldData, data)
             val diffResult = DiffUtil.calculateDiff(transactionsDiff)
@@ -64,29 +68,21 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
 
 
     private class TransactionsAdapter(
-        var data: List<Transaction>,
-        var total: Double,
+        var data: List<DayTransactionsViewModel.Item>,
         private val currencyManager: CurrencyManager,
         private val onTransactionClick: (Transaction) -> Unit,
         locale: Locale
     ) : RecyclerView.Adapter<ViewHolder>() {
 
 
-        private val dateFormatter by lazy { DateFormat.getDateInstance(SHORT, locale) }
+        private val shortDateFormatter by lazy { DateFormat.getDateInstance(SHORT, locale) }
+        private val mediumDateFormatter by lazy { DateFormat.getDateInstance(MEDIUM, locale) }
 
 
-        override fun getItemViewType(position: Int): Int = if (data.isNotEmpty()) {
-            if (position < data.size) {
-                Type.TRANSACTION.ordinal
-            } else {
-                Type.TOTAL.ordinal
-            }
-        } else {
-            Type.NO_DATA.ordinal
-        }
+        override fun getItemViewType(position: Int): Int = data[position].type
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = when (viewType) {
-            Type.TRANSACTION.ordinal -> {
+            TRANSACTION_TYPE -> {
                 val view = TransactionUI().createView(AnkoContext.create(parent.context, parent))
                 view.setOnClickListener {
                     onTransactionClick(it.tag as Transaction)
@@ -94,12 +90,17 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                 TransactionViewHolder(view)
             }
 
-            Type.TOTAL.ordinal -> {
+            DATE_TYPE -> {
+                val view = DateUI().createView(AnkoContext.create(parent.context, parent))
+                DateViewHolder(view)
+            }
+
+            TOTAL_TYPE -> {
                 val view = TotalUI().createView(AnkoContext.create(parent.context, parent))
                 TotalViewHolder(view)
             }
 
-            Type.NO_DATA.ordinal -> {
+            NO_DATA_TYPE -> {
                 val view = NoDataUI().createView(AnkoContext.create(parent.context, parent))
                 NoDataViewHolder(view)
             }
@@ -107,12 +108,13 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
             else -> throw IllegalArgumentException("Unexpected viewType $viewType")
         }
 
-        override fun getItemCount() = data.size + 1
+        override fun getItemCount() = data.size
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             when (getItemViewType(position)) {
-                Type.TRANSACTION.ordinal -> {
-                    val transaction = data[position]
+                TRANSACTION_TYPE -> {
+                    val transactionItem = data[position] as DayTransactionsViewModel.Item.TransactionItem
+                    val transaction = transactionItem.transaction
 
                     holder as TransactionViewHolder
                     holder.apply {
@@ -136,11 +138,24 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                             periodText.text = itemView.context.getPeriod(transaction)
                         }
 
-                        separator.isInvisible = position == itemCount - 2
+                        separator.isInvisible = data[position + 1].type == TOTAL_TYPE
                     }
                 }
 
-                Type.TOTAL.ordinal -> {
+                DATE_TYPE -> {
+                    val dateItem = data[position] as DayTransactionsViewModel.Item.DateItem
+                    val date = dateItem.date
+
+                    holder as DateViewHolder
+                    holder.apply {
+                        dateText.text = mediumDateFormatter.format(date)
+                    }
+                }
+
+                TOTAL_TYPE -> {
+                    val totalItem = data[position] as DayTransactionsViewModel.Item.TotalItem
+                    val total = totalItem.total
+
                     holder as TotalViewHolder
                     holder.apply {
                         totalAmountText.text = currencyManager.formatMoney(total)
@@ -160,17 +175,14 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                 dateReplacement,
                 dateReplacement
             )
-            val formattedDate1 = dateFormatter.format(transaction.startTimestamp)
-            val formattedDate2 = dateFormatter.format(transaction.endTimestamp)
+            val formattedDate1 = shortDateFormatter.format(transaction.startTimestamp)
+            val formattedDate2 = shortDateFormatter.format(transaction.endTimestamp)
 
             return text
                 .asSpannableBuilder()
                 .replace(dateReplacement, formattedDate1, StyleSpan(Typeface.BOLD))
                 .replace(dateReplacement, formattedDate2, StyleSpan(Typeface.BOLD))
         }
-
-
-        enum class Type { TRANSACTION, TOTAL, NO_DATA }
 
     }
 
@@ -267,6 +279,41 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
 
     }
 
+    private class DateViewHolder(itemView: View) : ViewHolder(itemView) {
+
+        val dateText: TextView = itemView.findViewById(R.id.transaction_date)
+
+    }
+
+    private class DateUI : AnkoComponent<ViewGroup> {
+
+        override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
+            constraintLayout {
+                layoutParams = LayoutParams(matchParent, wrapContent)
+
+                val dateText = textView {
+                    id = R.id.transaction_date
+                    textColorResource = R.color.fog_white
+                    textSize = 16f
+                    isAllCaps = true
+                    typeface = Typeface.DEFAULT_BOLD
+                }.lparams(matchConstraint, wrapContent) {
+                    leftMargin = dip(24)
+                    topMargin = dip(24)
+                }
+
+                applyConstraintSet {
+                    connect(
+                        START of dateText to START of PARENT_ID,
+                        TOP of dateText to TOP of PARENT_ID,
+                        BOTTOM of dateText to BOTTOM of PARENT_ID
+                    )
+                }
+            }
+        }
+
+    }
+
     private class TotalViewHolder(itemView: View) : ViewHolder(itemView) {
 
         val totalAmountText: TextView = itemView.findViewById(R.id.transaction_total_amount)
@@ -335,8 +382,7 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
         override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
             val availableHeight = ctx.screenSize().y -
                     dimen(R.dimen.day_transactions_app_bar_height) -
-                    dimen(R.dimen.day_transactions_tab_layout_height) -
-                    dimen(R.dimen.day_transactions_list_padding) * 2
+                    dimen(R.dimen.day_transactions_tab_layout_height)
 
             textView {
                 layoutParams = LayoutParams(matchParent, maxOf(availableHeight, dimen(R.dimen.day_transactions_item_height)))
@@ -350,32 +396,29 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
     }
 
     private class TransactionsDiff(
-        private val oldData: List<Transaction>,
-        private val newData: List<Transaction>
+        private val oldData: List<DayTransactionsViewModel.Item>,
+        private val newData: List<DayTransactionsViewModel.Item>
     ) : DiffUtil.Callback() {
 
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-            if (oldData.isNotEmpty() && newData.isNotEmpty()) {
-                when {
-                    oldItemPosition < oldData.size && newItemPosition < newData.size -> {
-                        oldData[oldItemPosition].id == newData[newItemPosition].id
-                    }
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldData[oldItemPosition] == newData[newItemPosition]
+        }
 
-                    oldItemPosition == oldData.size && newItemPosition == newData.size -> true
+        override fun getOldListSize(): Int = oldData.size
 
-                    else -> false
-                }
-            } else {
-                true
+        override fun getNewListSize(): Int = newData.size
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldItem = oldData[oldItemPosition]
+            val newItem = newData[newItemPosition]
+
+            if (oldItem.type == TOTAL_TYPE && newItem.type == TOTAL_TYPE) {
+                val oldTotal = (oldItem as DayTransactionsViewModel.Item.TotalItem).total
+                val newTotal = (newItem as DayTransactionsViewModel.Item.TotalItem).total
+                return oldTotal == newTotal
             }
 
-        override fun getOldListSize(): Int = oldData.size + 1
-
-        override fun getNewListSize(): Int = newData.size + 1
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = when {
-            oldData.isNotEmpty() && newData.isNotEmpty() && newItemPosition >= newData.size - 1 -> false
-            else -> true
+            return true
         }
 
     }

@@ -17,6 +17,7 @@
     <item name="transaction_separator" type="id" />
     <item name="transaction_category" type="id" />
     <item name="transaction_period" type="id" />
+    <item name="transaction_date" type="id" />
     <item name="transaction_total_amount" type="id" />
     <item name="settings_scroll_view" type="id" />
     <item name="web_view" type="id" />

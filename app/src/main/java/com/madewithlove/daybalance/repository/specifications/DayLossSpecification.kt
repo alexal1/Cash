@@ -18,7 +18,7 @@ class DayLossSpecification(private val date: Date, private val currencyIndex: In
         .lessThan("amount", 0.0)
         .lessThanOrEqualTo("startTimestamp", date.time)
         .greaterThan("endTimestamp", date.time)
-        .sort("addedTimestamp", Sort.DESCENDING)
+        .sort("startTimestamp", Sort.DESCENDING, "addedTimestamp", Sort.DESCENDING)
         .findAll()
 
 }
