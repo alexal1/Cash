@@ -5,8 +5,11 @@
 package com.madewithlove.daybalance.viewmodels
 
 import android.app.Application
+import android.content.SharedPreferences
+import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.CashApp
+import com.madewithlove.daybalance.CashApp.Companion.PREFS_LOGS_ENABLED
 import com.madewithlove.daybalance.helpers.CategoriesManager
 import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.helpers.enums.getDateIncrement
@@ -41,6 +44,7 @@ class DebugSettingsViewModel(application: Application) : AndroidViewModel(applic
     private val cache: CacheLogicAdapter by inject()
     private val categoriesManager: CategoriesManager by inject()
     private val currencyManager: CurrencyManager by inject()
+    private val sharedPreferences: SharedPreferences by inject()
     private val random = Random()
 
 
@@ -98,6 +102,12 @@ class DebugSettingsViewModel(application: Application) : AndroidViewModel(applic
         .take(1)
         .singleOrError()
         .ignoreElement()
+
+    fun areLogsEnabled(): Boolean = sharedPreferences.getBoolean(PREFS_LOGS_ENABLED, false)
+
+    fun setLogsEnabled(enabled: Boolean) = sharedPreferences.edit {
+        putBoolean(PREFS_LOGS_ENABLED, enabled)
+    }
 
 
     private fun addRandomTransactionToDate(date: Date): Completable {

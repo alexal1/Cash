@@ -163,7 +163,7 @@ class DebugSettingsActivity : BaseActivity() {
         val crashItem = getSettingsItem(
             R.string.debug_settings_crash_title,
             R.string.debug_settings_crash_subtitle,
-            false,
+            true,
             controlView = space {
                 id = View.generateViewId()
             },
@@ -179,6 +179,29 @@ class DebugSettingsActivity : BaseActivity() {
                     }
                     .subscribe()
                     .cache(dc)
+            }
+        )
+
+        val logsEnabledSwitch = switch {
+            id = View.generateViewId()
+            isChecked = viewModel.areLogsEnabled()
+        }.lparams(wrapContent, wrapContent) {
+            rightMargin = dip(16)
+        }
+
+        val logsItem = getSettingsItem(
+            R.string.debug_settings_enable_logs_title,
+            R.string.debug_settings_enable_logs_subtitle,
+            false,
+            controlView = logsEnabledSwitch,
+            onClickListener = {
+                if (logsEnabledSwitch.isChecked) {
+                    viewModel.setLogsEnabled(false)
+                    logsEnabledSwitch.isChecked = false
+                } else {
+                    viewModel.setLogsEnabled(true)
+                    logsEnabledSwitch.isChecked = true
+                }
             }
         )
 
@@ -211,6 +234,12 @@ class DebugSettingsActivity : BaseActivity() {
                 START of crashItem to START of PARENT_ID,
                 END of crashItem to END of PARENT_ID,
                 TOP of crashItem to BOTTOM of wipeItem
+            )
+
+            connect(
+                START of logsItem to START of PARENT_ID,
+                END of logsItem to END of PARENT_ID,
+                TOP of logsItem to BOTTOM of crashItem
             )
         }
     }

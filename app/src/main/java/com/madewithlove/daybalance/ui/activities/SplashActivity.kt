@@ -4,7 +4,11 @@
 
 package com.madewithlove.daybalance.ui.activities
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.View
 import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
@@ -39,6 +43,21 @@ class SplashActivity : BaseActivity() {
         if (isOpenedByPush) {
             analytics.clickOnPush()
         }
+
+        window.decorView.setOnTouchListener(object : View.OnTouchListener {
+            private val gestureDetector = GestureDetector(this@SplashActivity, object : GestureDetector.SimpleOnGestureListener() {
+                override fun onDoubleTap(e: MotionEvent): Boolean {
+                    DebugSettingsActivity.start(this@SplashActivity)
+                    return true
+                }
+            })
+
+            @SuppressLint("ClickableViewAccessibility")
+            override fun onTouch(v: View, event: MotionEvent): Boolean {
+                gestureDetector.onTouchEvent(event)
+                return true
+            }
+        })
     }
 
     override fun onDestroy() {

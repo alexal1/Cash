@@ -43,6 +43,7 @@ class CashApp : Application(), LifecycleObserver {
         const val PREFS_IS_FIRST_LAUNCH = "is_first_launch"
         const val PREFS_SHOW_PUSH_NOTIFICATIONS = "show_push_notifications"
         const val PREFS_TIPS_PREFIX = "tip_"
+        const val PREFS_LOGS_ENABLED = "logs_enabled"
 
         const val millisInDay = 24 * 60 * 60 * 1000L
 
@@ -113,6 +114,14 @@ class CashApp : Application(), LifecycleObserver {
                 putBoolean(PREFS_IS_FIRST_LAUNCH, false)
             }
             pushManager.schedulePushNotifications()
+        }
+
+
+        val areLogsEnabled = sharedPreferences.getBoolean(PREFS_LOGS_ENABLED, false)
+        val isDebugBuild = BuildConfig.BUILD_TYPE == "debug"
+
+        if (!isDebugBuild && areLogsEnabled) {
+            Timber.plant(CashDebugTree())
         }
 
 

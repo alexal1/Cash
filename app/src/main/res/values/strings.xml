@@ -71,6 +71,8 @@
     <string name="debug_settings_crash_title" translatable="false">Force a crash</string>
     <string name="debug_settings_crash_subtitle" translatable="false">To check if Crashlytics is working</string>
     <string name="debug_settings_done" translatable="false">Done!</string>
+    <string name="debug_settings_enable_logs_title" translatable="false">Logs in release build</string>
+    <string name="debug_settings_enable_logs_subtitle" translatable="false">Restart the app after change</string>
     <string name="push_notifications_channel_name">Daily reports</string>
     <string name="push_notifications_channel_description">Your day balance summary</string>
     <string name="push_notification_title_positive">+%s is your net income today</string>
