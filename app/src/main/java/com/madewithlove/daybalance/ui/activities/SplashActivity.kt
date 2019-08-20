@@ -16,6 +16,7 @@ import com.madewithlove.daybalance.utils.subscribeOnUi
 import com.madewithlove.daybalance.viewmodels.SplashViewModel
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class SplashActivity : BaseActivity() {
 
@@ -34,19 +35,24 @@ class SplashActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        Timber.i("SplashActivity created")
+
         viewModel.finishCompletable.subscribeOnUi {
+            Timber.i("Cache data obtained successfully, starting MainActivity...")
             MainActivity.start(this)
             finish()
         }.cache(dc)
 
         val isOpenedByPush = intent.getBooleanExtra(OPENED_BY_PUSH, false)
         if (isOpenedByPush) {
+            Timber.i("SplashActivity is opened by push")
             analytics.clickOnPush()
         }
 
         window.decorView.setOnTouchListener(object : View.OnTouchListener {
             private val gestureDetector = GestureDetector(this@SplashActivity, object : GestureDetector.SimpleOnGestureListener() {
                 override fun onDoubleTap(e: MotionEvent): Boolean {
+                    Timber.i("Double tap on SplashActivity, starting DebugSettingsActivity...")
                     DebugSettingsActivity.start(this@SplashActivity)
                     return true
                 }
@@ -61,6 +67,7 @@ class SplashActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
+        Timber.i("Destroying SplashActivity...")
         dc.drain()
         super.onDestroy()
     }

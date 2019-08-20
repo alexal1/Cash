@@ -47,6 +47,7 @@ import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.matchConstraint
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 import java.util.*
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -115,6 +116,8 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Timber.i("MainActivity created")
 
         if (savedInstanceState == null) {
             viewModel.checkCurrencyMismatch()
@@ -505,12 +508,13 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        Timber.i("Destroying MainActivity...")
         dc.drain()
         calendarDialog?.dismiss()
         mismatchedCurrencyDialog?.dismiss()
         chartViewMarginAnimator?.cancel()
         tipVisibilityAnimator?.cancel()
+        super.onDestroy()
     }
 
 }

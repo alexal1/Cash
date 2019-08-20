@@ -4,6 +4,7 @@
 
 package com.madewithlove.daybalance.repository
 
+import android.os.Handler
 import android.os.HandlerThread
 import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.repository.specifications.NumberSpecification
@@ -12,11 +13,22 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Realm
+import timber.log.Timber
 
 class TransactionsRepository {
 
+    init {
+        Timber.i("Starting RealmThread...")
+    }
+
     private val realmThread = HandlerThread("RealmThread").apply { start() }
     private val realmScheduler = AndroidSchedulers.from(realmThread.looper)
+
+    init {
+        Handler(realmThread.looper).post {
+            Timber.i("RealmThread has been started successfully")
+        }
+    }
 
 
     fun addTransaction(transaction: Transaction): Completable = Completable
@@ -76,7 +88,8 @@ class TransactionsRepository {
             realm().use { realm ->
                 realm.executeTransaction {
                     try {
-                        emitter.onSuccess(realm.copyFromRealm(specification.toRealmResults(realm)))
+                        val result = realm.copyFromRealm(specification.toRealmResults(realm))
+                        emitter.onSuccess(result)
                     } catch (e: Exception) {
                         emitter.onError(e)
                     }
@@ -90,7 +103,8 @@ class TransactionsRepository {
             realm().use { realm ->
                 realm.executeTransaction {
                     try {
-                        emitter.onSuccess(specification.toNumber(realm))
+                        val result = specification.toNumber(realm)
+                        emitter.onSuccess(result)
                     } catch (e: Exception) {
                         emitter.onError(e)
                     }

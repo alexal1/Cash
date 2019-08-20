@@ -122,6 +122,7 @@ class CashApp : Application(), LifecycleObserver {
 
         if (!isDebugBuild && areLogsEnabled) {
             Timber.plant(CashDebugTree())
+            Timber.i("Not a debug build, but logs are enabled in debug settings")
         }
 
 
