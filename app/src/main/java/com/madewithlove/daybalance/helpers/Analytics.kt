@@ -67,6 +67,12 @@ class Analytics(context: Context) {
         }
     }
 
+    fun splashScreenTime(millis: Long) {
+        val seconds = (millis / 1000).toInt()
+        val bundle = bundleOf("seconds" to seconds)
+        firebaseAnalytics.logEvent("splash_screen_time", bundle)
+    }
+
 
     private fun pickLossCategory(lossCategory: LossCategories) {
         val bundle = bundleOf("category_id" to lossCategory.id)

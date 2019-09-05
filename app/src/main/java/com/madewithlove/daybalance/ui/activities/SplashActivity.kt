@@ -34,6 +34,7 @@ class SplashActivity : BaseActivity() {
 
     private val viewModel: SplashViewModel by viewModel()
     private val analytics: Analytics by inject()
+    private val startTime = System.currentTimeMillis()
     private val dc = DisposableCache()
 
     private var timerDisposable: Disposable? = null
@@ -48,6 +49,7 @@ class SplashActivity : BaseActivity() {
             Timber.i("Cache data obtained successfully, starting MainActivity...")
             MainActivity.start(this)
             timerDisposable?.dispose()
+            analytics.splashScreenTime(System.currentTimeMillis() - startTime)
             finish()
         }.cache(dc)
 
