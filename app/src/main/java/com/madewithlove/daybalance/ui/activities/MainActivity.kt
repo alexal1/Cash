@@ -186,25 +186,6 @@ class MainActivity : BaseActivity() {
                 alpha = 0f
                 translationY = -dimen(R.dimen.tip_margin_bottom).toFloat()
 
-                viewModel.tipsDataObservable.subscribeOnUi {
-                    val tip = it.blockingGet()
-                    if (tip != null) {
-                        setData(tip)
-
-                        val widthSpec = View.MeasureSpec.makeMeasureSpec(screenSize().x, EXACTLY)
-                        val heightSpec = View.MeasureSpec.makeMeasureSpec(0, UNSPECIFIED)
-                        this@tipsView.measure(widthSpec, heightSpec)
-
-                        animateChartViewMargin(this@tipsView.measuredHeight) {
-                            animateTipVisibility(1f)
-                        }
-                    } else {
-                        animateTipVisibility(0f) {
-                            animateChartViewMargin(0)
-                        }
-                    }
-                }.cache(dc)
-
                 closeClick.subscribe(viewModel::closeTip).cache(dc)
 
                 lossClick.subscribeOnUi {
@@ -214,7 +195,26 @@ class MainActivity : BaseActivity() {
                 gainClick.subscribeOnUi {
                     NewTransactionActivity.start(this@MainActivity, NewTransactionViewModel.Type.GAIN)
                 }.cache(dc)
-            }.lparams(matchConstraint, wrapContent)
+            }.lparams(matchConstraint, wrapContent).apply {
+                viewModel.tipsDataObservable.subscribeOnUi {
+                    val tip = it.blockingGet()
+                    if (tip != null) {
+                        setData(tip)
+
+                        val widthSpec = View.MeasureSpec.makeMeasureSpec(screenSize().x, EXACTLY)
+                        val heightSpec = View.MeasureSpec.makeMeasureSpec(0, UNSPECIFIED)
+                        this@apply.measure(widthSpec, heightSpec)
+
+                        animateChartViewMargin(this@apply.measuredHeight) {
+                            animateTipVisibility(1f)
+                        }
+                    } else {
+                        animateTipVisibility(0f) {
+                            animateChartViewMargin(0)
+                        }
+                    }
+                }.cache(dc)
+            }
 
             chartView = chartView {
                 id = View.generateViewId()
