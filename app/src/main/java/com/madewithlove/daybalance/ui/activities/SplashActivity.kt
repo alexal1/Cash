@@ -14,9 +14,12 @@ import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
 import com.madewithlove.daybalance.utils.subscribeOnUi
 import com.madewithlove.daybalance.viewmodels.SplashViewModel
+import io.reactivex.Observable
+import io.reactivex.disposables.Disposable
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 class SplashActivity : BaseActivity() {
 
@@ -24,12 +27,16 @@ class SplashActivity : BaseActivity() {
 
         const val OPENED_BY_PUSH = "opened_by_push"
 
+        private const val MAX_TIME_TO_OPEN_MAIN_ACTIVITY = 5L
+
     }
 
 
     private val viewModel: SplashViewModel by viewModel()
     private val analytics: Analytics by inject()
     private val dc = DisposableCache()
+
+    private var timerDisposable: Disposable? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +47,12 @@ class SplashActivity : BaseActivity() {
         viewModel.finishCompletable.subscribeOnUi {
             Timber.i("Cache data obtained successfully, starting MainActivity...")
             MainActivity.start(this)
+            timerDisposable?.dispose()
             finish()
+        }.cache(dc)
+
+        timerDisposable = Observable.timer(MAX_TIME_TO_OPEN_MAIN_ACTIVITY, TimeUnit.SECONDS).subscribe {
+            throw Exception("MainActivity wasn't launched in $MAX_TIME_TO_OPEN_MAIN_ACTIVITY seconds")
         }.cache(dc)
 
         val isOpenedByPush = intent.getBooleanExtra(OPENED_BY_PUSH, false)
