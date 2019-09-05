@@ -9,7 +9,8 @@ import android.content.SharedPreferences
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.graphics.ColorUtils
-import com.madewithlove.daybalance.CashApp.Companion.PREFS_CATEGORIES_PREFIX
+import com.madewithlove.daybalance.CashApp.Companion.PREFS_CATEGORIES_GAIN_PREFIX
+import com.madewithlove.daybalance.CashApp.Companion.PREFS_CATEGORIES_LOSS_PREFIX
 import com.madewithlove.daybalance.CashApp.Companion.PREFS_DEFAULT_GAIN_CATEGORY
 import com.madewithlove.daybalance.CashApp.Companion.PREFS_DEFAULT_LOSS_CATEGORY
 import com.madewithlove.daybalance.R
@@ -110,7 +111,7 @@ class CategoriesManager(context: Context, private val sharedPreferences: SharedP
             return periodFromCache
         }
 
-        val periodFromSharedPrefs = sharedPreferences.getString(PREFS_CATEGORIES_PREFIX + category.id, "")?.takeIf { it.isNotEmpty() }?.let(Periods::valueOf)
+        val periodFromSharedPrefs = sharedPreferences.getString(category.prefix() + category.id, "")?.takeIf { it.isNotEmpty() }?.let(Periods::valueOf)
         if (periodFromSharedPrefs != null) {
             categoriesToPeriods[category] = periodFromSharedPrefs
             return periodFromSharedPrefs
@@ -120,7 +121,7 @@ class CategoriesManager(context: Context, private val sharedPreferences: SharedP
         if (defaultPeriod != null) {
             categoriesToPeriods[category] = defaultPeriod
             sharedPreferences.edit {
-                putString(PREFS_CATEGORIES_PREFIX + category.id, defaultPeriod.name)
+                putString(category.prefix() + category.id, defaultPeriod.name)
             }
             return defaultPeriod
         }
@@ -131,8 +132,14 @@ class CategoriesManager(context: Context, private val sharedPreferences: SharedP
     fun setPeriod(category: Categories, period: Periods) {
         categoriesToPeriods[category] = period
         sharedPreferences.edit {
-            putString(PREFS_CATEGORIES_PREFIX + category.id, period.name)
+            putString(category.prefix() + category.id, period.name)
         }
+    }
+
+    private fun Categories.prefix(): String = if (isGain) {
+        PREFS_CATEGORIES_GAIN_PREFIX
+    } else {
+        PREFS_CATEGORIES_LOSS_PREFIX
     }
 
     private fun getDefaultPeriod(category: Categories): Periods? = when (category) {
