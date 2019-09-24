@@ -85,7 +85,7 @@ class CurrencyManager(private val sharedPreferences: SharedPreferences, private 
         val doubleValue = value.toDouble()
         val absoluteValue = abs(doubleValue)
         when {
-            absoluteValue < 0.01 -> "0"
+            absoluteValue < 0.01 -> formatMoney(doubleValue, currencyIndex)
             doubleValue > 0 -> "+\u00A0${formatMoney(absoluteValue, currencyIndex)}"
             else -> "-\u00A0${formatMoney(absoluteValue, currencyIndex)}"
         }

@@ -283,6 +283,10 @@ class MainActivity : BaseActivity() {
                 viewModel.shortStatisticsObservable.subscribeOnUi { shortStatistics ->
                     setData(shortStatistics)
                 }.cache(dc)
+
+                setOnClickListenerWithThrottle {
+                    // TODO
+                }.cache(dc)
             }.lparams(matchConstraint, dip(48))
 
 

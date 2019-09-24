@@ -75,10 +75,6 @@ class ShortStatisticsView(context: Context) : _ConstraintLayout(context), KoinCo
             topMargin = dip(2)
         }
 
-        setOnClickListener {
-            // TODO
-        }
-
         applyConstraintSet {
             connect(
                 START of statisticsText to START of PARENT_ID,
@@ -137,7 +133,7 @@ class ShortStatisticsView(context: Context) : _ConstraintLayout(context), KoinCo
         while (spansList.isNotEmpty()) {
             when (val string = spansList.poll()!!.toString()) {
                 balanceTarget -> {
-                    val text = "\u00A0\u00A0\u00A0${currencyManager.formatMoneyWithSign(balance)}\u00A0\u00A0\u00A0".toSpannable()
+                    val text = "\u00A0\u00A0\u00A0${currencyManager.formatMoney(balance)}\u00A0\u00A0\u00A0".toSpannable()
                     text.setSpan(
                         ForegroundColorSpan(color(R.color.white_65)),
                         0,
