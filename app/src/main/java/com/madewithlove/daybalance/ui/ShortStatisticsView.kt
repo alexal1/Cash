@@ -12,7 +12,6 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintSet.CHAIN_PACKED
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
@@ -22,15 +21,14 @@ import com.github.iojjj.rcbs.RoundedCornersBackgroundSpan
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.utils.anko.appCompatTextView
-import com.madewithlove.daybalance.utils.blink
 import com.madewithlove.daybalance.utils.color
-import com.madewithlove.daybalance.utils.screenSize
 import com.madewithlove.daybalance.utils.string
 import com.madewithlove.daybalance.viewmodels.MainViewModel
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout._ConstraintLayout
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
+import org.jetbrains.anko.constraint.layout.matchConstraint
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import java.util.*
@@ -51,14 +49,9 @@ class ShortStatisticsView(context: Context) : _ConstraintLayout(context), KoinCo
             textColorResource = R.color.smoke
             textSize = 12f
             letterSpacing = 0.01f
-            compoundDrawablePadding = dip(8)
             typeface = ResourcesCompat.getFont(context, R.font.currencies)
-            includeFontPadding = false
-            maxWidth = context.screenSize().x - 2 * dip(16)
             maxLines = 1
-            gravity = Gravity.CENTER
-
-            setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_coins_stack, 0, 0, 0)
+            gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
 
             TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
                 this@appCompatTextView,
@@ -67,8 +60,9 @@ class ShortStatisticsView(context: Context) : _ConstraintLayout(context), KoinCo
                 1,
                 TypedValue.COMPLEX_UNIT_SP
             )
-        }.lparams(wrapContent, wrapContent) {
-            verticalChainStyle = CHAIN_PACKED
+        }.lparams(matchConstraint, matchConstraint) {
+            marginStart = dip(16)
+            marginEnd = dip(16)
         }
 
         val showFullStatisticsButton = imageView {
@@ -77,7 +71,7 @@ class ShortStatisticsView(context: Context) : _ConstraintLayout(context), KoinCo
 
             setImageResource(R.drawable.ic_expand)
         }.lparams(wrapContent, wrapContent) {
-            verticalChainStyle = CHAIN_PACKED
+            bottomMargin = dip(6)
             topMargin = dip(2)
         }
 
@@ -105,14 +99,7 @@ class ShortStatisticsView(context: Context) : _ConstraintLayout(context), KoinCo
 
     fun setData(shortStatistics: MainViewModel.ShortStatistics) {
         val (balance, month, monthDiff) = shortStatistics
-        statisticsText.blink {
-            // Hack to reset TextView's size as we want to use it with wrap_content
-            statisticsText.text = ""
-            statisticsText.textSize = 12f
-            post {
-                statisticsText.text = generateShortStatistics(balance, month, monthDiff)
-            }
-        }
+        statisticsText.text = generateShortStatistics(balance, month, monthDiff)
     }
 
 
