@@ -10,6 +10,7 @@ import com.madewithlove.daybalance.CashApp.Companion.PREFS_CURRENT_CURRENCY_INDE
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.util.*
+import kotlin.math.abs
 
 class CurrencyManager(private val sharedPreferences: SharedPreferences, private val locale: Locale) {
 
@@ -75,7 +76,19 @@ class CurrencyManager(private val sharedPreferences: SharedPreferences, private 
     }
 
     fun formatMoney(value: Number?, currencyIndex: Int = getCurrentCurrencyIndex()) = if (value != null) {
-        "${decimalFormat.format(value)} ${currenciesList[currencyIndex]}"
+        "${decimalFormat.format(value)}\u00A0${currenciesList[currencyIndex]}"
+    } else {
+        "0"
+    }
+
+    fun formatMoneyWithSign(value: Number?, currencyIndex: Int = getCurrentCurrencyIndex()) = if (value != null) {
+        val doubleValue = value.toDouble()
+        val absoluteValue = abs(doubleValue)
+        when {
+            absoluteValue < 0.01 -> "0"
+            doubleValue > 0 -> "+\u00A0${formatMoney(absoluteValue, currencyIndex)}"
+            else -> "-\u00A0${formatMoney(absoluteValue, currencyIndex)}"
+        }
     } else {
         "0"
     }

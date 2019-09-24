@@ -13,6 +13,8 @@
     <color name="fog_white">#9292AD</color>
     <color name="white">#FFFFFF</color>
     <color name="white_80">#CCFFFFFF</color>
+    <color name="white_70">#B3FFFFFF</color>
+    <color name="white_65">#A6FFFFFF</color>
     <color name="white_60">#66FFFFFF</color>
     <color name="blue">#79A1E0</color>
     <color name="blue_80">#CC79A1E0</color>

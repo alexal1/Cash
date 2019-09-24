@@ -6,8 +6,14 @@ package com.madewithlove.daybalance.utils
 
 import android.content.Context
 import android.graphics.Point
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.DisplayMetrics
+import android.view.View
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import org.jetbrains.anko.windowManager
 import java.util.*
 
@@ -32,3 +38,15 @@ fun Context.currentLocale(): Locale =
         @Suppress("DEPRECATION")
         resources.configuration.locale
     }
+
+fun Context.color(@ColorRes colorRes: Int): Int = ContextCompat.getColor(this, colorRes)
+
+fun View.color(@ColorRes colorRes: Int): Int = context.color(colorRes)
+
+fun Context.drawable(@DrawableRes drawableRes: Int): Drawable = ContextCompat.getDrawable(this, drawableRes)!!
+
+fun View.drawable(@DrawableRes drawableRes: Int): Drawable = context.drawable(drawableRes)
+
+fun Context.string(@StringRes stringRes: Int): String = getString(stringRes)
+
+fun View.string(@StringRes stringRes: Int): String = context.getString(stringRes)

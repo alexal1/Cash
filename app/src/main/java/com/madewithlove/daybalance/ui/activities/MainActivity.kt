@@ -10,10 +10,12 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.*
+import android.graphics.PixelFormat
+import android.graphics.Point
+import android.graphics.PointF
+import android.graphics.Rect
 import android.os.Bundle
 import android.text.SpannableStringBuilder
-import android.view.Gravity.CENTER
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.MeasureSpec.EXACTLY
@@ -275,27 +277,13 @@ class MainActivity : BaseActivity() {
                 rightMargin = dip(4)
             }
 
-            val realBalanceBackground = view {
+            val shortStatisticsView = shortStatisticsView {
                 id = View.generateViewId()
-                backgroundResource = R.color.soft_dark
-            }.lparams(matchConstraint, dip(32))
 
-            val realBalanceText = textView {
-                id = View.generateViewId()
-                backgroundColor = Color.TRANSPARENT
-                textColorResource = R.color.smoke
-                textSize = 12f
-                gravity = CENTER
-                letterSpacing = 0.01f
-                compoundDrawablePadding = dip(8)
-                typeface = ResourcesCompat.getFont(context, R.font.currencies)
-
-                setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_coins_stack, 0, 0, 0)
-
-                viewModel.realBalanceObservable.subscribeOnUi { realBalance ->
-                    text = getString(R.string.real_balance, realBalance)
+                viewModel.shortStatisticsObservable.subscribeOnUi { shortStatistics ->
+                    setData(shortStatistics)
                 }.cache(dc)
-            }.lparams(wrapContent, wrapContent)
+            }.lparams(matchConstraint, dip(48))
 
 
             applyConstraintSet {
@@ -350,26 +338,19 @@ class MainActivity : BaseActivity() {
                 connect(
                     START of buttonGain to START of PARENT_ID,
                     END of buttonGain to START of buttonLoss,
-                    BOTTOM of buttonGain to TOP of realBalanceBackground
+                    BOTTOM of buttonGain to TOP of shortStatisticsView
                 )
 
                 connect(
                     START of buttonLoss to END of buttonGain,
                     END of buttonLoss to END of PARENT_ID,
-                    BOTTOM of buttonLoss to TOP of realBalanceBackground
+                    BOTTOM of buttonLoss to TOP of shortStatisticsView
                 )
 
                 connect(
-                    START of realBalanceBackground to START of PARENT_ID,
-                    END of realBalanceBackground to END of PARENT_ID,
-                    BOTTOM of realBalanceBackground to BOTTOM of PARENT_ID
-                )
-
-                connect(
-                    START of realBalanceText to START of realBalanceBackground,
-                    END of realBalanceText to END of realBalanceBackground,
-                    TOP of realBalanceText to TOP of realBalanceBackground,
-                    BOTTOM of realBalanceText to BOTTOM of realBalanceBackground
+                    START of shortStatisticsView to START of PARENT_ID,
+                    END of shortStatisticsView to END of PARENT_ID,
+                    BOTTOM of shortStatisticsView to BOTTOM of PARENT_ID
                 )
             }
         }

@@ -6,10 +6,7 @@ package com.madewithlove.daybalance.ui
 
 import android.content.Context
 import android.graphics.Point
-import android.graphics.drawable.InsetDrawable
-import android.text.SpannableStringBuilder
 import android.text.TextUtils
-import android.text.style.ImageSpan
 import android.view.Gravity.CENTER
 import android.view.MotionEvent
 import android.view.View
@@ -24,11 +21,8 @@ import com.jakewharton.rxbinding3.view.clicks
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.repository.entities.Transaction
-import com.madewithlove.daybalance.utils.add
 import com.madewithlove.daybalance.utils.anko.dashedLineView
-import com.madewithlove.daybalance.utils.drawable
 import com.madewithlove.daybalance.utils.getRect
-import com.madewithlove.daybalance.utils.string
 import com.madewithlove.daybalance.viewmodels.enums.Categories
 import io.reactivex.Observable
 import org.jetbrains.anko.*
@@ -59,12 +53,6 @@ class ShortTransactionsList(context: Context) : _ConstraintLayout(context), Koin
             textColorResource = R.color.blue
             textResource = R.string.transactions_show_all
             alpha = 0.8f
-
-            val expandDrawable = InsetDrawable(drawable(R.drawable.ic_expand), dip(4), 0, 0, dip(3)).apply {
-                setBounds(0, 0, intrinsicWidth, intrinsicHeight)
-            }
-            val expandSpan = ImageSpan(expandDrawable, ImageSpan.ALIGN_BOTTOM)
-            text = SpannableStringBuilder(string(R.string.transactions_show_all)).add(" ", 0, expandSpan)
         }.lparams(wrapContent, wrapContent)
 
         stubView = textView {

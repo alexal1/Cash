@@ -8,9 +8,10 @@ import com.madewithlove.daybalance.CashApp
 import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.specifications.DaySpecification
+import com.madewithlove.daybalance.repository.specifications.MonthDiffSpecification
 import com.madewithlove.daybalance.repository.specifications.RealBalanceSpecification
 import io.reactivex.Single
-import io.reactivex.functions.BiFunction
+import io.reactivex.functions.Function3
 import java.util.*
 
 class DataSource(private val repository: TransactionsRepository, private val currencyManager: CurrencyManager) {
@@ -21,11 +22,15 @@ class DataSource(private val repository: TransactionsRepository, private val cur
 
         val transactionsSingle = repository.query(DaySpecification(date, currencyIndex))
         val realBalanceSingle = repository.query(RealBalanceSpecification(date, currencyIndex))
+        val monthDiffSingle = repository.query(MonthDiffSpecification(date, currencyIndex))
 
         return Single.zip(
             transactionsSingle,
             realBalanceSingle,
-            BiFunction { transactions, realBalance -> MomentData(transactions, realBalance.toDouble()) }
+            monthDiffSingle,
+            Function3 { transactions, realBalance, monthDiff ->
+                MomentData(transactions, realBalance.toDouble(), monthDiff.toDouble())
+            }
         )
     }
 }

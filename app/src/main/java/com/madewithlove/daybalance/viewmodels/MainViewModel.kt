@@ -43,6 +43,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
     private val sharedPreferences: SharedPreferences by inject()
     private val tipsManager: TipsManager by inject()
     private val weekdayFormat = SimpleDateFormat("EEEE", application.currentLocale())
+    private val monthFormat = SimpleDateFormat("LLLL", application.currentLocale())
     private val dc = DisposableCache()
 
     private val weekdaySubject = BehaviorSubject.create<Weekday>()
@@ -51,7 +52,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
     private val dayDataSubject = BehaviorSubject.create<MomentData>()
     val shortTransactionsListObservable: Observable<List<Transaction>> = dayDataSubject.map { it.transactions.take(2) }
     val chartDataObservable: Observable<ChartData> = dayDataSubject.map { it.transactions.toChartData() }
-    val realBalanceObservable: Observable<String> = dayDataSubject.map { currencyManager.formatMoney(it.realBalance) }
+    val shortStatisticsObservable: Observable<ShortStatistics> = dayDataSubject.map { ShortStatistics(it.balance, app.currentDate.value!!.toMonth(), it.monthDiff) }.distinctUntilChanged()
 
     private val showMismatchedCurrencyDialogSubject = PublishSubject.create<Int>()
     val showMismatchedCurrencyDialogObservable: Observable<Int> = showMismatchedCurrencyDialogSubject
@@ -138,6 +139,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
         return Weekday(name, isToday)
     }
 
+    private fun Date.toMonth(): String {
+        val month = monthFormat.format(this)
+        return if (app.currentLocale().language == "ru") {
+            month.decapitalize()
+        } else {
+            month
+        }
+    }
+
     private fun List<Transaction>.toChartData() = ChartData(
         gain = GainCategories.values()
             .map { category ->
@@ -169,5 +179,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
 
 
     data class Weekday(val name: String, val isToday: Boolean)
+
+    data class ShortStatistics(val balance: Double, val month: String, val monthDiff: Double)
 
 }

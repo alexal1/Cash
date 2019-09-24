@@ -72,3 +72,7 @@ inline fun ViewManager.datesRecyclerView(init: DatesRecyclerView.() -> Unit = {}
 inline fun ViewManager.tipsView(init: TipsView.() -> Unit = {}): TipsView {
     return ankoView({ TipsView(it) }, theme = 0, init = init)
 }
+
+inline fun ViewManager.shortStatisticsView(init: ShortStatisticsView.() -> Unit = {}): ShortStatisticsView {
+    return ankoView({ ShortStatisticsView(it) }, theme = 0, init = init)
+}

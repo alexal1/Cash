@@ -105,7 +105,7 @@ class SettingsActivity : BaseActivity() {
 
             val versionText = textView {
                 id = View.generateViewId()
-                backgroundResource = R.drawable.bg_debug_settings_button
+                backgroundResource = R.drawable.bg_bottom_bar
                 textColorResource = R.color.smoke
                 textSize = 12f
                 gravity = CENTER

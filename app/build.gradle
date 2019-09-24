@@ -6,7 +6,7 @@ apply plugin: 'realm-android'
 apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion rootProject.compileSdk
 
     // To avoid changes in misc.xml
     compileOptions {
@@ -16,8 +16,8 @@ android {
 
     defaultConfig {
         applicationId "com.madewithlove.daybalance"
-        minSdkVersion 21
-        targetSdkVersion 29
+        minSdkVersion rootProject.minSdk
+        targetSdkVersion rootProject.targetSdk
         versionCode 9
         versionName "0.1.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -74,6 +74,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+
+    implementation project(':roundedcornersbackgroundspan')
 }
 
 apply plugin: 'com.google.gms.google-services'
