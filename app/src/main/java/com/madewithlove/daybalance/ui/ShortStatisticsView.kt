@@ -52,6 +52,7 @@ class ShortStatisticsView(context: Context) : _ConstraintLayout(context), KoinCo
             typeface = ResourcesCompat.getFont(context, R.font.currencies)
             maxLines = 1
             gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
+            typeface = ResourcesCompat.getFont(context, R.font.currencies)
 
             TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
                 this@appCompatTextView,

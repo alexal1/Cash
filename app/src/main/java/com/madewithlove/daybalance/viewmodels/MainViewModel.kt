@@ -52,7 +52,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), K
     private val dayDataSubject = BehaviorSubject.create<MomentData>()
     val shortTransactionsListObservable: Observable<List<Transaction>> = dayDataSubject.map { it.transactions.take(2) }
     val chartDataObservable: Observable<ChartData> = dayDataSubject.map { it.transactions.toChartData() }
-    val shortStatisticsObservable: Observable<ShortStatistics> = dayDataSubject.map { ShortStatistics(it.balance, app.currentDate.value!!.toMonth(), it.monthDiff) }.distinctUntilChanged()
+    val shortStatisticsObservable: Observable<ShortStatistics> = dayDataSubject.map { ShortStatistics(it.balance, app.currentDate.value!!.toMonth(), it.monthDiff) }
 
     private val showMismatchedCurrencyDialogSubject = PublishSubject.create<Int>()
     val showMismatchedCurrencyDialogObservable: Observable<Int> = showMismatchedCurrencyDialogSubject
