@@ -23,6 +23,7 @@ class TransactionsRepository {
 
     private val realmThread = HandlerThread("RealmThread").apply { start() }
     private val realmScheduler = AndroidSchedulers.from(realmThread.looper)
+    private var realmInstance: Realm? = null
 
     init {
         Handler(realmThread.looper).post {
@@ -33,14 +34,12 @@ class TransactionsRepository {
 
     fun addTransaction(transaction: Transaction): Completable = Completable
         .create { emitter ->
-            realm().use { realm ->
-                realm.executeTransaction {
-                    try {
-                        realm.copyToRealm(transaction)
-                        emitter.onComplete()
-                    } catch (e: Exception) {
-                        emitter.onError(e)
-                    }
+            getRealm().executeTransaction { realm ->
+                try {
+                    realm.copyToRealm(transaction)
+                    emitter.onComplete()
+                } catch (e: Exception) {
+                    emitter.onError(e)
                 }
             }
         }
@@ -48,51 +47,47 @@ class TransactionsRepository {
 
     fun removeTransaction(transactionId: String): Completable = Completable
         .create { emitter ->
-            realm().use { realm ->
-                realm.executeTransaction {
-                    try {
-                        realm
-                            .where(Transaction::class.java)
-                            .equalTo("id", transactionId)
-                            .findAll()
-                            .deleteAllFromRealm()
+            getRealm().executeTransaction { realm ->
+                try {
+                    realm
+                        .where(Transaction::class.java)
+                        .equalTo("id", transactionId)
+                        .findAll()
+                        .deleteAllFromRealm()
 
-                        emitter.onComplete()
-                    } catch (e: Exception) {
-                        emitter.onError(e)
-                    }
+                    emitter.onComplete()
+                } catch (e: Exception) {
+                    emitter.onError(e)
                 }
             }
         }
+        .subscribeOn(realmScheduler)
 
     fun removeAllTransactions(): Completable = Completable
         .create { emitter ->
-            realm().use { realm ->
-                realm.executeTransaction {
-                    try {
-                        realm
-                            .where(Transaction::class.java)
-                            .findAll()
-                            .deleteAllFromRealm()
+            getRealm().executeTransaction { realm ->
+                try {
+                    realm
+                        .where(Transaction::class.java)
+                        .findAll()
+                        .deleteAllFromRealm()
 
-                        emitter.onComplete()
-                    } catch (e: Exception) {
-                        emitter.onError(e)
-                    }
+                    emitter.onComplete()
+                } catch (e: Exception) {
+                    emitter.onError(e)
                 }
             }
         }
+        .subscribeOn(realmScheduler)
 
     fun query(specification: RealmSpecification): Single<List<Transaction>> = Single
         .create<List<Transaction>> { emitter ->
-            realm().use { realm ->
-                realm.executeTransaction {
-                    try {
-                        val result = realm.copyFromRealm(specification.toRealmResults(realm))
-                        emitter.onSuccess(result)
-                    } catch (e: Exception) {
-                        emitter.onError(e)
-                    }
+            getRealm().executeTransaction { realm ->
+                try {
+                    val result = realm.copyFromRealm(specification.toRealmResults(realm))
+                    emitter.onSuccess(result)
+                } catch (e: Exception) {
+                    emitter.onError(e)
                 }
             }
         }
@@ -100,19 +95,31 @@ class TransactionsRepository {
 
     fun query(specification: NumberSpecification): Single<Number> = Single
         .create<Number> { emitter ->
-            realm().use { realm ->
-                realm.executeTransaction {
-                    try {
-                        val result = specification.toNumber(realm)
-                        emitter.onSuccess(result)
-                    } catch (e: Exception) {
-                        emitter.onError(e)
-                    }
+            getRealm().executeTransaction { realm ->
+                try {
+                    val result = specification.toNumber(realm)
+                    emitter.onSuccess(result)
+                } catch (e: Exception) {
+                    emitter.onError(e)
                 }
             }
         }
         .subscribeOn(realmScheduler)
 
-    private fun realm() = Realm.getDefaultInstance()
+    fun dispose() {
+        Handler(realmThread.looper).post {
+            realmInstance?.close()
+            realmInstance = null
+        }
+    }
+
+
+    private fun getRealm(): Realm {
+        if (realmInstance == null) {
+            realmInstance = Realm.getDefaultInstance()
+        }
+
+        return realmInstance!!
+    }
 
 }

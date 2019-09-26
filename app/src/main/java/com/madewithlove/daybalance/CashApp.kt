@@ -18,6 +18,7 @@ import com.madewithlove.daybalance.helpers.push.PushManager
 import com.madewithlove.daybalance.helpers.timber.CashDebugTree
 import com.madewithlove.daybalance.helpers.timber.CashReleaseTree
 import com.madewithlove.daybalance.helpers.timber.KoinLogger
+import com.madewithlove.daybalance.repository.TransactionsRepository
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.subjects.BehaviorSubject
 import io.realm.Realm
@@ -45,6 +46,7 @@ class CashApp : Application(), LifecycleObserver {
         const val PREFS_SHOW_PUSH_NOTIFICATIONS = "show_push_notifications"
         const val PREFS_TIPS_PREFIX = "tip_"
         const val PREFS_LOGS_ENABLED = "logs_enabled"
+        const val PREFS_STATISTICS_INTERVAL = "statistics_interval"
 
         const val millisInDay = 24 * 60 * 60 * 1000L
 
@@ -53,6 +55,7 @@ class CashApp : Application(), LifecycleObserver {
 
     private val sharedPreferences: SharedPreferences by inject()
     private val pushManager: PushManager by inject()
+    private val transactionsRepository: TransactionsRepository by inject()
 
     val todayDate: Date by lazy {
         GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT+0000"))
@@ -143,6 +146,7 @@ class CashApp : Application(), LifecycleObserver {
     private fun onAppBackgrounded() {
         Timber.i("App is in background")
         isInForeground = false
+        transactionsRepository.dispose()
     }
 
 }

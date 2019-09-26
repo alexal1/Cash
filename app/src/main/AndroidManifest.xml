@@ -35,6 +35,8 @@
 
         <activity android:name="com.madewithlove.daybalance.ui.activities.WebPageActivity"/>
 
+        <activity android:name="com.madewithlove.daybalance.ui.activities.StatisticsActivity"/>
+
         <activity android:name="com.madewithlove.daybalance.ui.activities.SplashActivity" android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

@@ -285,7 +285,7 @@ class MainActivity : BaseActivity() {
                 }.cache(dc)
 
                 setOnClickListenerWithThrottle {
-                    // TODO
+                    StatisticsActivity.start(this@MainActivity)
                 }.cache(dc)
             }.lparams(matchConstraint, dip(48))
 

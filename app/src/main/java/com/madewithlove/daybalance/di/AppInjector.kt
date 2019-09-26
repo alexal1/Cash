@@ -29,6 +29,7 @@ val viewModelsModule = module {
     viewModel { SettingsViewModel(androidApplication()) }
     viewModel { DebugSettingsViewModel(androidApplication()) }
     viewModel { SplashViewModel(androidApplication()) }
+    viewModel { StatisticsViewModel(androidApplication()) }
 }
 
 val sharedPreferencesModule = module {

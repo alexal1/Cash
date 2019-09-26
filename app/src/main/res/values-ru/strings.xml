@@ -79,6 +79,10 @@
     <string name="tip_gains_from_other_days_only">В этот день у вас есть доходы, внесённые ранее, в размере {value}. Добавьте {loss}, чтобы видеть баланс за день.</string>
     <string name="tip_losses_and_gains_positive_result">Сумма доходов за день {gains_value}, сумма расходов за день {losses_value}. Чистая прибыль за день {total_value}.</string>
     <string name="tip_losses_and_gains_negative_result">Сумма доходов за день {gains_value}, сумма расходов за день {losses_value}. Чистый убыток за день {total_value}.</string>
+    <string name="statistics_title">Статистика</string>
+    <string name="statistics_interval_this_month">Этот месяц</string>
+    <string name="statistics_interval_this_year">Этот год</string>
+    <string name="statistics_interval_all_time">Всё время</string>
 
     <!-- Gain -->
     <string name="gain_inheritance">Наследство</string>
