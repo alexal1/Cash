@@ -44,7 +44,7 @@ class CacheLogic(private val dataSource: DataSource) {
         .fromCallable {
             obtainMoment(index).also { it.actualize() }
         }
-        .doOnSuccess {
+        .doAfterSuccess {
             var ok = true
             for (i in 1..LOAD_DELTA) {
                 val momentLeft = obtainMoment(index - i)

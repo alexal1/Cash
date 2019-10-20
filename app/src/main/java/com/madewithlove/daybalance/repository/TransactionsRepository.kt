@@ -36,7 +36,24 @@ class TransactionsRepository {
         .create { emitter ->
             getRealm().executeTransaction { realm ->
                 try {
-                    realm.copyToRealm(transaction)
+                    realm.insert(transaction)
+                    emitter.onComplete()
+                } catch (e: Exception) {
+                    emitter.onError(e)
+                }
+            }
+        }
+        .subscribeOn(realmScheduler)
+
+    fun addAllTransactions(iterator: Iterator<Transaction>): Completable = Completable
+        .create { emitter ->
+            getRealm().executeTransaction { realm ->
+                try {
+                    while (iterator.hasNext()) {
+                        val transaction = iterator.next()
+                        realm.insert(transaction)
+                    }
+
                     emitter.onComplete()
                 } catch (e: Exception) {
                     emitter.onError(e)

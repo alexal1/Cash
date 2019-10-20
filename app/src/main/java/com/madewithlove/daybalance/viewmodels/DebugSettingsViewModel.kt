@@ -10,23 +10,15 @@ import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.CashApp
 import com.madewithlove.daybalance.CashApp.Companion.PREFS_LOGS_ENABLED
-import com.madewithlove.daybalance.helpers.CategoriesManager
-import com.madewithlove.daybalance.helpers.CurrencyManager
-import com.madewithlove.daybalance.helpers.enums.getDateIncrement
 import com.madewithlove.daybalance.helpers.push.PushManager
 import com.madewithlove.daybalance.repository.TransactionsRepository
-import com.madewithlove.daybalance.repository.entities.Account
-import com.madewithlove.daybalance.repository.entities.Transaction
-import com.madewithlove.daybalance.utils.currentLocale
+import com.madewithlove.daybalance.repository.utils.RandomTransactionsIterator
+import com.madewithlove.daybalance.repository.utils.RandomTransactionsIteratorFactory
 import com.madewithlove.daybalance.viewmodels.cache.CacheLogicAdapter
-import com.madewithlove.daybalance.viewmodels.enums.Categories
-import com.madewithlove.daybalance.viewmodels.enums.GainCategories
-import com.madewithlove.daybalance.viewmodels.enums.LossCategories
 import io.reactivex.Completable
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import java.util.*
-import java.util.Calendar.*
+import org.koin.core.parameter.parametersOf
 
 class DebugSettingsViewModel(application: Application) : AndroidViewModel(application), KoinComponent {
 
@@ -38,14 +30,12 @@ class DebugSettingsViewModel(application: Application) : AndroidViewModel(applic
 
 
     private val app = application as CashApp
-    private val currentDate = app.currentDate.value!!
     private val pushManager: PushManager by inject()
     private val repository: TransactionsRepository by inject()
     private val cache: CacheLogicAdapter by inject()
-    private val categoriesManager: CategoriesManager by inject()
-    private val currencyManager: CurrencyManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
-    private val random = Random()
+    private val randomDayTransactionsIteratorFactory: RandomTransactionsIteratorFactory by inject { parametersOf(TRANSACTIONS_COUNT, RandomTransactionsIterator.Mode.THIS_DAY) }
+    private val randomMonthTransactionsIteratorFactory: RandomTransactionsIteratorFactory by inject { parametersOf(TRANSACTIONS_COUNT, RandomTransactionsIterator.Mode.THIS_MONTH) }
 
 
     fun showPush() {
@@ -53,13 +43,11 @@ class DebugSettingsViewModel(application: Application) : AndroidViewModel(applic
     }
 
     fun addTransactionsToCurrentDate(): Completable {
-        val completables = Array(TRANSACTIONS_COUNT) {
-            addRandomTransactionToDate(currentDate)
-        }
+        val randomDayTransactionsIterator = randomDayTransactionsIteratorFactory.getInstance()
 
         return cache
             .clear()
-            .andThen(Completable.mergeArray(*completables))
+            .andThen(repository.addAllTransactions(randomDayTransactionsIterator))
             .andThen(cache.requestDate(app.currentDate.value!!))
             .take(1)
             .singleOrError()
@@ -67,28 +55,11 @@ class DebugSettingsViewModel(application: Application) : AndroidViewModel(applic
     }
 
     fun addTransactionsToCurrentMonth(): Completable {
-        val completables = arrayListOf<Completable>()
-
-        val calendar = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT+0000")).apply {
-            set(DAY_OF_MONTH, 1)
-            set(HOUR_OF_DAY, 0)
-            set(MINUTE, 0)
-            set(SECOND, 0)
-            set(MILLISECOND, 0)
-        }
-
-        val currentMonth = calendar.get(MONTH)
-
-        while (calendar.get(MONTH) == currentMonth) {
-            repeat(TRANSACTIONS_COUNT) {
-                completables.add(addRandomTransactionToDate(calendar.time))
-            }
-            calendar.add(DAY_OF_MONTH, 1)
-        }
+        val randomMonthTransactionsIterator = randomMonthTransactionsIteratorFactory.getInstance()
 
         return cache
             .clear()
-            .andThen(Completable.mergeArray(*completables.toTypedArray()))
+            .andThen(repository.addAllTransactions(randomMonthTransactionsIterator))
             .andThen(cache.requestDate(app.currentDate.value!!))
             .take(1)
             .singleOrError()
@@ -107,40 +78,6 @@ class DebugSettingsViewModel(application: Application) : AndroidViewModel(applic
 
     fun setLogsEnabled(enabled: Boolean) = sharedPreferences.edit {
         putBoolean(PREFS_LOGS_ENABLED, enabled)
-    }
-
-
-    private fun addRandomTransactionToDate(date: Date): Completable {
-        val transaction = Transaction().apply {
-            amount = random.nextDouble() * 200 - 100
-
-            val category: Categories = if (isGain()) {
-                random.nextInt(GainCategories.values().count()).let { index ->
-                    GainCategories.values()[index]
-                }
-            } else {
-                random.nextInt(LossCategories.values().count()).let { index ->
-                    LossCategories.values()[index]
-                }
-            }
-
-            categoryId = category.id
-            period = categoriesManager.getPeriod(category).name
-            startTimestamp = date.time
-
-            endTimestamp = categoriesManager
-                .getPeriod(category)
-                .getDateIncrement(app.currentLocale(), app.currentDate.value!!)
-                .time
-
-            addedTimestamp = System.currentTimeMillis()
-
-            account = Account().apply {
-                currencyIndex = currencyManager.getCurrentCurrencyIndex()
-            }
-        }
-
-        return repository.addTransaction(transaction)
     }
 
 }

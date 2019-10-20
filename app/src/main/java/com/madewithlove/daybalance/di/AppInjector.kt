@@ -12,6 +12,8 @@ import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.helpers.TipsManager
 import com.madewithlove.daybalance.helpers.push.PushManager
 import com.madewithlove.daybalance.repository.TransactionsRepository
+import com.madewithlove.daybalance.repository.utils.RandomTransactionsIterator
+import com.madewithlove.daybalance.repository.utils.RandomTransactionsIteratorFactory
 import com.madewithlove.daybalance.utils.currentLocale
 import com.madewithlove.daybalance.viewmodels.*
 import com.madewithlove.daybalance.viewmodels.cache.CacheLogic
@@ -46,6 +48,7 @@ val helpersModule = module {
 
 val repositoryModule = module {
     single { TransactionsRepository() }
+    single { (count: Int, mode: RandomTransactionsIterator.Mode) -> RandomTransactionsIteratorFactory(androidContext(), get(), get(), count, mode) }
 }
 
 val cacheModule = module {
