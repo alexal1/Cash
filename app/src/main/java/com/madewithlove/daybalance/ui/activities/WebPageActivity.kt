@@ -90,10 +90,7 @@ class WebPageActivity : BaseActivity() {
 
             progressBar = progressBar {
                 id = View.generateViewId()
-            }.lparams(
-                dimen(R.dimen.day_transactions_progress_bar_size),
-                dimen(R.dimen.day_transactions_progress_bar_size)
-            )
+            }.lparams(dimen(R.dimen.progress_bar_size), dimen(R.dimen.progress_bar_size))
 
             errorText = textView {
                 id = View.generateViewId()

@@ -49,4 +49,15 @@ fun View.drawable(@DrawableRes drawableRes: Int): Drawable = context.drawable(dr
 
 fun Context.string(@StringRes stringRes: Int): String = getString(stringRes)
 
+fun Context.string(@StringRes res: Int, vararg replacements: Pair<String, String>): String = string(res).run {
+    var result = this
+
+    replacements.forEach { (target, replacement) ->
+        val index = indexOf(target)
+        result = result.replaceRange(index, index + target.length, replacement)
+    }
+
+    result
+}
+
 fun View.string(@StringRes stringRes: Int): String = context.getString(stringRes)

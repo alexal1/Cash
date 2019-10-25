@@ -8,6 +8,7 @@ import android.content.Context
 import androidx.annotation.StringRes
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.helpers.enums.Periods.*
+import com.madewithlove.daybalance.utils.CalendarFactory
 import timber.log.Timber
 import java.util.*
 import java.util.Calendar.*
@@ -47,8 +48,8 @@ enum class Periods(@StringRes val shortString: Int, @StringRes val fullString: I
 }
 
 
-fun Periods.getDateIncrement(locale: Locale, date: Date): Date {
-    val calendar = GregorianCalendar.getInstance(locale)
+fun Periods.getDateIncrement(date: Date): Date {
+    val calendar = CalendarFactory.getInstance()
     calendar.time = date
 
     when (this) {

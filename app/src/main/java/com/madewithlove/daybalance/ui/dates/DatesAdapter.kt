@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.madewithlove.daybalance.R
+import com.madewithlove.daybalance.utils.CalendarFactory
 import com.madewithlove.daybalance.utils.screenSize
 import io.reactivex.functions.Consumer
 import org.jetbrains.anko.*
@@ -25,7 +26,7 @@ class DatesAdapter(
     private val dateConsumer: Consumer<Date>
 ) : RecyclerView.Adapter<DatesAdapter.DateViewHolder>() {
 
-    private val calendar = GregorianCalendar.getInstance(locale)
+    private val calendar = CalendarFactory.getInstance()
     private val todayPos = Int.MAX_VALUE / 2
     private val dateFormatter = SimpleDateFormat("d MMM", locale)
 

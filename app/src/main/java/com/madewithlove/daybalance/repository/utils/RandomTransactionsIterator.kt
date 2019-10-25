@@ -12,7 +12,6 @@ import com.madewithlove.daybalance.helpers.enums.getDateIncrement
 import com.madewithlove.daybalance.repository.entities.Account
 import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.utils.CalendarFactory
-import com.madewithlove.daybalance.utils.currentLocale
 import com.madewithlove.daybalance.viewmodels.enums.Categories
 import com.madewithlove.daybalance.viewmodels.enums.GainCategories
 import com.madewithlove.daybalance.viewmodels.enums.LossCategories
@@ -91,7 +90,7 @@ class RandomTransactionsIterator(
 
         endTimestamp = categoriesManager
             .getPeriod(category)
-            .getDateIncrement(app.currentLocale(), app.currentDate.value!!)
+            .getDateIncrement(app.currentDate.value!!)
             .time
 
         addedTimestamp = System.currentTimeMillis()

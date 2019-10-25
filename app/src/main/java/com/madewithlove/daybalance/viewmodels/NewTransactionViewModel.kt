@@ -21,7 +21,6 @@ import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.TextFormatter
 import com.madewithlove.daybalance.utils.cache
-import com.madewithlove.daybalance.utils.currentLocale
 import com.madewithlove.daybalance.viewmodels.NewTransactionViewModel.CalculatorActionType.*
 import com.madewithlove.daybalance.viewmodels.cache.CacheLogicAdapter
 import com.madewithlove.daybalance.viewmodels.enums.Categories
@@ -254,7 +253,7 @@ class NewTransactionViewModel(application: Application) : AndroidViewModel(appli
 
         endTimestamp = categoriesManager
             .getPeriod(currentCategory)
-            .getDateIncrement(app.currentLocale(), app.currentDate.value!!)
+            .getDateIncrement(app.currentDate.value!!)
             .time
 
         addedTimestamp = System.currentTimeMillis()

@@ -5,12 +5,13 @@
 package com.madewithlove.daybalance.repository.specifications
 
 import com.madewithlove.daybalance.repository.entities.Transaction
+import com.madewithlove.daybalance.utils.CalendarFactory
 import io.realm.Realm
 import java.util.*
 
 class MonthDiffSpecification(private val date: Date, private val currencyIndex: Int) : NumberSpecification {
 
-    private val monthStart: Long = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT+0000")).run {
+    private val monthStart: Long = CalendarFactory.getInstance().run {
         time = date
         set(Calendar.DAY_OF_MONTH, 1)
         time.time

@@ -89,18 +89,7 @@ class MainActivity : BaseActivity() {
     }
 
     private val calendarListener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
-        val date = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT+0000"))
-            .apply {
-                set(Calendar.YEAR, year)
-                set(Calendar.MONTH, month)
-                set(Calendar.DAY_OF_MONTH, day)
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }
-            .time
-
+        val date = CalendarFactory.getInstance(day, month, year).time
         analytics.pickCalendarDate()
         datesRecyclerView.setDate(date)
     }
@@ -390,7 +379,7 @@ class MainActivity : BaseActivity() {
     private fun PointF.distanceTo(point: PointF) = sqrt((x - point.x).pow(2) + (y - point.y).pow(2))
 
     private fun showCalendarDialog() {
-        val calendar = GregorianCalendar.getInstance(currentLocale()).also { it.time = viewModel.currentDate.value!! }
+        val calendar = CalendarFactory.getInstance().also { it.time = viewModel.currentDate.value!! }
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)

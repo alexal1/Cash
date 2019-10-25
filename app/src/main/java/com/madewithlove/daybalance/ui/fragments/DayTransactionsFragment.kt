@@ -44,17 +44,14 @@ class DayTransactionsFragment : Fragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = container?.context?.frameLayout {
-        val progressBar = progressBar().lparams(
-            dimen(R.dimen.day_transactions_progress_bar_size),
-            dimen(R.dimen.day_transactions_progress_bar_size)
-        ) {
+        val progressBar = progressBar().lparams(dimen(R.dimen.progress_bar_size), dimen(R.dimen.progress_bar_size)) {
             gravity = CENTER_HORIZONTAL
 
             val availableHeight = requireContext().screenSize().y -
                     dimen(R.dimen.day_transactions_app_bar_height) -
                     dimen(R.dimen.day_transactions_tab_layout_height)
 
-            topMargin = (availableHeight - dimen(R.dimen.day_transactions_progress_bar_size)) / 2
+            topMargin = (availableHeight - dimen(R.dimen.progress_bar_size)) / 2
         }
 
         transactionsList {

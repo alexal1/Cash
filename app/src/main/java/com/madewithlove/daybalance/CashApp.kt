@@ -19,6 +19,7 @@ import com.madewithlove.daybalance.helpers.timber.CashDebugTree
 import com.madewithlove.daybalance.helpers.timber.CashReleaseTree
 import com.madewithlove.daybalance.helpers.timber.KoinLogger
 import com.madewithlove.daybalance.repository.TransactionsRepository
+import com.madewithlove.daybalance.utils.CalendarFactory
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.subjects.BehaviorSubject
 import io.realm.Realm
@@ -28,7 +29,6 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import timber.log.Timber
 import java.util.*
-import java.util.Calendar.*
 
 class CashApp : Application(), LifecycleObserver {
 
@@ -46,7 +46,6 @@ class CashApp : Application(), LifecycleObserver {
         const val PREFS_SHOW_PUSH_NOTIFICATIONS = "show_push_notifications"
         const val PREFS_TIPS_PREFIX = "tip_"
         const val PREFS_LOGS_ENABLED = "logs_enabled"
-        const val PREFS_STATISTICS_INTERVAL = "statistics_interval"
 
         const val millisInDay = 24 * 60 * 60 * 1000L
 
@@ -57,16 +56,7 @@ class CashApp : Application(), LifecycleObserver {
     private val pushManager: PushManager by inject()
     private val transactionsRepository: TransactionsRepository by inject()
 
-    val todayDate: Date by lazy {
-        GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT+0000"))
-            .apply {
-                set(HOUR_OF_DAY, 0)
-                set(MINUTE, 0)
-                set(SECOND, 0)
-                set(MILLISECOND, 0)
-            }
-            .time
-    }
+    val todayDate: Date by lazy { CalendarFactory.getInstance().time }
 
     val currentDate by lazy {
         BehaviorSubject.createDefault(todayDate)
