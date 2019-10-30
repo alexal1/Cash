@@ -13,6 +13,7 @@ interface FragmentNavigator {
     fun setFragment(fragment: Fragment) {
         getNavigatorFragmentManager()
             .beginTransaction()
+            .setCustomAnimations(R.anim.fade_in, 0)
             .add(getFragmentContainerId(), fragment)
             .commit()
     }

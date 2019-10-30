@@ -33,6 +33,8 @@ class MainUI : AnkoComponent<MainFragment> {
 
     override fun createView(ui: AnkoContext<MainFragment>): View = with (ui) {
         constraintLayout {
+            backgroundColorResource = R.color.deepDark
+
             val datesSpace = space {
                 id = View.generateViewId()
             }.lparams(matchConstraint, dimen(R.dimen.date_height))

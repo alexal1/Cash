@@ -9,14 +9,11 @@ import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.utils.anko.floatingActionButton
-import org.jetbrains.anko.AnkoComponent
-import org.jetbrains.anko.AnkoContext
+import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.BOTTOM
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.END
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.constraint.layout.constraintLayout
-import org.jetbrains.anko.dip
-import org.jetbrains.anko.wrapContent
 
 class HistoryUI : AnkoComponent<HistoryFragment> {
 
@@ -25,6 +22,8 @@ class HistoryUI : AnkoComponent<HistoryFragment> {
 
     override fun createView(ui: AnkoContext<HistoryFragment>): View = with (ui){
         constraintLayout {
+            backgroundColorResource = R.color.deepDark
+
             floatingActionButton = floatingActionButton {
                 id = View.generateViewId()
                 setImageResource(R.drawable.ic_double_arrow)
