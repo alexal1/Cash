@@ -24,7 +24,8 @@ class FancyButton(context: Context) : _FrameLayout(context) {
 
     companion object {
 
-        private const val DURATION = 200L
+        private const val DURATION_FADE_IN = 100L
+        private const val DURATION_FADE_OUT = 300L
         private const val DEFAULT_ALPHA = 230
 
     }
@@ -46,12 +47,12 @@ class FancyButton(context: Context) : _FrameLayout(context) {
         val fadeIn: AnimatorSet = AnimatorSet().apply {
             playTogether(
                 ValueAnimator.ofInt(0, 255).apply {
-                    duration = DURATION
+                    duration = DURATION_FADE_IN
                     interpolator = DecelerateInterpolator()
                     addUpdateListener { glowDrawable.alpha = it.animatedValue as Int }
                 },
                 ValueAnimator.ofInt(DEFAULT_ALPHA, 255).apply {
-                    duration = DURATION
+                    duration = DURATION_FADE_IN
                     interpolator = DecelerateInterpolator()
                     addUpdateListener { fillDrawable.alpha = it.animatedValue as Int }
                 }
@@ -61,12 +62,12 @@ class FancyButton(context: Context) : _FrameLayout(context) {
         val fadeOut: AnimatorSet = AnimatorSet().apply {
             playTogether(
                 ValueAnimator.ofInt(255, 0).apply {
-                    duration = DURATION
+                    duration = DURATION_FADE_OUT
                     interpolator = AccelerateInterpolator()
                     addUpdateListener { glowDrawable.alpha = it.animatedValue as Int }
                 },
                 ValueAnimator.ofInt(255, DEFAULT_ALPHA).apply {
-                    duration = DURATION
+                    duration = DURATION_FADE_OUT
                     interpolator = AccelerateInterpolator()
                     addUpdateListener { fillDrawable.alpha = it.animatedValue as Int }
                 }

@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.madewithlove.daybalance.R
-import com.madewithlove.daybalance.utils.CalendarFactory
 import com.madewithlove.daybalance.utils.screenSize
 import io.reactivex.functions.Consumer
 import org.jetbrains.anko.*
@@ -22,12 +21,11 @@ import java.util.Calendar.DAY_OF_MONTH
 
 class DatesAdapter(
     locale: Locale,
-    private val todayDate: Date,
-    private val dateConsumer: Consumer<Date>
+    private val dateConsumer: Consumer<Date>,
+    private val onItemClick: (clickPos: Int) -> Unit
 ) : RecyclerView.Adapter<DatesAdapter.DateViewHolder>() {
 
-    private val calendar = CalendarFactory.getInstance()
-    private val todayPos = Int.MAX_VALUE / 2
+    private val calendar = GregorianCalendar.getInstance()
     private val dateFormatter = SimpleDateFormat("d MMM", locale)
 
     private var datesScrollListener: DatesScrollListener? = null
@@ -43,6 +41,7 @@ class DatesAdapter(
     override fun onBindViewHolder(holder: DateViewHolder, position: Int) {
         val date = dateByPos(position)
         holder.textDate.text = dateFormatter.format(date)
+        holder.textDate.setOnClickListener { onItemClick(position) }
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -62,8 +61,8 @@ class DatesAdapter(
     }
 
     private fun dateByPos(position: Int): Date {
-        calendar.time = todayDate
-        calendar.add(DAY_OF_MONTH, position - todayPos)
+        calendar.timeInMillis = 0
+        calendar.add(DAY_OF_MONTH, position)
         return calendar.time
     }
 

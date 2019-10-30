@@ -5,11 +5,11 @@
 package com.madewithlove.daybalance.di
 
 import android.content.Context
+import com.madewithlove.daybalance.BaseViewModel
 import com.madewithlove.daybalance.CashApp.Companion.CASH_APP_PREFERENCES
-import com.madewithlove.daybalance.helpers.Analytics
-import com.madewithlove.daybalance.helpers.CategoriesManager
-import com.madewithlove.daybalance.helpers.CurrencyManager
-import com.madewithlove.daybalance.helpers.TipsManager
+import com.madewithlove.daybalance.features.history.HistoryViewModel
+import com.madewithlove.daybalance.features.main.MainViewModel
+import com.madewithlove.daybalance.helpers.*
 import com.madewithlove.daybalance.helpers.push.PushManager
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.utils.RandomTransactionsIterator
@@ -25,13 +25,14 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelsModule = module {
-    viewModel { MainViewModel(androidApplication()) }
+    viewModel { BaseViewModel(androidApplication()) }
+    viewModel { MainViewModel(androidApplication(), get()) }
+    viewModel { HistoryViewModel(androidApplication()) }
     viewModel { NewTransactionViewModel(androidApplication()) }
     viewModel { DayTransactionsViewModel(androidApplication()) }
     viewModel { SettingsViewModel(androidApplication()) }
     viewModel { DebugSettingsViewModel(androidApplication()) }
     viewModel { SplashViewModel(androidApplication()) }
-    viewModel { StatisticsViewModel(androidApplication()) }
 }
 
 val sharedPreferencesModule = module {
@@ -39,6 +40,7 @@ val sharedPreferencesModule = module {
 }
 
 val helpersModule = module {
+    single { DatesManager() }
     single { CategoriesManager(androidContext(), get()) }
     single { CurrencyManager(get(), androidContext().currentLocale()) }
     single { PushManager(androidContext()) }

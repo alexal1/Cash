@@ -21,6 +21,14 @@
         <!-- Disable SSAID collection -->
         <meta-data android:name="google_analytics_ssaid_collection_enabled" android:value="false"/>
 
+        <activity android:name="com.madewithlove.daybalance.BaseActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
         <activity android:name="com.madewithlove.daybalance.ui.activities.MainActivity" android:launchMode="singleTask"/>
 
         <activity android:name="com.madewithlove.daybalance.ui.activities.NewTransactionActivity"/>
@@ -35,15 +43,7 @@
 
         <activity android:name="com.madewithlove.daybalance.ui.activities.WebPageActivity"/>
 
-        <activity android:name="com.madewithlove.daybalance.ui.activities.StatisticsActivity"/>
-
-        <activity android:name="com.madewithlove.daybalance.ui.activities.SplashActivity" android:theme="@style/SplashTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
+        <activity android:name="com.madewithlove.daybalance.ui.activities.SplashActivity" android:theme="@style/SplashTheme" />
 
         <receiver android:name="com.madewithlove.daybalance.helpers.push.BootReceiver" android:enabled="true">
             <intent-filter>

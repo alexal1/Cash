@@ -23,7 +23,7 @@ import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.utils.anko.appCompatTextView
 import com.madewithlove.daybalance.utils.color
 import com.madewithlove.daybalance.utils.string
-import com.madewithlove.daybalance.viewmodels.MainViewModel
+import com.madewithlove.daybalance.viewmodels.MainViewModelOld
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout._ConstraintLayout
@@ -94,7 +94,7 @@ class ShortStatisticsView(context: Context) : _ConstraintLayout(context), KoinCo
     }
 
 
-    fun setData(shortStatistics: MainViewModel.ShortStatistics) {
+    fun setData(shortStatistics: MainViewModelOld.ShortStatistics) {
         val (balance, month, monthDiff) = shortStatistics
         statisticsText.text = generateShortStatistics(balance, month, monthDiff)
     }

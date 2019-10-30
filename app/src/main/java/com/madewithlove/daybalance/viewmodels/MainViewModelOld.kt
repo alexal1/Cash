@@ -34,7 +34,7 @@ import org.koin.core.inject
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainViewModel(application: Application) : AndroidViewModel(application), KoinComponent {
+class MainViewModelOld(application: Application) : AndroidViewModel(application), KoinComponent {
 
     private val app = application as CashApp
     private val cache: CacheLogicAdapter by inject()

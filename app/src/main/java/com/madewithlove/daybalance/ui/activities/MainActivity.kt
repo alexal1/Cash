@@ -40,7 +40,7 @@ import com.madewithlove.daybalance.ui.dates.DatesRecyclerView
 import com.madewithlove.daybalance.utils.*
 import com.madewithlove.daybalance.utils.anko.*
 import com.madewithlove.daybalance.utils.spans.TypefaceSpan
-import com.madewithlove.daybalance.viewmodels.MainViewModel
+import com.madewithlove.daybalance.viewmodels.MainViewModelOld
 import com.madewithlove.daybalance.viewmodels.NewTransactionViewModel
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
@@ -76,7 +76,7 @@ class MainActivity : BaseActivity() {
     }
 
 
-    private val viewModel: MainViewModel by viewModel()
+    private val viewModel: MainViewModelOld by viewModel()
     private val currencyManager: CurrencyManager by inject()
     private val sharedPreferences: SharedPreferences by inject()
     private val analytics: Analytics by inject()
@@ -122,7 +122,7 @@ class MainActivity : BaseActivity() {
             datesRecyclerView = datesRecyclerView {
                 id = R.id.dates_recycler_view
 
-                init(viewModel.todayDate, currentLocale())
+//                init(viewModel.todayDate, currentLocale())
                 dateObservable.subscribe(viewModel.currentDate.onNextConsumer()).cache(dc)
 
                 setDate(viewModel.currentDate.value!!)
@@ -271,10 +271,6 @@ class MainActivity : BaseActivity() {
 
                 viewModel.shortStatisticsObservable.subscribeOnUi { shortStatistics ->
                     setData(shortStatistics)
-                }.cache(dc)
-
-                setOnClickListenerWithThrottle {
-                    StatisticsActivity.start(this@MainActivity)
                 }.cache(dc)
             }.lparams(matchConstraint, dip(48))
 

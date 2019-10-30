@@ -7,6 +7,7 @@ package com.madewithlove.daybalance.utils.anko
 import android.app.Activity
 import android.view.ViewManager
 import androidx.appcompat.widget.AppCompatTextView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.madewithlove.daybalance.ui.*
 import com.madewithlove.daybalance.ui.chart.ChartView
@@ -75,4 +76,8 @@ inline fun ViewManager.tipsView(init: TipsView.() -> Unit = {}): TipsView {
 
 inline fun ViewManager.shortStatisticsView(init: ShortStatisticsView.() -> Unit = {}): ShortStatisticsView {
     return ankoView({ ShortStatisticsView(it) }, theme = 0, init = init)
+}
+
+inline fun ViewManager.floatingActionButton(init: FloatingActionButton.() -> Unit = {}): FloatingActionButton {
+    return ankoView({ FloatingActionButton(it) }, theme = 0, init = init)
 }
