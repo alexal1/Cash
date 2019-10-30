@@ -5,6 +5,7 @@
 package com.madewithlove.daybalance.features.main
 
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.core.content.ContextCompat
@@ -23,6 +24,7 @@ class MainUI : AnkoComponent<MainFragment> {
 
     lateinit var weekdayText: TextView
     lateinit var datesRecyclerView: DatesRecyclerView
+    lateinit var container: FrameLayout
     lateinit var gainButton: FancyButton
     lateinit var lossButton: FancyButton
     lateinit var largeButtonBackground: View
@@ -75,6 +77,10 @@ class MainUI : AnkoComponent<MainFragment> {
                 rightMargin = dip(4)
             }
 
+            container = frameLayout {
+                id = R.id.main_container
+            }.lparams(matchConstraint, matchConstraint)
+
             largeButtonBackground = view {
                 id = R.id.large_button_background
                 backgroundResource = R.drawable.bg_large_button
@@ -119,6 +125,13 @@ class MainUI : AnkoComponent<MainFragment> {
                     START of lossButton to END of gainButton,
                     END of lossButton to END of PARENT_ID,
                     BOTTOM of lossButton to TOP of largeButtonBackground
+                )
+
+                connect(
+                    START of container to START of PARENT_ID,
+                    END of container to END of PARENT_ID,
+                    TOP of container to TOP of PARENT_ID,
+                    BOTTOM of container to TOP of largeButtonBackground
                 )
 
                 connect(

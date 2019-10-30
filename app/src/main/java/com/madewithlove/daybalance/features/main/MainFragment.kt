@@ -12,9 +12,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.madewithlove.daybalance.BaseViewModel
 import com.madewithlove.daybalance.R
+import com.madewithlove.daybalance.features.create.CreateFragment
+import com.madewithlove.daybalance.features.create.CreateViewModel
 import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.helpers.DatesManager
 import com.madewithlove.daybalance.utils.*
+import com.madewithlove.daybalance.utils.navigation.FragmentNavigator
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.ctx
@@ -26,7 +29,10 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(), FragmentNavigator {
+    override fun getNavigatorFragmentManager() = childFragmentManager
+
+    override fun getFragmentContainerId() = R.id.main_container
 
     companion object {
 
@@ -87,6 +93,20 @@ class MainFragment : Fragment() {
                     }
                 }
                 .cache(dc)
+        }
+
+        ui.gainButton.apply {
+            setOnClickListenerWithThrottle {
+                val fragment = CreateFragment.create(CreateViewModel.Type.GAIN)
+                addFragment(fragment)
+            }.cache(dc)
+        }
+
+        ui.lossButton.apply {
+            setOnClickListenerWithThrottle {
+                val fragment = CreateFragment.create(CreateViewModel.Type.LOSS)
+                addFragment(fragment)
+            }.cache(dc)
         }
 
         ui.largeButtonBackground.apply {

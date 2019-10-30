@@ -11,11 +11,12 @@ import com.madewithlove.daybalance.features.history.HistoryFragment
 import com.madewithlove.daybalance.features.main.MainFragment
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
+import com.madewithlove.daybalance.utils.navigation.FragmentNavigator
 import com.madewithlove.daybalance.utils.subscribeOnUi
 import org.jetbrains.anko.frameLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class BaseActivity : AppCompatActivity() {
+class BaseActivity : AppCompatActivity(), FragmentNavigator {
 
     private val viewModel: BaseViewModel by viewModel()
     private val dc = DisposableCache()
@@ -36,23 +37,24 @@ class BaseActivity : AppCompatActivity() {
             id = R.id.base_container
         }
 
-
         if (savedInstanceState == null) {
-            supportFragmentManager
-                .beginTransaction()
-                .add(R.id.base_container, MainFragment.create())
-                .commit()
+            setFragment(MainFragment.create())
         }
 
         viewModel.openHistorySubject.subscribeOnUi {
-            supportFragmentManager
-                .beginTransaction()
-                .setCustomAnimations(R.anim.go_in_up, R.anim.go_out_up, R.anim.go_in_down, R.anim.go_out_down)
-                .replace(R.id.base_container, HistoryFragment.create())
-                .addToBackStack(null)
-                .commit()
+            replaceFragment(HistoryFragment.create())
         }.cache(dc)
     }
+
+    override fun onBackPressed() {
+        if (!onNavigatorBackPressed()) {
+            super.onBackPressed()
+        }
+    }
+
+    override fun getNavigatorFragmentManager() = supportFragmentManager
+
+    override fun getFragmentContainerId() = R.id.base_container
 
     override fun onDestroy() {
         dc.drain()
