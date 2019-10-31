@@ -7,6 +7,7 @@ package com.madewithlove.daybalance.di
 import android.content.Context
 import com.madewithlove.daybalance.BaseViewModel
 import com.madewithlove.daybalance.CashApp.Companion.CASH_APP_PREFERENCES
+import com.madewithlove.daybalance.features.create.CreateViewModel
 import com.madewithlove.daybalance.features.history.HistoryViewModel
 import com.madewithlove.daybalance.features.main.MainViewModel
 import com.madewithlove.daybalance.helpers.*
@@ -28,6 +29,7 @@ val viewModelsModule = module {
     viewModel { BaseViewModel(androidApplication()) }
     viewModel { MainViewModel(androidApplication(), get()) }
     viewModel { HistoryViewModel(androidApplication()) }
+    viewModel { CreateViewModel(androidApplication()) }
     viewModel { NewTransactionViewModel(androidApplication()) }
     viewModel { DayTransactionsViewModel(androidApplication()) }
     viewModel { SettingsViewModel(androidApplication()) }

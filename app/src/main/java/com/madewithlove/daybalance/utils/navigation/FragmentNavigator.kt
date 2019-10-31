@@ -21,6 +21,7 @@ interface FragmentNavigator {
     fun replaceFragment(fragment: Fragment) {
         getNavigatorFragmentManager()
             .beginTransaction()
+            .setReorderingAllowed(true)
             .setCustomAnimations(R.anim.go_in_up, R.anim.go_out_up, R.anim.go_in_down, R.anim.go_out_down)
             .replace(getFragmentContainerId(), fragment)
             .addToBackStack(null)
@@ -30,6 +31,7 @@ interface FragmentNavigator {
     fun addFragment(fragment: Fragment) {
         getNavigatorFragmentManager()
             .beginTransaction()
+            .setReorderingAllowed(true)
             .setCustomAnimations(R.anim.slide_in_left, 0, 0, R.anim.slide_out_right)
             .add(getFragmentContainerId(), fragment)
             .addToBackStack(null)

@@ -34,6 +34,12 @@ class HistoryFragment : Fragment() {
     private val dc = DisposableCache()
 
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        postponeEnterTransition()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,6 +52,10 @@ class HistoryFragment : Fragment() {
         ui.floatingActionButton.setOnClickListenerWithThrottle {
             act.onBackPressed()
         }.cache(dc)
+
+        view.post {
+            startPostponedEnterTransition()
+        }
     }
 
     override fun onDestroyView() {
