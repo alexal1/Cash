@@ -2,6 +2,8 @@
 <resources>
     <dimen name="glow_size">8dp</dimen>
     <dimen name="date_height">128dp</dimen>
+    <dimen name="date_height_visual">96dp</dimen>
+    <dimen name="side_button_width">72dp</dimen>
     <dimen name="tip_padding">8dp</dimen>
     <dimen name="tip_margin_bottom">16dp</dimen>
     <dimen name="toolbar_height">54dp</dimen>

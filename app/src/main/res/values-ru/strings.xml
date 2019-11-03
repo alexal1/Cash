@@ -170,5 +170,7 @@
     <string name="period_single_full">Разово</string>
 
     <!-- v1.0.0 -->
-    <string name="history_title">История</string>
+    <string name="circle_text">на этот день</string>
+    <string name="month_plan">План на этот месяц</string>
+    <string name="large_button_history">История</string>
 </resources>

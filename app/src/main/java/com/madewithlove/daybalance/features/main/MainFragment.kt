@@ -7,6 +7,7 @@ package com.madewithlove.daybalance.features.main
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent.*
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -21,6 +22,7 @@ import com.madewithlove.daybalance.utils.navigation.FragmentNavigator
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.ctx
+import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.textResource
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -79,6 +81,28 @@ class MainFragment : Fragment(), FragmentNavigator {
                     setDate(currentDate)
                 }
                 .cache(dc)
+
+            goPrevSubject.subscribeOnUi {  action ->
+                when (action) {
+                    ACTION_DOWN -> ui.prevButton.alpha = 1.0f
+                    ACTION_CANCEL -> ui.prevButton.alpha = 0.8f
+                    ACTION_UP -> {
+                        ui.prevButton.alpha = 0.8f
+                        swipePrev()
+                    }
+                }
+            }.cache(dc)
+
+            goNextSubject.subscribeOnUi {  action ->
+                when (action) {
+                    ACTION_DOWN -> ui.nextButton.alpha = 1.0f
+                    ACTION_CANCEL -> ui.nextButton.alpha = 0.8f
+                    ACTION_UP -> {
+                        ui.nextButton.alpha = 0.8f
+                        swipeNext()
+                    }
+                }
+            }.cache(dc)
         }
 
         ui.weekdayText.apply {
@@ -93,6 +117,20 @@ class MainFragment : Fragment(), FragmentNavigator {
                     }
                 }
                 .cache(dc)
+        }
+
+        ui.circleView.apply {
+            viewModel.mainStateObservable
+                .map { it.circleState }
+                .distinctUntilChanged()
+                .subscribeOnUi(this::setData)
+                .cache(dc)
+        }
+
+        ui.monthPlanButton.apply {
+            setOnClickListener {
+                toast("In development")
+            }
         }
 
         ui.gainButton.apply {
@@ -126,7 +164,7 @@ class MainFragment : Fragment(), FragmentNavigator {
                 .subscribeOnUi { largeButtonType ->
                     when (largeButtonType!!) {
                         MainViewModel.LargeButtonType.HISTORY -> {
-                            textResource = R.string.history_title
+                            textResource = R.string.large_button_history
                             setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_down, 0)
                         }
                     }

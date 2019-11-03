@@ -11,6 +11,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.madewithlove.daybalance.ui.*
 import com.madewithlove.daybalance.ui.chart.ChartView
+import com.madewithlove.daybalance.ui.circle.CircleView
 import com.madewithlove.daybalance.ui.dates.DatesRecyclerView
 import org.jetbrains.anko.custom.ankoView
 
@@ -80,4 +81,8 @@ inline fun ViewManager.shortStatisticsView(init: ShortStatisticsView.() -> Unit 
 
 inline fun ViewManager.floatingActionButton(init: FloatingActionButton.() -> Unit = {}): FloatingActionButton {
     return ankoView({ FloatingActionButton(it) }, theme = 0, init = init)
+}
+
+inline fun ViewManager.circleView(init: CircleView.() -> Unit = {}): CircleView {
+    return ankoView({ CircleView(it) }, theme = 0, init = init)
 }
