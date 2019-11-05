@@ -86,3 +86,7 @@ inline fun ViewManager.floatingActionButton(init: FloatingActionButton.() -> Uni
 inline fun ViewManager.circleView(init: CircleView.() -> Unit = {}): CircleView {
     return ankoView({ CircleView(it) }, theme = 0, init = init)
 }
+
+inline fun ViewManager.keypadView(init: KeypadView.() -> Unit = {}): KeypadView {
+    return ankoView({ KeypadView(it) }, theme = 0, init = init)
+}

@@ -4,20 +4,35 @@
 
 package com.madewithlove.daybalance.features.create
 
+import android.animation.Animator
+import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
+import com.madewithlove.daybalance.R
+import com.madewithlove.daybalance.features.main.MainFragment
+import com.madewithlove.daybalance.features.main.MainViewModel
+import com.madewithlove.daybalance.utils.*
 import org.jetbrains.anko.AnkoContext
+import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
+import org.jetbrains.anko.textColorResource
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CreateFragment : Fragment() {
 
     companion object {
 
+        const val KEYPAD_ANIMATION_DURATION = 200L
+
         private const val TYPE = "type"
+
 
         fun create(type: CreateViewModel.Type): CreateFragment = CreateFragment().apply {
             arguments = bundleOf(TYPE to type)
@@ -26,8 +41,19 @@ class CreateFragment : Fragment() {
     }
 
 
+    private val mainViewModel by sharedViewModel<MainViewModel>(from = { parentFragment!! })
+    private val viewModel by viewModel<CreateViewModel>()
     private val ui = CreateUI()
+    private val dc = DisposableCache()
 
+    private var animator: Animator? = null
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        postponeEnterTransition()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +64,100 @@ class CreateFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        ui.toolbar.apply {
+            setNavigationOnClickListener {
+                act.onBackPressed()
+            }
+        }
 
+        ui.inputTextView.apply {
+            viewModel.createStateObservable
+                .map { it.amountString }
+                .distinctUntilChanged()
+                .subscribeOnUi { textAmount ->
+                    if (textAmount.isNotEmpty()) {
+                        text = textAmount
+                        textColorResource = R.color.white
+                    } else {
+                        @SuppressLint("SetTextI18n")
+                        text = "0.00"
+                        textColorResource = R.color.palladium
+                    }
+                }
+                .cache(dc)
+        }
+
+        ui.keypadView.apply {
+            actionsObservable.subscribe(viewModel.keypadActionsConsumer).cache(dc)
+
+            mainViewModel.mainStateObservable
+                .map { it.isKeyboardOpened }
+                .distinctUntilChanged()
+                .subscribeOnUi { isKeyboradOpened ->
+                    if (isKeyboradOpened) {
+                        hideKeypad()
+                    } else {
+                        showKeypad()
+                    }
+                }
+                .cache(dc)
+        }
+
+        view.post {
+            startPostponedEnterTransition()
+            mainViewModel.notifyCreateOpened()
+        }
+    }
+
+    override fun onDestroyView() {
+        animator?.cancel()
+        dc.drain()
+        ui.commentEditText.hideKeyboard()
+        super.onDestroyView()
+
+        mainViewModel.notifyCreateClosed()
+    }
+
+
+    private fun hideKeypad() {
+        animator?.cancel()
+        animator = ValueAnimator.ofInt(
+            ui.keypadView.marginTop,
+            ui.keypadView.height
+        ).apply {
+            duration = KEYPAD_ANIMATION_DURATION
+
+            addUpdateListener {
+                val lp = ui.keypadView.layoutParams as ViewGroup.MarginLayoutParams
+                lp.topMargin = animatedValue as Int
+                ui.keypadView.layoutParams = lp
+            }
+
+            view?.postDelayed({
+                ui.commentEditText.showKeyboard()
+            }, KEYPAD_ANIMATION_DURATION + MainFragment.LARGE_BUTTON_ANIMATION_DURATION)
+
+            start()
+        }
+    }
+
+    private fun showKeypad() {
+        animator?.cancel()
+        animator = ValueAnimator.ofInt(
+            ui.keypadView.marginTop,
+            0
+        ).apply {
+            startDelay = MainFragment.LARGE_BUTTON_ANIMATION_DURATION
+            duration = KEYPAD_ANIMATION_DURATION
+
+            addUpdateListener {
+                val lp = ui.keypadView.layoutParams as ViewGroup.MarginLayoutParams
+                lp.topMargin = animatedValue as Int
+                ui.keypadView.layoutParams = lp
+            }
+
+            start()
+        }
     }
 
 }

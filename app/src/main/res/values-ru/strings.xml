@@ -173,4 +173,5 @@
     <string name="circle_text">на этот день</string>
     <string name="month_plan">План на этот месяц</string>
     <string name="large_button_history">История</string>
+    <string name="large_button_ketboard">Добавить комментарий</string>
 </resources>

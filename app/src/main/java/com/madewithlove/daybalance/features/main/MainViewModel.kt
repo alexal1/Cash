@@ -48,12 +48,34 @@ class MainViewModel(
                         isToday = isToday,
                         weekday = weekdayFormat.format(currentDate).capitalize(),
                         circleState = CircleView.CircleState(Money(BigDecimal(1234.56)), 0.8f),
-                        largeButtonType = LargeButtonType.HISTORY
+                        largeButtonType = LargeButtonType.HISTORY,
+                        isKeyboardOpened = false
                     )
                 }
             )
             .subscribe(mainStateSubject.onNextConsumer())
             .cache(dc)
+    }
+
+
+    fun notifyCreateOpened() {
+        val newMainState = mainState.copy(largeButtonType = LargeButtonType.KEYBOARD)
+        mainStateSubject.onNext(newMainState)
+    }
+
+    fun notifyCreateClosed() {
+        val newMainState = mainState.copy(largeButtonType = LargeButtonType.HISTORY, isKeyboardOpened = false)
+        mainStateSubject.onNext(newMainState)
+    }
+
+    fun openKeyboard() {
+        val newMainState = mainState.copy(isKeyboardOpened = true)
+        mainStateSubject.onNext(newMainState)
+    }
+
+    fun notifyKeyboardClosed() {
+        val newMainState = mainState.copy(isKeyboardOpened = false)
+        mainStateSubject.onNext(newMainState)
     }
 
 
@@ -67,10 +89,11 @@ class MainViewModel(
         val isToday: Boolean,
         val weekday: String,
         val circleState: CircleView.CircleState,
-        val largeButtonType: LargeButtonType
+        val largeButtonType: LargeButtonType,
+        val isKeyboardOpened: Boolean
     )
 
 
-    enum class LargeButtonType { HISTORY }
+    enum class LargeButtonType { HISTORY, KEYBOARD }
 
 }

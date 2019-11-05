@@ -22,7 +22,7 @@ import org.jetbrains.anko.sp
 
 class KeypadView(context: Context) : View(context) {
 
-    val actionObservable: Observable<Action>
+    val actionsObservable: Observable<Action>
 
     private val actionSubject = PublishSubject.create<Action>()
     private val backgroundColor = context.color(R.color.soft_dark)
@@ -80,7 +80,7 @@ class KeypadView(context: Context) : View(context) {
 
 
     init {
-        actionObservable = actionSubject
+        actionsObservable = actionSubject
     }
 
 

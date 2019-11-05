@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Point
 import android.view.Gravity.CENTER_HORIZONTAL
+import android.view.Gravity.CENTER_VERTICAL
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
@@ -30,6 +31,7 @@ import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.constraint.layout.constraintLayout
 import org.jetbrains.anko.constraint.layout.matchConstraint
+import org.jetbrains.anko.support.v4.space
 
 class MainUI : AnkoComponent<MainFragment> {
 
@@ -167,6 +169,10 @@ class MainUI : AnkoComponent<MainFragment> {
                 id = R.id.main_container
             }.lparams(matchConstraint, matchConstraint)
 
+            val largeButtonSpace = space {
+                id = View.generateViewId()
+            }.lparams(matchConstraint, dimen(R.dimen.large_button_height))
+
             largeButtonBackground = view {
                 id = R.id.large_button_background
                 backgroundResource = R.drawable.bg_large_button
@@ -178,7 +184,8 @@ class MainUI : AnkoComponent<MainFragment> {
                 textSize = 14f
                 letterSpacing = 0.02f
                 compoundDrawablePadding = dip(8)
-            }.lparams(wrapContent, wrapContent)
+                gravity = CENTER_VERTICAL
+            }.lparams(wrapContent, matchConstraint)
 
 
             applyConstraintSet {
@@ -253,9 +260,15 @@ class MainUI : AnkoComponent<MainFragment> {
                 )
 
                 connect(
+                    START of largeButtonSpace to START of PARENT_ID,
+                    END of largeButtonSpace to END of PARENT_ID,
+                    BOTTOM of largeButtonSpace to BOTTOM of PARENT_ID
+                )
+
+                connect(
                     START of largeButtonBackground to START of PARENT_ID,
                     END of largeButtonBackground to END of PARENT_ID,
-                    BOTTOM of largeButtonBackground to BOTTOM of PARENT_ID
+                    TOP of largeButtonBackground to TOP of largeButtonSpace
                 )
 
                 connect(

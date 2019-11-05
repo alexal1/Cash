@@ -17,4 +17,5 @@
     <dimen name="chart_diff_text_vertical_padding">4dp</dimen>
     <dimen name="fancy_button_height">70dp</dimen>
     <dimen name="large_button_height">54dp</dimen>
+    <dimen name="input_icon_height">64dp</dimen>
 </resources>

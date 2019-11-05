@@ -4,12 +4,15 @@
 
 package com.madewithlove.daybalance.features.main
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent.*
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import com.madewithlove.daybalance.BaseViewModel
 import com.madewithlove.daybalance.R
@@ -21,6 +24,7 @@ import com.madewithlove.daybalance.utils.*
 import com.madewithlove.daybalance.utils.navigation.FragmentNavigator
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoContext
+import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
 import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.textResource
@@ -38,6 +42,9 @@ class MainFragment : Fragment(), FragmentNavigator {
 
     companion object {
 
+        const val LARGE_BUTTON_ANIMATION_DURATION = 100L
+
+
         fun create(): MainFragment = MainFragment()
 
     }
@@ -51,6 +58,8 @@ class MainFragment : Fragment(), FragmentNavigator {
     private val calendar = GregorianCalendar.getInstance()
     private val ui = MainUI()
     private val dc = DisposableCache()
+
+    private var animator: Animator? = null
 
 
     override fun onCreateView(
@@ -82,7 +91,7 @@ class MainFragment : Fragment(), FragmentNavigator {
                 }
                 .cache(dc)
 
-            goPrevSubject.subscribeOnUi {  action ->
+            goPrevSubject.subscribeOnUi { action ->
                 when (action) {
                     ACTION_DOWN -> ui.prevButton.alpha = 1.0f
                     ACTION_CANCEL -> ui.prevButton.alpha = 0.8f
@@ -93,7 +102,7 @@ class MainFragment : Fragment(), FragmentNavigator {
                 }
             }.cache(dc)
 
-            goNextSubject.subscribeOnUi {  action ->
+            goNextSubject.subscribeOnUi { action ->
                 when (action) {
                     ACTION_DOWN -> ui.nextButton.alpha = 1.0f
                     ACTION_CANCEL -> ui.nextButton.alpha = 0.8f
@@ -148,10 +157,26 @@ class MainFragment : Fragment(), FragmentNavigator {
         }
 
         ui.largeButtonBackground.apply {
+            viewModel.mainStateObservable
+                .map { it.isKeyboardOpened }
+                .distinctUntilChanged()
+                .subscribeOnUi { isKeyboardOpened ->
+                    if (isKeyboardOpened) {
+                        hideLargeButton()
+                    } else {
+                        showLargeButton()
+                    }
+                }
+                .cache(dc)
+
             setOnClickListenerWithThrottle {
                 when (viewModel.mainState.largeButtonType) {
                     MainViewModel.LargeButtonType.HISTORY -> {
                         baseViewModel.openHistorySubject.onNext(Unit)
+                    }
+
+                    MainViewModel.LargeButtonType.KEYBOARD -> {
+                        viewModel.openKeyboard()
                     }
                 }
             }.cache(dc)
@@ -167,6 +192,11 @@ class MainFragment : Fragment(), FragmentNavigator {
                             textResource = R.string.large_button_history
                             setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_down, 0)
                         }
+
+                        MainViewModel.LargeButtonType.KEYBOARD -> {
+                            textResource = R.string.large_button_ketboard
+                            setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_keyboard, 0)
+                        }
                     }
                 }
                 .cache(dc)
@@ -175,9 +205,18 @@ class MainFragment : Fragment(), FragmentNavigator {
         Observable.timer(1, TimeUnit.SECONDS).subscribeOnUi {
             calendarDialog // pre initialize
         }.cache(dc)
+
+        act.keyboardListener().subscribe { isVisible ->
+            if (isVisible) {
+                viewModel.openKeyboard()
+            } else {
+                viewModel.notifyKeyboardClosed()
+            }
+        }.cache(dc)
     }
 
     override fun onDestroyView() {
+        animator?.cancel()
         dc.drain()
         super.onDestroyView()
     }
@@ -202,6 +241,43 @@ class MainFragment : Fragment(), FragmentNavigator {
 
         calendarDialog.updateDate(year, month, day)
         calendarDialog.show()
+    }
+
+    private fun hideLargeButton() {
+        animator?.cancel()
+        animator = ValueAnimator.ofInt(
+            ui.largeButtonBackground.marginTop,
+            ui.largeButtonBackground.height
+        ).apply {
+            startDelay = CreateFragment.KEYPAD_ANIMATION_DURATION
+            duration = LARGE_BUTTON_ANIMATION_DURATION
+
+            addUpdateListener {
+                val lp = ui.largeButtonBackground.layoutParams as ViewGroup.MarginLayoutParams
+                lp.topMargin = animatedValue as Int
+                ui.largeButtonBackground.layoutParams = lp
+            }
+
+            start()
+        }
+    }
+
+    private fun showLargeButton() {
+        animator?.cancel()
+        animator = ValueAnimator.ofInt(
+            ui.largeButtonBackground.marginTop,
+            0
+        ).apply {
+            duration = LARGE_BUTTON_ANIMATION_DURATION
+
+            addUpdateListener {
+                val lp = ui.largeButtonBackground.layoutParams as ViewGroup.MarginLayoutParams
+                lp.topMargin = animatedValue as Int
+                ui.largeButtonBackground.layoutParams = lp
+            }
+
+            start()
+        }
     }
 
 }

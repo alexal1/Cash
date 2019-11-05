@@ -13,21 +13,23 @@ object TextFormatter {
 
     private val decimalFormatSymbols = DecimalFormatSymbols().apply {
         decimalSeparator = '.'
+        groupingSeparator = ' '
     }
 
-    private val decimalFormat = DecimalFormat("#.##", decimalFormatSymbols).apply {
-        minimumFractionDigits = 2
-        maximumFractionDigits = 2
-    }
+    private val decimalFormat = DecimalFormat("#,###.##", decimalFormatSymbols)
 
 
-    fun formatMoney(money: Money, withGrouping: Boolean = true): String {
+    fun formatMoney(money: Money, withGrouping: Boolean = true, withFixedFraction: Boolean = true): String {
         decimalFormat.isGroupingUsed = withGrouping
+        decimalFormat.minimumFractionDigits = if (withFixedFraction) 2 else 0
+        decimalFormat.maximumFractionDigits = if (withFixedFraction) 2 else Int.MAX_VALUE
         return decimalFormat.format(money.amount)
     }
 
-    fun formatMoney(money: Float, withGrouping: Boolean = true): String {
+    fun formatMoney(money: Float, withGrouping: Boolean = true, withFixedFraction: Boolean = true): String {
         decimalFormat.isGroupingUsed = withGrouping
+        decimalFormat.minimumFractionDigits = if (withFixedFraction) 2 else 0
+        decimalFormat.maximumFractionDigits = if (withFixedFraction) 2 else Int.MAX_VALUE
         return decimalFormat.format(money)
     }
 

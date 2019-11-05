@@ -13,6 +13,9 @@
     <item name="text_date" type="id" />
     <item name="dates_recycler_view" type="id" />
     <item name="view_pager" type="id" />
+    <item name="input_text_view" type="id" />
+    <item name="comment_edit_text" type="id" />
+    <item name="keypad_view" type="id" />
     <item name="currency_picker_text" type="id" />
     <item name="category_picker" type="id" />
     <item name="category_picker_text" type="id" />

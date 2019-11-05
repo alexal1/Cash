@@ -6,13 +6,19 @@ package com.madewithlove.daybalance.utils
 
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
+import android.app.Activity
+import android.content.Context
 import android.graphics.Rect
+import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.TouchDelegate
 import android.view.View
 import android.view.ViewTreeObserver
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.core.animation.doOnEnd
 import com.jakewharton.rxbinding3.view.clicks
+import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
 
@@ -92,3 +98,48 @@ fun View.getRect(): Rect {
     getHitRect(rect)
     return rect
 }
+
+fun EditText.showKeyboard() {
+    requestFocus()
+
+    post {
+        val mgr = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        mgr.showSoftInput(this, InputMethodManager.SHOW_FORCED)
+    }
+}
+
+fun View.hideKeyboard() {
+    val mgr = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    mgr.hideSoftInputFromWindow(windowToken, 0)
+
+    clearFocus()
+}
+
+fun Activity.keyboardListener(): Observable<Boolean> = window.decorView.keyboardObservable().map { it.isVisible }
+
+fun View.keyboardObservable(): Observable<KeyboardState> = Observable.create<KeyboardState> { emitter ->
+    val globalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
+        val rect = Rect().apply { getWindowVisibleDisplayFrame(this) }
+
+        val metrics = DisplayMetrics()
+        display.getRealMetrics(metrics)
+
+        val screenHeight = metrics.heightPixels
+        val dy = screenHeight - bottom
+        val keypadHeight = screenHeight - dy - rect.bottom
+
+        if (keypadHeight > screenHeight * 0.15) {
+            emitter.onNext(KeyboardState(true, keypadHeight))
+        } else {
+            emitter.onNext(KeyboardState(false, 0))
+        }
+    }
+
+    viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
+
+    emitter.setCancellable {
+        viewTreeObserver.removeOnGlobalLayoutListener(globalLayoutListener)
+    }
+}.distinctUntilChanged()
+
+data class KeyboardState(val isVisible: Boolean, val height: Int)

@@ -96,7 +96,7 @@ class CircleView(context: Context) : ViewGroup(context) {
                 val amount = prevAmount + k * (newAmount - prevAmount)
 
                 circleDrawable.progress = progress
-                amountTextView.text = TextFormatter.formatMoney(amount, false)
+                amountTextView.text = TextFormatter.formatMoney(amount, withGrouping = false)
             }
 
             addListener(object : Animator.AnimatorListener {
@@ -104,7 +104,7 @@ class CircleView(context: Context) : ViewGroup(context) {
                 }
 
                 override fun onAnimationEnd(animation: Animator?) {
-                    amountTextView.text = TextFormatter.formatMoney(newMoney)
+                    amountTextView.text = TextFormatter.formatMoney(newMoney, withGrouping = false)
                 }
 
                 override fun onAnimationCancel(animation: Animator?) {
