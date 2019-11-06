@@ -12,6 +12,7 @@ import com.madewithlove.daybalance.utils.TextFormatter
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
+import timber.log.Timber
 import java.math.BigDecimal
 
 class CreateViewModel(application: Application) : AndroidViewModel(application) {
@@ -26,12 +27,15 @@ class CreateViewModel(application: Application) : AndroidViewModel(application) 
     val createStateObservable: Observable<CreateState>
     val createState: CreateState get() = createStateSubject.value!!
     val keypadActionsConsumer = Consumer<KeypadView.Action>(this::handleKeypadAction)
+    val commentTextConsumer = Consumer<CharSequence>(this::handleCommentText)
 
     private val createStateSubject = BehaviorSubject.create<CreateState>()
 
 
     init {
-        createStateObservable = createStateSubject.distinctUntilChanged()
+        createStateObservable = createStateSubject
+            .distinctUntilChanged()
+            .doOnNext { Timber.i(it.toString()) }
 
         // Default state
         createStateSubject.onNext(
@@ -81,6 +85,11 @@ class CreateViewModel(application: Application) : AndroidViewModel(application) 
 
         val money = Money(BigDecimal(this.filterNot { it == ' ' }))
         return TextFormatter.formatMoney(money, withFixedFraction = false)
+    }
+
+    private fun handleCommentText(comment: CharSequence) {
+        val newState = createState.copy(comment = comment.toString().trim())
+        createStateSubject.onNext(newState)
     }
 
 

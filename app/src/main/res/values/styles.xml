@@ -8,6 +8,7 @@
         <item name="alertDialogTheme">@style/AppTheme.AlertDialog</item>
         <item name="colorAccent">@color/blue</item>
         <item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item>
+        <item name="android:editTextStyle">@style/MyEditTextStyle</item>
     </style>
 
     <style name="SplashTheme" parent="AppTheme">
@@ -37,6 +38,10 @@
     <style name="MyDatePickerStyle" parent="@android:style/Widget.Material.Light.DatePicker">
         <item name="android:headerBackground">@color/blue_80</item>
         <item name="android:background">@color/palladium</item>
+    </style>
+
+    <style name="MyEditTextStyle" parent="@android:style/Widget.EditText">
+        <item name="android:textCursorDrawable">@drawable/ic_cursor</item>
     </style>
 
 </resources>

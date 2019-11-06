@@ -12,8 +12,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
+import com.jakewharton.rxbinding3.widget.textChanges
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.main.MainFragment
 import com.madewithlove.daybalance.features.main.MainViewModel
@@ -70,7 +72,39 @@ class CreateFragment : Fragment() {
             }
         }
 
+        ui.miniTextView.apply {
+            setOnClickListener {
+                if (text.isNotEmpty()) {
+                    if (mainViewModel.mainState.isKeyboardOpened) {
+                        ui.commentEditText.hideKeyboard()
+                    } else {
+                        mainViewModel.openKeyboard()
+                    }
+                }
+            }
+
+            mainViewModel.mainStateObservable
+                .map { it.isKeyboardOpened }
+                .distinctUntilChanged()
+                .subscribeOnUi { isKeyboardOpened ->
+                    text = if (isKeyboardOpened) {
+                        viewModel.createState.amountString
+                    } else {
+                        viewModel.createState.comment
+                    }
+                }
+                .cache(dc)
+        }
+
         ui.inputTextView.apply {
+            mainViewModel.mainStateObservable
+                .map { it.isKeyboardOpened }
+                .distinctUntilChanged()
+                .subscribeOnUi { isKeyboardOpened ->
+                    isVisible = !isKeyboardOpened
+                }
+                .cache(dc)
+
             viewModel.createStateObservable
                 .map { it.amountString }
                 .distinctUntilChanged()
@@ -83,6 +117,18 @@ class CreateFragment : Fragment() {
                         text = "0.00"
                         textColorResource = R.color.palladium
                     }
+                }
+                .cache(dc)
+        }
+
+        ui.commentEditText.apply {
+            textChanges().subscribe(viewModel.commentTextConsumer).cache(dc)
+
+            mainViewModel.mainStateObservable
+                .map { it.isKeyboardOpened }
+                .distinctUntilChanged()
+                .subscribeOnUi { isKeyboardOpened ->
+                    isVisible = isKeyboardOpened
                 }
                 .cache(dc)
         }

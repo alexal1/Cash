@@ -17,6 +17,7 @@ import com.madewithlove.daybalance.utils.onNextConsumer
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.BehaviorSubject
+import timber.log.Timber
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.*
@@ -36,7 +37,9 @@ class MainViewModel(
 
 
     init {
-        mainStateObservable = mainStateSubject.distinctUntilChanged()
+        mainStateObservable = mainStateSubject
+            .distinctUntilChanged()
+            .doOnNext { Timber.i(it.toString()) }
 
         Observable
             .combineLatest<Date, Boolean, MainState>(

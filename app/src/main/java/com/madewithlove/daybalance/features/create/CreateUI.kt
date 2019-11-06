@@ -4,20 +4,22 @@
 
 package com.madewithlove.daybalance.features.create
 
+import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity.CENTER_VERTICAL
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
-import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.ui.KeypadView
 import com.madewithlove.daybalance.utils.anko.appCompatTextView
 import com.madewithlove.daybalance.utils.anko.keypadView
+import com.madewithlove.daybalance.utils.expandHitArea
 import com.madewithlove.daybalance.utils.screenSize
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
@@ -28,6 +30,7 @@ import org.jetbrains.anko.constraint.layout.matchConstraint
 class CreateUI : AnkoComponent<CreateFragment> {
 
     lateinit var toolbar: Toolbar
+    lateinit var miniTextView: TextView
     lateinit var inputTextView: TextView
     lateinit var commentEditText: EditText
     lateinit var keypadView: KeypadView
@@ -57,8 +60,23 @@ class CreateUI : AnkoComponent<CreateFragment> {
                 topMargin = (ctx.screenSize().y - dimen(R.dimen.toolbar_height) - dimen(R.dimen.input_icon_height) - keypadHeight - dimen(R.dimen.large_button_height)) / 2
             }
 
+            miniTextView = textView {
+                id = R.id.mini_text_view
+                textColorResource = R.color.white_80
+                textSize = 12f
+                includeFontPadding = false
+                maxLines = 1
+                ellipsize = TextUtils.TruncateAt.END
+
+                expandHitArea(3f)
+            }.lparams(matchConstraint, wrapContent) {
+                leftMargin = dip(18)
+                rightMargin = dip(16)
+            }
+
             inputTextView = appCompatTextView {
                 id = R.id.input_text_view
+                textColorResource = R.color.white
                 gravity = CENTER_VERTICAL
                 maxLines = 1
 
@@ -76,8 +94,16 @@ class CreateUI : AnkoComponent<CreateFragment> {
 
             commentEditText = editText {
                 id = R.id.comment_edit_text
-                isVisible = false
-            }.lparams(matchConstraint, wrapContent)
+                textColorResource = R.color.white
+                textSize = 32f
+                gravity = CENTER_VERTICAL
+                imeOptions = EditorInfo.IME_ACTION_DONE
+                singleLine = true
+                background = null
+            }.lparams(matchConstraint, dimen(R.dimen.input_icon_height)) {
+                leftMargin = dip(16)
+                rightMargin = dip(16)
+            }
 
             val keypadSpace = space {
                 id = View.generateViewId()
@@ -101,6 +127,12 @@ class CreateUI : AnkoComponent<CreateFragment> {
                 )
 
                 connect(
+                    START of miniTextView to END of inputIcon,
+                    END of miniTextView to END of PARENT_ID,
+                    BOTTOM of miniTextView to TOP of inputIcon
+                )
+
+                connect(
                     START of inputTextView to END of inputIcon,
                     END of inputTextView to END of PARENT_ID,
                     TOP of inputTextView to TOP of inputIcon,
@@ -108,10 +140,10 @@ class CreateUI : AnkoComponent<CreateFragment> {
                 )
 
                 connect(
-                    START of commentEditText to START of PARENT_ID,
+                    START of commentEditText to END of inputIcon,
                     END of commentEditText to END of PARENT_ID,
-                    TOP of commentEditText to BOTTOM of toolbar,
-                    BOTTOM of commentEditText to TOP of keypadView
+                    TOP of commentEditText to TOP of inputIcon,
+                    BOTTOM of commentEditText to BOTTOM of inputIcon
                 )
 
                 connect(
