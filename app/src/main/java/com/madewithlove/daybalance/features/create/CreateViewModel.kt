@@ -13,7 +13,7 @@ import io.reactivex.Observable
 import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
-import java.math.BigDecimal
+import java.math.BigDecimal.ZERO
 
 class CreateViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -41,7 +41,8 @@ class CreateViewModel(application: Application) : AndroidViewModel(application) 
         createStateSubject.onNext(
             CreateState(
                 amountString = "",
-                comment = ""
+                comment = "",
+                inputValidation = InputValidation.NONE
             )
         )
     }
@@ -73,7 +74,10 @@ class CreateViewModel(application: Application) : AndroidViewModel(application) 
             }
 
             KeypadView.Type.ENTER -> {
-
+                val money = createState.amountString.toMoney()
+                val inputValidation = if (money == null) InputValidation.ERROR else InputValidation.OK
+                createStateSubject.onNext(createState.copy(inputValidation = inputValidation))
+                createStateSubject.onNext(createState.copy(inputValidation = InputValidation.NONE))
             }
         }
     }
@@ -83,8 +87,29 @@ class CreateViewModel(application: Application) : AndroidViewModel(application) 
             return this
         }
 
-        val money = Money(BigDecimal(this.filterNot { it == ' ' }))
+        val money = Money.by(this.filterNot { it == ' ' })
         return TextFormatter.formatMoney(money, withFixedFraction = false)
+    }
+
+    private fun String.toMoney(): Money? {
+        var string = this
+
+        if (string.isEmpty()) {
+            return null
+        }
+
+        if (string.last() == '.') {
+            string += '0'
+        }
+
+        string = string.filterNot { it == ' ' }
+
+        val money = Money.by(string)
+        return if (money.amount > ZERO) {
+            money
+        } else {
+            null
+        }
     }
 
     private fun handleCommentText(comment: CharSequence) {
@@ -95,10 +120,14 @@ class CreateViewModel(application: Application) : AndroidViewModel(application) 
 
     data class CreateState(
         val amountString: String,
-        val comment: String
+        val comment: String,
+        val inputValidation: InputValidation
     )
 
 
     enum class Type { GAIN, LOSS }
+
+
+    enum class InputValidation { OK, ERROR, NONE }
 
 }

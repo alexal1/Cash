@@ -30,6 +30,7 @@ import org.jetbrains.anko.constraint.layout.matchConstraint
 class CreateUI : AnkoComponent<CreateFragment> {
 
     lateinit var toolbar: Toolbar
+    lateinit var inputIcon: ImageView
     lateinit var miniTextView: TextView
     lateinit var inputTextView: TextView
     lateinit var commentEditText: EditText
@@ -50,8 +51,8 @@ class CreateUI : AnkoComponent<CreateFragment> {
 
             val keypadHeight = minOf(dip(320), (ctx.screenSize().y * 0.5f).toInt())
 
-            val inputIcon = imageView {
-                id = View.generateViewId()
+            inputIcon = imageView {
+                id = R.id.input_icon
                 scaleType = ImageView.ScaleType.FIT_XY
 
                 setImageResource(R.drawable.ic_input)

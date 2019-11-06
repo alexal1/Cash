@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.marginTop
@@ -70,6 +71,18 @@ class CreateFragment : Fragment() {
             setNavigationOnClickListener {
                 act.onBackPressed()
             }
+        }
+
+        ui.inputIcon.apply {
+            viewModel.createStateObservable
+                .map { it.inputValidation }
+                .distinctUntilChanged()
+                .filter { it == CreateViewModel.InputValidation.ERROR }
+                .subscribeOnUi {
+                    val animation = AnimationUtils.loadAnimation(ctx, R.anim.shake)
+                    startAnimation(animation)
+                }
+                .cache(dc)
         }
 
         ui.miniTextView.apply {
