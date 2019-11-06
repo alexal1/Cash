@@ -15,7 +15,7 @@ import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 import java.math.BigDecimal.ZERO
 
-class CreateViewModel(application: Application) : AndroidViewModel(application) {
+class CreateViewModel(application: Application, initialType: Type) : AndroidViewModel(application) {
 
     companion object {
 
@@ -40,11 +40,19 @@ class CreateViewModel(application: Application) : AndroidViewModel(application) 
         // Default state
         createStateSubject.onNext(
             CreateState(
+                type = initialType,
                 amountString = "",
                 comment = "",
                 inputValidation = InputValidation.NONE
             )
         )
+    }
+
+
+    fun switchType() {
+        val newType = if (createState.type == Type.LOSS) Type.GAIN else Type.LOSS
+        val newState = createState.copy(type = newType)
+        createStateSubject.onNext(newState)
     }
 
 
@@ -119,6 +127,7 @@ class CreateViewModel(application: Application) : AndroidViewModel(application) 
 
 
     data class CreateState(
+        val type: Type,
         val amountString: String,
         val comment: String,
         val inputValidation: InputValidation

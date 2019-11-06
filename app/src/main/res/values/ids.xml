@@ -13,6 +13,8 @@
     <item name="text_date" type="id" />
     <item name="dates_recycler_view" type="id" />
     <item name="view_pager" type="id" />
+    <item name="create_toolbar" type="id" />
+    <item name="create_title" type="id" />
     <item name="input_icon" type="id" />
     <item name="mini_text_view" type="id" />
     <item name="input_text_view" type="id" />

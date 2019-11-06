@@ -188,4 +188,6 @@
     <string name="month_plan">The plan for this month</string>
     <string name="large_button_history">History</string>
     <string name="large_button_ketboard">Add comment</string>
+    <string name="create_loss">Expense</string>
+    <string name="create_gain">Income</string>
 </resources>

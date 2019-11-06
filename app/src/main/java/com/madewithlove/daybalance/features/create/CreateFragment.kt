@@ -22,11 +22,14 @@ import com.madewithlove.daybalance.features.main.MainFragment
 import com.madewithlove.daybalance.features.main.MainViewModel
 import com.madewithlove.daybalance.utils.*
 import org.jetbrains.anko.AnkoContext
+import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
 import org.jetbrains.anko.textColorResource
+import org.jetbrains.anko.textResource
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class CreateFragment : Fragment() {
 
@@ -45,7 +48,8 @@ class CreateFragment : Fragment() {
 
 
     private val mainViewModel by sharedViewModel<MainViewModel>(from = { parentFragment!! })
-    private val viewModel by viewModel<CreateViewModel>()
+    private val initialType by lazy { arguments!!.getSerializable(TYPE) as CreateViewModel.Type }
+    private val viewModel by viewModel<CreateViewModel> { parametersOf(initialType) }
     private val ui = CreateUI()
     private val dc = DisposableCache()
 
@@ -71,6 +75,26 @@ class CreateFragment : Fragment() {
             setNavigationOnClickListener {
                 act.onBackPressed()
             }
+        }
+
+        ui.titleText.apply {
+            setOnClickListener {
+                viewModel.switchType()
+            }
+
+            viewModel.createStateObservable
+                .map { it.type }
+                .distinctUntilChanged()
+                .subscribeOnUi { type ->
+                    if (type == CreateViewModel.Type.LOSS) {
+                        textResource = R.string.create_loss
+                        backgroundResource = R.drawable.bg_loss
+                    } else {
+                        textResource = R.string.create_gain
+                        backgroundResource = R.drawable.bg_gain
+                    }
+                }
+                .cache(dc)
         }
 
         ui.inputIcon.apply {

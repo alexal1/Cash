@@ -4,6 +4,7 @@
 
 package com.madewithlove.daybalance.features.create
 
+import android.graphics.Typeface
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity.CENTER_VERTICAL
@@ -30,6 +31,7 @@ import org.jetbrains.anko.constraint.layout.matchConstraint
 class CreateUI : AnkoComponent<CreateFragment> {
 
     lateinit var toolbar: Toolbar
+    lateinit var titleText: TextView
     lateinit var inputIcon: ImageView
     lateinit var miniTextView: TextView
     lateinit var inputTextView: TextView
@@ -44,9 +46,20 @@ class CreateUI : AnkoComponent<CreateFragment> {
             isFocusable = true
 
             toolbar = toolbar {
-                id = View.generateViewId()
+                id = R.id.create_toolbar
                 navigationIconResource = R.drawable.ic_arrow_back
                 backgroundColorResource = R.color.soft_dark
+
+                titleText = textView {
+                    id = R.id.create_title
+                    textColorResource = R.color.white_80
+                    alpha = 0.8f
+                    textSize = 14f
+                    letterSpacing = 0.02f
+                    typeface = Typeface.DEFAULT_BOLD
+
+                    setPadding(dip(12), dip(2), dip(12), dip(2))
+                }.lparams(wrapContent, wrapContent)
             }.lparams(matchConstraint, dimen(R.dimen.toolbar_height))
 
             val keypadHeight = minOf(dip(320), (ctx.screenSize().y * 0.5f).toInt())
