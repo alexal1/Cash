@@ -16,6 +16,13 @@ import java.math.BigDecimal
 
 class CreateViewModel(application: Application) : AndroidViewModel(application) {
 
+    companion object {
+
+        private const val AMOUNT_MAX_LENGTH = 16
+
+    }
+
+
     val createStateObservable: Observable<CreateState>
     val createState: CreateState get() = createStateSubject.value!!
     val keypadActionsConsumer = Consumer<KeypadView.Action>(this::handleKeypadAction)
@@ -39,11 +46,19 @@ class CreateViewModel(application: Application) : AndroidViewModel(application) 
     private fun handleKeypadAction(action: KeypadView.Action) {
         when (action.type) {
             KeypadView.Type.NUMBER -> {
+                if (createState.amountString.count { it.isDigit() } == AMOUNT_MAX_LENGTH) {
+                    return
+                }
+
                 val newAmountString = createState.amountString + action.payload.toString()
                 createStateSubject.onNext(createState.copy(amountString = newAmountString.format()))
             }
 
             KeypadView.Type.DOT -> {
+                if (createState.amountString.contains('.')) {
+                    return
+                }
+
                 val newAmountString = createState.amountString + "."
                 createStateSubject.onNext(createState.copy(amountString = newAmountString))
             }
