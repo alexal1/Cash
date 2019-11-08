@@ -300,19 +300,13 @@ class CreateFragment : Fragment() {
             setPadding(dip(16), dip(16), dip(16), dip(16))
         }
 
-        var newChosenMonth = chosenMonth
-
         monthPickerDialog = AlertDialog.Builder(ctx)
             .setCustomTitle(customTitle)
             .setSingleChoiceItems(
                 availableMonths.map { dateGainFormatter.format(it) }.toTypedArray(),
                 chosenMonth
-            ) { _, index -> newChosenMonth = index }
+            ) { _, index -> viewModel.setGainChosenMonth(index) }
             .setPositiveButton(R.string.ok) { dialog, _ ->
-                viewModel.setGainChosenMonth(newChosenMonth)
-                dialog.dismiss()
-            }
-            .setNegativeButton(R.string.cancel) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
