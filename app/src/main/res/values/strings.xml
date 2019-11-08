@@ -190,4 +190,6 @@
     <string name="large_button_ketboard">Add comment</string>
     <string name="create_loss">Expense</string>
     <string name="create_gain">Income</string>
+    <string name="create_gain_chosen_month_title">On which month are you going to spend these money?</string>
+    <string name="create_gain_chosen_month_description">This affects budget for one or another month</string>
 </resources>

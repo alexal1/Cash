@@ -17,10 +17,12 @@ import com.madewithlove.daybalance.utils.onNextConsumer
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 @SuppressLint("DefaultLocale")
 class MainViewModel(
@@ -30,8 +32,10 @@ class MainViewModel(
 
     val mainStateObservable: Observable<MainState>
     val mainState: MainState get() = mainStateSubject.value!!
+    val showCalendarObservable: Observable<Unit>
 
-    private val mainStateSubject = BehaviorSubject.create<MainState>()
+    private val mainStateSubject = BehaviorSubject.createDefault(getDefaultMainState())
+    private val showCalendarSubject = PublishSubject.create<Unit>()
     private val weekdayFormat = SimpleDateFormat("EEEE", application.currentLocale())
     private val dc = DisposableCache()
 
@@ -41,18 +45,17 @@ class MainViewModel(
             .distinctUntilChanged()
             .doOnNext { Timber.i(it.toString()) }
 
+        showCalendarObservable = showCalendarSubject.throttleFirst(1, TimeUnit.SECONDS)
+
         Observable
             .combineLatest<Date, Boolean, MainState>(
                 datesManager.currentDateObservable,
                 datesManager.isTodayObservable,
                 BiFunction { currentDate, isToday ->
-                    MainState(
+                    mainState.copy(
                         currentDate = currentDate,
                         isToday = isToday,
-                        weekday = weekdayFormat.format(currentDate).capitalize(),
-                        circleState = CircleView.CircleState(Money(BigDecimal(1234.56)), 0.8f),
-                        largeButtonType = LargeButtonType.HISTORY,
-                        isKeyboardOpened = false
+                        weekday = weekdayFormat.format(currentDate).capitalize()
                     )
                 }
             )
@@ -81,10 +84,24 @@ class MainViewModel(
         mainStateSubject.onNext(newMainState)
     }
 
+    fun showCalendar() {
+        showCalendarSubject.onNext(Unit)
+    }
+
 
     override fun onCleared() {
         dc.drain()
     }
+
+
+    private fun getDefaultMainState(): MainState = MainState(
+        currentDate = Date(),
+        isToday = false,
+        weekday = "",
+        circleState = CircleView.CircleState(Money(BigDecimal(1234.56)), 0.8f),
+        largeButtonType = LargeButtonType.HISTORY,
+        isKeyboardOpened = false
+    )
 
 
     data class MainState(

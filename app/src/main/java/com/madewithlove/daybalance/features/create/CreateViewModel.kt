@@ -7,15 +7,24 @@ package com.madewithlove.daybalance.features.create
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.dto.Money
+import com.madewithlove.daybalance.helpers.DatesManager
 import com.madewithlove.daybalance.ui.KeypadView
+import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.TextFormatter
+import com.madewithlove.daybalance.utils.cache
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 import java.math.BigDecimal.ZERO
+import java.util.*
+import kotlin.collections.ArrayList
 
-class CreateViewModel(application: Application, initialType: Type) : AndroidViewModel(application) {
+class CreateViewModel(
+    application: Application,
+    private val datesManager: DatesManager,
+    private val initialType: Type
+) : AndroidViewModel(application) {
 
     companion object {
 
@@ -29,7 +38,9 @@ class CreateViewModel(application: Application, initialType: Type) : AndroidView
     val keypadActionsConsumer = Consumer<KeypadView.Action>(this::handleKeypadAction)
     val commentTextConsumer = Consumer<CharSequence>(this::handleCommentText)
 
-    private val createStateSubject = BehaviorSubject.create<CreateState>()
+    private val calendar = GregorianCalendar()
+    private val createStateSubject = BehaviorSubject.createDefault(getDefaultCreateState())
+    private val dc = DisposableCache()
 
 
     init {
@@ -37,15 +48,14 @@ class CreateViewModel(application: Application, initialType: Type) : AndroidView
             .distinctUntilChanged()
             .doOnNext { Timber.i(it.toString()) }
 
-        // Default state
-        createStateSubject.onNext(
-            CreateState(
-                type = initialType,
-                amountString = "",
-                comment = "",
-                inputValidation = InputValidation.NONE
+        datesManager.currentDateObservable.subscribe { currentDate ->
+            val newState = createState.copy(
+                lossDate = currentDate,
+                gainAvailableMonths = getAvailableMonths(currentDate),
+                gainChosenMonth = 1
             )
-        )
+            createStateSubject.onNext(newState)
+        }.cache(dc)
     }
 
 
@@ -53,6 +63,16 @@ class CreateViewModel(application: Application, initialType: Type) : AndroidView
         val newType = if (createState.type == Type.LOSS) Type.GAIN else Type.LOSS
         val newState = createState.copy(type = newType)
         createStateSubject.onNext(newState)
+    }
+
+    fun setGainChosenMonth(chosenMonth: Int) {
+        val newState = createState.copy(gainChosenMonth = chosenMonth)
+        createStateSubject.onNext(newState)
+    }
+
+
+    override fun onCleared() {
+        dc.drain()
     }
 
 
@@ -125,9 +145,41 @@ class CreateViewModel(application: Application, initialType: Type) : AndroidView
         createStateSubject.onNext(newState)
     }
 
+    private fun getDefaultCreateState(): CreateState = CreateState(
+        type = initialType,
+        lossDate = datesManager.currentDate,
+        gainAvailableMonths = getAvailableMonths(datesManager.currentDate),
+        gainChosenMonth = 1,
+        amountString = "",
+        comment = "",
+        inputValidation = InputValidation.NONE
+    )
+
+    private fun getAvailableMonths(date: Date): List<Date> {
+        val result = ArrayList<Date>()
+        calendar.time = date
+
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        result.add(calendar.time)
+
+        calendar.add(Calendar.MONTH, 1)
+        result.add(calendar.time)
+
+        calendar.add(Calendar.MONTH, 1)
+        result.add(calendar.time)
+
+        calendar.add(Calendar.MONTH, 1)
+        result.add(calendar.time)
+
+        return result
+    }
+
 
     data class CreateState(
         val type: Type,
+        val lossDate: Date,
+        val gainAvailableMonths: List<Date>,
+        val gainChosenMonth: Int,
         val amountString: String,
         val comment: String,
         val inputValidation: InputValidation

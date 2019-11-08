@@ -73,7 +73,7 @@ class MainFragment : Fragment(), FragmentNavigator {
 
         ui.datesRecyclerView.apply {
             init(ctx.currentLocale())
-            centerItemClickObservable.subscribeOnUi { openCalendarDialog() }.cache(dc)
+            centerItemClickObservable.subscribeOnUi { viewModel.showCalendar() }.cache(dc)
 
             val lastDate = AtomicLong()
 
@@ -212,6 +212,10 @@ class MainFragment : Fragment(), FragmentNavigator {
             } else {
                 viewModel.notifyKeyboardClosed()
             }
+        }.cache(dc)
+
+        viewModel.showCalendarObservable.subscribeOnUi {
+            openCalendarDialog()
         }.cache(dc)
     }
 

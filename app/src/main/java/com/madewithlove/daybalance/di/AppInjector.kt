@@ -29,7 +29,7 @@ val viewModelsModule = module {
     viewModel { BaseViewModel(androidApplication()) }
     viewModel { MainViewModel(androidApplication(), get()) }
     viewModel { HistoryViewModel(androidApplication()) }
-    viewModel { (type: CreateViewModel.Type) -> CreateViewModel(androidApplication(), type) }
+    viewModel { (type: CreateViewModel.Type) -> CreateViewModel(androidApplication(), get(), type) }
     viewModel { NewTransactionViewModel(androidApplication()) }
     viewModel { DayTransactionsViewModel(androidApplication()) }
     viewModel { SettingsViewModel(androidApplication()) }

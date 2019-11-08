@@ -12,6 +12,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.LinearLayout
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.marginTop
@@ -21,15 +23,14 @@ import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.main.MainFragment
 import com.madewithlove.daybalance.features.main.MainViewModel
 import com.madewithlove.daybalance.utils.*
-import org.jetbrains.anko.AnkoContext
-import org.jetbrains.anko.backgroundResource
+import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
-import org.jetbrains.anko.textColorResource
-import org.jetbrains.anko.textResource
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import java.text.SimpleDateFormat
+import java.util.*
 
 class CreateFragment : Fragment() {
 
@@ -50,6 +51,8 @@ class CreateFragment : Fragment() {
     private val mainViewModel by sharedViewModel<MainViewModel>(from = { parentFragment!! })
     private val initialType by lazy { arguments!!.getSerializable(TYPE) as CreateViewModel.Type }
     private val viewModel by viewModel<CreateViewModel> { parametersOf(initialType) }
+    private val dateLossFormatter  by lazy { SimpleDateFormat("d MMM", ctx.currentLocale()) }
+    private val dateGainFormatter by lazy { SimpleDateFormat("MMMM", ctx.currentLocale()) }
     private val ui = CreateUI()
     private val dc = DisposableCache()
 
@@ -95,6 +98,35 @@ class CreateFragment : Fragment() {
                     }
                 }
                 .cache(dc)
+        }
+
+        ui.datePicker.apply {
+            viewModel.createStateObservable
+                .map {
+                    if (it.type == CreateViewModel.Type.LOSS) {
+                        it.type to it.lossDate
+                    } else {
+                        it.type to it.gainAvailableMonths[it.gainChosenMonth]
+                    }
+                }
+                .distinctUntilChanged()
+                .subscribeOnUi { (type, date) ->
+                    val formattedDate = when (type) {
+                        CreateViewModel.Type.LOSS -> dateLossFormatter.format(date)
+                        CreateViewModel.Type.GAIN -> dateGainFormatter.format(date)
+                    }
+
+                    text = formattedDate
+                }
+                .cache(dc)
+
+            setOnClickListener {
+                if (viewModel.createState.type == CreateViewModel.Type.LOSS) {
+                    mainViewModel.showCalendar()
+                } else {
+                    openMonthPickerDialog(viewModel.createState.gainAvailableMonths, viewModel.createState.gainChosenMonth)
+                }
+            }
         }
 
         ui.inputIcon.apply {
@@ -241,6 +273,45 @@ class CreateFragment : Fragment() {
 
             start()
         }
+    }
+
+    private fun openMonthPickerDialog(availableMonths: List<Date>, chosenMonth: Int) {
+        val customTitle = ctx.linearLayout {
+            orientation = LinearLayout.VERTICAL
+
+            textView {
+                textColorResource = R.color.white
+                textSize = 16f
+                textResource = R.string.create_gain_chosen_month_title
+            }.lparams(matchParent, wrapContent) {
+                bottomMargin = dip(8)
+            }
+
+            textView {
+                textColorResource = R.color.white_80
+                textSize = 14f
+                textResource = R.string.create_gain_chosen_month_description
+            }.lparams(matchParent, wrapContent)
+
+            setPadding(dip(16), dip(16), dip(16), dip(16))
+        }
+
+        var newChosenMonth = chosenMonth
+
+        AlertDialog.Builder(requireContext())
+            .setCustomTitle(customTitle)
+            .setSingleChoiceItems(
+                availableMonths.map { dateGainFormatter.format(it) }.toTypedArray(),
+                chosenMonth
+            ) { _, index -> newChosenMonth = index }
+            .setPositiveButton(R.string.ok) { dialog, _ ->
+                viewModel.setGainChosenMonth(newChosenMonth)
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
 }

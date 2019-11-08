@@ -13,16 +13,20 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
+import androidx.core.view.get
 import androidx.core.widget.TextViewCompat
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.ui.KeypadView
+import com.madewithlove.daybalance.utils.anko._Toolbar
 import com.madewithlove.daybalance.utils.anko.appCompatTextView
+import com.madewithlove.daybalance.utils.anko.appCompatToolbar
 import com.madewithlove.daybalance.utils.anko.keypadView
 import com.madewithlove.daybalance.utils.expandHitArea
 import com.madewithlove.daybalance.utils.screenSize
+import com.madewithlove.daybalance.utils.setSelectableBackground
 import org.jetbrains.anko.*
+import org.jetbrains.anko.appcompat.v7.navigationIconResource
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
 import org.jetbrains.anko.constraint.layout.constraintLayout
@@ -30,8 +34,9 @@ import org.jetbrains.anko.constraint.layout.matchConstraint
 
 class CreateUI : AnkoComponent<CreateFragment> {
 
-    lateinit var toolbar: Toolbar
+    lateinit var toolbar: _Toolbar
     lateinit var titleText: TextView
+    lateinit var datePicker: TextView
     lateinit var inputIcon: ImageView
     lateinit var miniTextView: TextView
     lateinit var inputTextView: TextView
@@ -45,7 +50,7 @@ class CreateUI : AnkoComponent<CreateFragment> {
             isClickable = true
             isFocusable = true
 
-            toolbar = toolbar {
+            toolbar = appCompatToolbar {
                 id = R.id.create_toolbar
                 navigationIconResource = R.drawable.ic_arrow_back
                 backgroundColorResource = R.color.soft_dark
@@ -60,6 +65,19 @@ class CreateUI : AnkoComponent<CreateFragment> {
 
                     setPadding(dip(12), dip(2), dip(12), dip(2))
                 }.lparams(wrapContent, wrapContent)
+
+                inflateMenu(R.menu.create)
+
+                datePicker = (menu[0].actionView as TextView).apply {
+                    textSize = 14f
+                    textColorResource = R.color.white_80
+                    letterSpacing = 0.02f
+                    compoundDrawablePadding = dip(8)
+
+                    setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_calendar, 0)
+                    setPadding(dip(16), 0, dip(16), 0)
+                    setSelectableBackground(true)
+                }
             }.lparams(matchConstraint, dimen(R.dimen.toolbar_height))
 
             val keypadHeight = minOf(dip(320), (ctx.screenSize().y * 0.5f).toInt())
