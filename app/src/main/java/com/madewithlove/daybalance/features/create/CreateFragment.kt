@@ -57,6 +57,7 @@ class CreateFragment : Fragment() {
     private val dc = DisposableCache()
 
     private var animator: Animator? = null
+    private var monthPickerDialog: AlertDialog? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -226,6 +227,7 @@ class CreateFragment : Fragment() {
 
     override fun onDestroyView() {
         animator?.cancel()
+        monthPickerDialog?.dismiss()
         dc.drain()
         ui.commentEditText.hideKeyboard()
         super.onDestroyView()
@@ -276,6 +278,8 @@ class CreateFragment : Fragment() {
     }
 
     private fun openMonthPickerDialog(availableMonths: List<Date>, chosenMonth: Int) {
+        monthPickerDialog?.dismiss()
+
         val customTitle = ctx.linearLayout {
             orientation = LinearLayout.VERTICAL
 
@@ -298,7 +302,7 @@ class CreateFragment : Fragment() {
 
         var newChosenMonth = chosenMonth
 
-        AlertDialog.Builder(requireContext())
+        monthPickerDialog = AlertDialog.Builder(ctx)
             .setCustomTitle(customTitle)
             .setSingleChoiceItems(
                 availableMonths.map { dateGainFormatter.format(it) }.toTypedArray(),
