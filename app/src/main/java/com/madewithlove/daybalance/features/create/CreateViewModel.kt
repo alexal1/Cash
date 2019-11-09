@@ -8,6 +8,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.dto.Money
 import com.madewithlove.daybalance.helpers.DatesManager
+import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.ui.KeypadView
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.TextFormatter
@@ -25,13 +26,6 @@ class CreateViewModel(
     private val datesManager: DatesManager,
     private val initialType: Type
 ) : AndroidViewModel(application) {
-
-    companion object {
-
-        private const val AMOUNT_MAX_LENGTH = 16
-
-    }
-
 
     val createStateObservable: Observable<CreateState>
     val createState: CreateState get() = createStateSubject.value!!
@@ -79,10 +73,6 @@ class CreateViewModel(
     private fun handleKeypadAction(action: KeypadView.Action) {
         when (action.type) {
             KeypadView.Type.NUMBER -> {
-                if (createState.amountString.count { it.isDigit() } == AMOUNT_MAX_LENGTH) {
-                    return
-                }
-
                 val newAmountString = createState.amountString + action.payload.toString()
                 createStateSubject.onNext(createState.copy(amountString = newAmountString.format()))
             }
@@ -103,9 +93,13 @@ class CreateViewModel(
 
             KeypadView.Type.ENTER -> {
                 val money = createState.amountString.toMoney()
-                val inputValidation = if (money == null) InputValidation.ERROR else InputValidation.OK
-                createStateSubject.onNext(createState.copy(inputValidation = inputValidation))
-                createStateSubject.onNext(createState.copy(inputValidation = InputValidation.NONE))
+                if (money == null) {
+                    createStateSubject.onNext(createState.copy(inputValidation = InputValidation.ERROR))
+                    createStateSubject.onNext(createState.copy(inputValidation = InputValidation.NONE))
+                } else {
+                    val transaction = createTransaction(money)
+                    createStateSubject.onNext(createState.copy(inputValidation = InputValidation.OK(transaction)))
+                }
             }
         }
     }
@@ -174,6 +168,28 @@ class CreateViewModel(
         return result
     }
 
+    private fun createTransaction(money: Money): Transaction = Transaction().apply {
+        val sign = if (createState.type == Type.LOSS) "-" else ""
+
+        value = "$sign${money.amount.toPlainString()}"
+        comment = createState.comment
+        addedTimestamp = System.currentTimeMillis()
+
+        if (createState.type == Type.LOSS) {
+            calendar.time = datesManager.currentDate
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+
+            startTimestamp = datesManager.currentDate.time
+            endTimestamp = calendar.timeInMillis
+        } else {
+            calendar.time = createState.gainAvailableMonths[createState.gainChosenMonth]
+            calendar.add(Calendar.MONTH, 1)
+
+            startTimestamp = createState.gainAvailableMonths[createState.gainChosenMonth].time
+            endTimestamp = calendar.timeInMillis
+        }
+    }
+
 
     data class CreateState(
         val type: Type,
@@ -189,6 +205,10 @@ class CreateViewModel(
     enum class Type { GAIN, LOSS }
 
 
-    enum class InputValidation { OK, ERROR, NONE }
+    sealed class InputValidation {
+        class OK(val transaction: Transaction) : InputValidation()
+        object ERROR : InputValidation()
+        object NONE : InputValidation()
+    }
 
 }

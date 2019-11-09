@@ -5,6 +5,7 @@
 package com.madewithlove.daybalance.repository.entities
 
 import com.madewithlove.daybalance.CashApp
+import com.madewithlove.daybalance.dto.Money
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import java.io.Serializable
@@ -16,10 +17,17 @@ open class Transaction : RealmObject(), Serializable {
     @PrimaryKey
     var id: String = UUID.randomUUID().toString()
 
+    var value: String = ""
+
+    var comment: String = ""
+
+    @Deprecated("Old concept")
     var amount: Double = 0.0
 
+    @Deprecated("Old concept")
     var categoryId: String = ""
 
+    @Deprecated("Old concept")
     var period: String = ""
 
     var startTimestamp: Long = 0
@@ -28,8 +36,11 @@ open class Transaction : RealmObject(), Serializable {
 
     var addedTimestamp: Long = 0
 
+    @Deprecated("Old concept")
     var account: Account? = null
 
+
+    fun getMoney() = Money.by(value)
 
     fun isGain(): Boolean = amount > 0.0
 

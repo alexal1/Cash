@@ -24,6 +24,9 @@ data class Money(val amount: BigDecimal) {
     }
 
 
+    fun isGain(): Boolean = amount.signum() > 0
+
+
     init {
         amount.setScale(2, ROUND_HALF_UP)
     }

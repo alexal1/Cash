@@ -219,6 +219,16 @@ class CreateFragment : Fragment() {
                 .cache(dc)
         }
 
+        viewModel.createStateObservable
+            .map { it.inputValidation }
+            .ofType(CreateViewModel.InputValidation.OK::class.java)
+            .map { it.transaction }
+            .subscribeOnUi {
+                mainViewModel.saveTransaction(it)
+                act.onBackPressed()
+            }
+            .cache(dc)
+
         view.post {
             startPostponedEnterTransition()
             mainViewModel.notifyCreateOpened()

@@ -9,11 +9,14 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.dto.Money
 import com.madewithlove.daybalance.helpers.DatesManager
+import com.madewithlove.daybalance.repository.TransactionsRepository
+import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.ui.circle.CircleView
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
 import com.madewithlove.daybalance.utils.currentLocale
 import com.madewithlove.daybalance.utils.onNextConsumer
+import com.madewithlove.daybalance.viewmodels.cache.CacheLogicAdapter
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.BehaviorSubject
@@ -27,7 +30,9 @@ import java.util.concurrent.TimeUnit
 @SuppressLint("DefaultLocale")
 class MainViewModel(
     application: Application,
-    datesManager: DatesManager
+    private val datesManager: DatesManager,
+    private val cache: CacheLogicAdapter,
+    private val repository: TransactionsRepository
 ) : AndroidViewModel(application) {
 
     val mainStateObservable: Observable<MainState>
@@ -86,6 +91,15 @@ class MainViewModel(
 
     fun showCalendar() {
         showCalendarSubject.onNext(Unit)
+    }
+
+    fun saveTransaction(transaction: Transaction) {
+        cache
+            .clear()
+            .andThen(repository.addTransaction(transaction))
+            .andThen(cache.requestDate(datesManager.currentDate))
+            .subscribe()
+            .cache(dc)
     }
 
 
