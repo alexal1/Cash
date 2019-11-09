@@ -53,9 +53,10 @@ class CreateFragment : Fragment() {
     private val viewModel by viewModel<CreateViewModel> { parametersOf(initialType) }
     private val dateLossFormatter  by lazy { SimpleDateFormat("d MMM", ctx.currentLocale()) }
     private val dateGainFormatter by lazy { SimpleDateFormat("MMMM", ctx.currentLocale()) }
-    private val ui = CreateUI()
+    private val ui: CreateUI get() = createUI ?: CreateUI().also { createUI = it }
     private val dc = DisposableCache()
 
+    private var createUI: CreateUI? = null
     private var animator: Animator? = null
     private var monthPickerDialog: AlertDialog? = null
 
@@ -240,6 +241,7 @@ class CreateFragment : Fragment() {
         monthPickerDialog?.dismiss()
         dc.drain()
         ui.commentEditText.hideKeyboard()
+        createUI = null
         super.onDestroyView()
 
         mainViewModel.notifyCreateClosed()

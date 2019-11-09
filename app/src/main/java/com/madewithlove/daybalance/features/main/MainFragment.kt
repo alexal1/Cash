@@ -56,11 +56,18 @@ class MainFragment : Fragment(), FragmentNavigator {
     private val analytics: Analytics by inject()
     private val calendarDialog by lazy { createCalendarDialog() }
     private val calendar = GregorianCalendar.getInstance()
-    private val ui = MainUI()
+    private val ui: MainUI get() = mainUI ?: MainUI().also { mainUI = it }
     private val dc = DisposableCache()
 
+    private var mainUI: MainUI? = null
     private var animator: Animator? = null
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        postponeEnterTransition()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -217,11 +224,16 @@ class MainFragment : Fragment(), FragmentNavigator {
         viewModel.showCalendarObservable.subscribeOnUi {
             openCalendarDialog()
         }.cache(dc)
+
+        view.post {
+            startPostponedEnterTransition()
+        }
     }
 
     override fun onDestroyView() {
         animator?.cancel()
         dc.drain()
+        mainUI = null
         super.onDestroyView()
     }
 
