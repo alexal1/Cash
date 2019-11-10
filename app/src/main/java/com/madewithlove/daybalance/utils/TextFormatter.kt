@@ -20,16 +20,14 @@ object TextFormatter {
 
 
     fun formatMoney(money: Money, withGrouping: Boolean = true, withFixedFraction: Boolean = true): String {
-        decimalFormat.isGroupingUsed = withGrouping
-        decimalFormat.minimumFractionDigits = if (withFixedFraction) 2 else 0
-        decimalFormat.maximumFractionDigits = if (withFixedFraction) 2 else Int.MAX_VALUE
-        return decimalFormat.format(money.amount)
+        return formatMoney(money.amount, withGrouping, withFixedFraction)
     }
 
-    fun formatMoney(money: Float, withGrouping: Boolean = true, withFixedFraction: Boolean = true): String {
+    fun formatMoney(money: Number, withGrouping: Boolean = true, withFixedFraction: Boolean = true): String {
         decimalFormat.isGroupingUsed = withGrouping
         decimalFormat.minimumFractionDigits = if (withFixedFraction) 2 else 0
         decimalFormat.maximumFractionDigits = if (withFixedFraction) 2 else Int.MAX_VALUE
+        decimalFormat.negativePrefix = "- "
         return decimalFormat.format(money)
     }
 
