@@ -20,6 +20,9 @@
     <item name="input_text_view" type="id" />
     <item name="comment_edit_text" type="id" />
     <item name="keypad_view" type="id" />
+    <item name="floating_action_button" type="id" />
+    <item name="empty_view" type="id" />
+    <item name="loading_view" type="id" />
     <item name="currency_picker_text" type="id" />
     <item name="category_picker" type="id" />
     <item name="category_picker_text" type="id" />
@@ -31,6 +34,8 @@
     <item name="day_transactions_fragment_container" type="id" />
     <item name="transactions_list" type="id" />
     <item name="transaction_text_amount" type="id" />
+    <item name="transaction_icon_comment" type="id" />
+    <item name="transaction_text_comment" type="id" />
     <item name="transaction_separator" type="id" />
     <item name="transaction_category" type="id" />
     <item name="transaction_period" type="id" />

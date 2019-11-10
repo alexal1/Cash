@@ -178,4 +178,6 @@
     <string name="create_gain">Доход</string>
     <string name="create_gain_chosen_month_title">В какой месяц вы будете тратить эти деньги?</string>
     <string name="create_gain_chosen_month_description">Выбор влияет на бюджет в том или ином месяце</string>
+    <string name="history_empty">Здесь пока\nничего нет</string>
+    <string name="history_loading">Загружаем…</string>
 </resources>

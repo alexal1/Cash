@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.ui.activities.DetailedTransactionActivity
 import com.madewithlove.daybalance.utils.DisposableCache
-import com.madewithlove.daybalance.utils.anko.transactionsList
+import com.madewithlove.daybalance.utils.anko.transactionsListOld
 import com.madewithlove.daybalance.utils.cache
 import com.madewithlove.daybalance.utils.screenSize
 import com.madewithlove.daybalance.utils.subscribeOnUi
@@ -54,7 +54,7 @@ class DayTransactionsFragment : Fragment() {
             topMargin = (availableHeight - dimen(R.dimen.progress_bar_size)) / 2
         }
 
-        transactionsList {
+        transactionsListOld {
             id = R.id.transactions_list
 
             val transactionsItemsObservable = if (type == Type.LOSS) {

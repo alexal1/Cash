@@ -51,6 +51,10 @@ inline fun ViewManager.transactionsList(init: TransactionsList.() -> Unit = {}):
     return ankoView({ TransactionsList(it) }, theme = 0, init = init)
 }
 
+inline fun ViewManager.transactionsListOld(init: TransactionsListOld.() -> Unit = {}): TransactionsListOld {
+    return ankoView({ TransactionsListOld(it) }, theme = 0, init = init)
+}
+
 inline fun ViewManager.appCompatToolbar(init: _Toolbar.() -> Unit = {}): _Toolbar {
     return ankoView({ _Toolbar(it) }, theme = 0, init = init)
 }

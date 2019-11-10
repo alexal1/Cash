@@ -42,7 +42,7 @@ open class Transaction : RealmObject(), Serializable {
 
     fun getMoney() = Money.by(value)
 
-    fun isGain(): Boolean = amount > 0.0
+    fun isGain(): Boolean = getMoney().isGain()
 
     fun getDaysCount(): Int = ((endTimestamp - startTimestamp) / CashApp.millisInDay).toInt()
 

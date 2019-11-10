@@ -52,6 +52,7 @@ class CashApp : Application(), LifecycleObserver {
     }
 
 
+    private val isDebugBuild = BuildConfig.BUILD_TYPE == "debug"
     private val sharedPreferences: SharedPreferences by inject()
     private val pushManager: PushManager by inject()
     private val transactionsRepository: TransactionsRepository by inject()
@@ -72,6 +73,7 @@ class CashApp : Application(), LifecycleObserver {
     }
 
 
+    @Suppress("ConstantConditionIf")
     override fun onCreate() {
         super.onCreate()
 
@@ -91,13 +93,17 @@ class CashApp : Application(), LifecycleObserver {
 
 
         Realm.init(this)
-        val config = RealmConfiguration.Builder()
+        val configBuilder = RealmConfiguration.Builder()
             .name("cash.realm")
             .schemaVersion(0)
-            .migration(CashRealmMigration())
-            .build()
 
-        Realm.setDefaultConfiguration(config)
+        if (isDebugBuild) {
+            configBuilder.deleteRealmIfMigrationNeeded()
+        } else {
+            configBuilder.migration(CashRealmMigration())
+        }
+
+        Realm.setDefaultConfiguration(configBuilder.build())
 
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
@@ -112,7 +118,6 @@ class CashApp : Application(), LifecycleObserver {
 
 
         val areLogsEnabled = sharedPreferences.getBoolean(PREFS_LOGS_ENABLED, false)
-        val isDebugBuild = BuildConfig.BUILD_TYPE == "debug"
 
         if (!isDebugBuild && areLogsEnabled) {
             Timber.plant(CashDebugTree())

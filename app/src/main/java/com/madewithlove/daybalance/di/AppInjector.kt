@@ -28,7 +28,7 @@ import org.koin.dsl.module
 val viewModelsModule = module {
     viewModel { BaseViewModel(androidApplication()) }
     viewModel { MainViewModel(androidApplication(), get(), get(), get()) }
-    viewModel { HistoryViewModel(androidApplication()) }
+    viewModel { HistoryViewModel(androidApplication(), get()) }
     viewModel { (type: CreateViewModel.Type) -> CreateViewModel(androidApplication(), get(), type) }
     viewModel { NewTransactionViewModel(androidApplication()) }
     viewModel { DayTransactionsViewModel(androidApplication()) }
