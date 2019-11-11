@@ -13,6 +13,7 @@ import com.madewithlove.daybalance.ui.TransactionsList
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
 import io.reactivex.Observable
+import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 import java.util.*
@@ -26,6 +27,8 @@ class HistoryViewModel(
 
     val historyStateObservable: Observable<HistoryState>
     val historyState: HistoryState get() = historyStateSubject.value!!
+    val checkConsumer: Consumer<TransactionsList.Item.TransactionItem> = Consumer(this::handleCheck)
+    val uncheckConsumer: Consumer<TransactionsList.Item.TransactionItem> = Consumer(this::handleUncheck)
 
     private val historyStateSubject = BehaviorSubject.createDefault(getDefaultHistoryState())
     private val dc = DisposableCache()
@@ -51,6 +54,22 @@ class HistoryViewModel(
     }
 
 
+    fun dismissDeleteMode() {
+        val newState = historyState.copy(
+            items = historyState.items.map { item ->
+                if (item is TransactionsList.Item.TransactionItem) {
+                    item.isChecked = false
+                }
+
+                item
+            },
+            checkedTransactions = emptySet()
+        )
+
+        historyStateSubject.onNext(newState)
+    }
+
+
     override fun onCleared() {
         dc.drain()
     }
@@ -59,7 +78,8 @@ class HistoryViewModel(
     private fun getDefaultHistoryState() = HistoryState(
         showEmpty = false,
         showLoading = true,
-        items = emptyList()
+        items = emptyList(),
+        checkedTransactions = emptySet()
     )
 
     private fun toItems(transactions: List<Transaction>): List<TransactionsList.Item> {
@@ -90,11 +110,28 @@ class HistoryViewModel(
         return this / TimeUnit.DAYS.toMillis(1) == timestamp / TimeUnit.DAYS.toMillis(1)
     }
 
+    private fun handleCheck(transactionItem: TransactionsList.Item.TransactionItem) {
+        transactionItem.isChecked = true
+
+        val newState = historyState.copy(checkedTransactions = historyState.checkedTransactions + transactionItem.transaction)
+        historyStateSubject.onNext(newState)
+    }
+
+    private fun handleUncheck(transactionItem: TransactionsList.Item.TransactionItem) {
+        transactionItem.isChecked = false
+
+        val newState = historyState.copy(checkedTransactions = historyState.checkedTransactions - transactionItem.transaction)
+        historyStateSubject.onNext(newState)
+    }
+
 
     data class HistoryState(
         val showEmpty: Boolean,
         val showLoading: Boolean,
-        val items: List<TransactionsList.Item>
-    )
+        val items: List<TransactionsList.Item>,
+        val checkedTransactions: Set<Transaction>
+    ) {
+        val deleteModeOn: Boolean get() = checkedTransactions.isNotEmpty()
+    }
 
 }

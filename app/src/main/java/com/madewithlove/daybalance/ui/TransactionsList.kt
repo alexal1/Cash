@@ -12,14 +12,17 @@ import android.util.TypedValue
 import android.view.Gravity.CENTER_VERTICAL
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
 import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.utils.*
@@ -37,25 +40,38 @@ import java.util.*
 
 class TransactionsList(context: Context) : RecyclerView(context), KoinComponent {
 
-    val transactionLongClickSubject = PublishSubject.create<Transaction>()
+    val checkSubject = PublishSubject.create<Item.TransactionItem>()
+    val uncheckSubject = PublishSubject.create<Item.TransactionItem>()
 
 
     init {
         clipToPadding = false
         layoutManager = LinearLayoutManager(context, VERTICAL, false)
-        adapter = TransactionsAdapter(emptyList(), context.currentLocale()) { transaction ->
-            transactionLongClickSubject.onNext(transaction)
-        }
+        adapter = TransactionsAdapter(
+            emptyList(),
+            false,
+            context.currentLocale(),
+            onChecked = { transaction ->
+                checkSubject.onNext(transaction)
+            },
+            onUnchecked = { transaction ->
+                uncheckSubject.onNext(transaction)
+            }
+        )
+
+        (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
     }
 
 
-    fun setData(data: List<Item>) = post {
+    fun setData(data: List<Item>, deleteModeOn: Boolean) = post {
         val transactionsAdapter = adapter as TransactionsAdapter
 
         val oldData = transactionsAdapter.data.toList()
+        val oldDeleteModeOn = transactionsAdapter.deleteModeOn
         transactionsAdapter.data = data
+        transactionsAdapter.deleteModeOn = deleteModeOn
 
-        val transactionsDiff = TransactionsDiff(oldData, data)
+        val transactionsDiff = TransactionsDiff(oldData, oldDeleteModeOn, data, deleteModeOn)
         val diffResult = DiffUtil.calculateDiff(transactionsDiff)
         diffResult.dispatchUpdatesTo(transactionsAdapter)
     }
@@ -68,7 +84,9 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
             const val DATE_TYPE = 1
         }
 
-        data class TransactionItem(val transaction: Transaction) : Item(TRANSACTION_TYPE)
+        data class TransactionItem(val transaction: Transaction) : Item(TRANSACTION_TYPE) {
+            var isChecked = false
+        }
 
         data class DateItem(val date: Date) : Item(DATE_TYPE)
 
@@ -77,8 +95,10 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
 
     private class TransactionsAdapter(
         var data: List<Item>,
+        var deleteModeOn: Boolean,
         locale: Locale,
-        private val onTransactionLongClick: (Transaction) -> Unit
+        private val onChecked: (Item.TransactionItem) -> Unit,
+        private val onUnchecked: (Item.TransactionItem) -> Unit
     ) : RecyclerView.Adapter<ViewHolder>() {
 
 
@@ -101,13 +121,33 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                 }
 
                 Item.TRANSACTION_TYPE -> {
-                    val view =
-                        TransactionUI().createView(AnkoContext.create(parent.context, parent))
+                    val view = TransactionUI().createView(AnkoContext.create(parent.context, parent))
+                    val viewHolder = TransactionViewHolder(view)
+
                     view.setOnLongClickListener {
-                        onTransactionLongClick(it.tag as Transaction)
-                        return@setOnLongClickListener true
+                        if (!deleteModeOn) {
+                            viewHolder.checkBox.isChecked = true
+                            return@setOnLongClickListener true
+                        }
+
+                        return@setOnLongClickListener false
                     }
-                    TransactionViewHolder(view)
+
+                    view.setOnClickListener {
+                        if (viewHolder.checkBox.isVisible) {
+                            viewHolder.checkBox.isChecked = !viewHolder.checkBox.isChecked
+                        }
+                    }
+
+                    viewHolder.checkBox.setOnCheckedChangeListener { _, isChecked ->
+                        if (isChecked) {
+                            onChecked(view.tag as Item.TransactionItem)
+                        } else {
+                            onUnchecked(view.tag as Item.TransactionItem)
+                        }
+                    }
+
+                    viewHolder
                 }
 
                 else -> throw IllegalArgumentException("Unexpected viewType $viewType")
@@ -123,12 +163,14 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
 
                     holder as TransactionViewHolder
                     holder.apply {
-                        itemView.tag = transaction
+                        itemView.tag = transactionItem
 
                         amountText.text = TextFormatter.formatMoney(transaction.getMoney(), withPositivePrefix = true)
                         amountText.textColorResource = if (transaction.getMoney().isGain()) R.color.green_80 else R.color.red_80
                         commentIcon.isInvisible = transaction.comment.isEmpty()
                         commentText.text = transaction.comment
+                        checkBox.isVisible = deleteModeOn
+                        checkBox.isChecked = transactionItem.isChecked
 
                         separator.isInvisible = (position == data.size - 1) || (data[position + 1].type == Item.DATE_TYPE)
                     }
@@ -166,6 +208,7 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
         val commentIcon: ImageView = itemView.findViewById(R.id.transaction_icon_comment)
         val commentText: TextView = itemView.findViewById(R.id.transaction_text_comment)
         val separator: View = itemView.findViewById(R.id.transaction_separator)
+        val checkBox: CheckBox = itemView.findViewById(R.id.transaction_checkbox)
 
     }
 
@@ -176,6 +219,12 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
             constraintLayout {
                 layoutParams = LayoutParams(matchParent, wrapContent)
                 setSelectableBackground()
+
+                val checkBox = checkBox {
+                    id = R.id.transaction_checkbox
+
+                    rightPadding = dip(8)
+                }.lparams(wrapContent, wrapContent)
 
                 val amountText = appCompatTextView {
                     id = R.id.transaction_text_amount
@@ -223,13 +272,19 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
 
                 applyConstraintSet {
                     connect(
-                        START of amountText to START of separator,
+                        START of checkBox to START of separator,
+                        TOP of checkBox to TOP of PARENT_ID,
+                        BOTTOM of checkBox to BOTTOM of PARENT_ID
+                    )
+
+                    connect(
+                        START of amountText to END of checkBox,
                         END of amountText to END of PARENT_ID,
                         TOP of amountText to TOP of PARENT_ID
                     )
 
                     connect(
-                        START of commentIcon to START of separator,
+                        START of commentIcon to END of checkBox,
                         TOP of commentIcon to BOTTOM of amountText
                     )
 
@@ -278,7 +333,9 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
 
     private class TransactionsDiff(
         private val oldData: List<Item>,
-        private val newData: List<Item>
+        private val oldDeleteModeOn: Boolean,
+        private val newData: List<Item>,
+        private val newDeleteModeOn: Boolean
     ) : DiffUtil.Callback() {
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
@@ -290,6 +347,20 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
         override fun getNewListSize(): Int = newData.size
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            if (oldDeleteModeOn != newDeleteModeOn) {
+                if (newData[newItemPosition].type == Item.TRANSACTION_TYPE) {
+                    return false
+                }
+            }
+
+            if (newDeleteModeOn) {
+                val newTransactionItem = newData[newItemPosition] as? Item.TransactionItem
+                if (newTransactionItem != null) {
+                    val oldTransactionItem = oldData[oldItemPosition] as Item.TransactionItem
+                    return oldTransactionItem.isChecked == newTransactionItem.isChecked
+                }
+            }
+
             return true
         }
 

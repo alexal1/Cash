@@ -51,11 +51,14 @@ class HistoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         ui.transactionsList.apply {
+            checkSubject.subscribe(viewModel.checkConsumer).cache(dc)
+            uncheckSubject.subscribe(viewModel.uncheckConsumer).cache(dc)
+
             viewModel.historyStateObservable
-                .map { it.items }
+                .map { it.items to it.deleteModeOn }
                 .distinctUntilChanged()
-                .subscribeOnUi { items ->
-                    setData(items)
+                .subscribeOnUi { (items, deleteModeOn) ->
+                    setData(items, deleteModeOn)
                 }
                 .cache(dc)
         }
