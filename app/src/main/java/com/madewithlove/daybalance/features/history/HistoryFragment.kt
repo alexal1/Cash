@@ -4,16 +4,16 @@
 
 package com.madewithlove.daybalance.features.history
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import com.madewithlove.daybalance.utils.DisposableCache
-import com.madewithlove.daybalance.utils.cache
-import com.madewithlove.daybalance.utils.setOnClickListenerWithThrottle
-import com.madewithlove.daybalance.utils.subscribeOnUi
+import com.madewithlove.daybalance.R
+import com.madewithlove.daybalance.utils.*
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
@@ -33,6 +33,7 @@ class HistoryFragment : Fragment() {
     private val dc = DisposableCache()
 
     private var historyUI: HistoryUI? = null
+    private var confirmDeleteDialog: AlertDialog? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,9 +64,29 @@ class HistoryFragment : Fragment() {
                 .cache(dc)
         }
 
-        ui.floatingActionButton.setOnClickListenerWithThrottle {
-            act.onBackPressed()
-        }.cache(dc)
+        ui.floatingActionButton.apply {
+            viewModel.historyStateObservable
+                .map { it.deleteModeOn }
+                .distinctUntilChanged()
+                .subscribeOnUi { deleteModeOn ->
+                    if (deleteModeOn) {
+                        backgroundTintList = ColorStateList.valueOf(color(R.color.arterial_blood))
+                        setImageResource(R.drawable.ic_trash)
+                    } else {
+                        backgroundTintList = ColorStateList.valueOf(color(R.color.blue))
+                        setImageResource(R.drawable.ic_double_arrow)
+                    }
+                }
+                .cache(dc)
+
+            setOnClickListenerWithThrottle {
+                if (viewModel.historyState.deleteModeOn) {
+                    openAreYouSureDialog(viewModel.historyState.checkedTransactions.count())
+                } else {
+                    act.onBackPressed()
+                }
+            }.cache(dc)
+        }
 
         ui.emptyView.apply {
             viewModel.historyStateObservable
@@ -93,9 +114,26 @@ class HistoryFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        confirmDeleteDialog?.dismiss()
         dc.drain()
         historyUI = null
         super.onDestroyView()
+    }
+
+
+    private fun openAreYouSureDialog(checkedItemsCount: Int) {
+        confirmDeleteDialog?.dismiss()
+
+        confirmDeleteDialog = AlertDialog.Builder(ctx)
+            .setMessage(ctx.resources.getQuantityString(R.plurals.history_delete_confirm, checkedItemsCount, checkedItemsCount))
+            .setNegativeButton(R.string.no) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(R.string.yes) { dialog, _ ->
+                viewModel.deleteCheckedItems()
+                dialog.dismiss()
+            }
+            .show()
     }
 
 }

@@ -180,4 +180,9 @@
     <string name="create_gain_chosen_month_description">Выбор влияет на бюджет в том или ином месяце</string>
     <string name="history_empty">Здесь пока\nничего нет</string>
     <string name="history_loading">Загружаем…</string>
+    <plurals name="history_delete_confirm">
+        <item quantity="one">Удалить %d транзакцию?</item>
+        <item quantity="few">Удалить %d транзакции?</item>
+        <item quantity="many">Удалить %d транзакций?</item>
+    </plurals>
 </resources>

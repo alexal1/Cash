@@ -18,6 +18,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -167,6 +168,7 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
 
                         amountText.text = TextFormatter.formatMoney(transaction.getMoney(), withPositivePrefix = true)
                         amountText.textColorResource = if (transaction.getMoney().isGain()) R.color.green_80 else R.color.red_80
+                        amountText.updateLayoutParams<MarginLayoutParams> { leftMargin = if (deleteModeOn) 0 else itemView.dip(24) }
                         commentIcon.isInvisible = transaction.comment.isEmpty()
                         commentText.text = transaction.comment
                         checkBox.isVisible = deleteModeOn
@@ -224,7 +226,9 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                     id = R.id.transaction_checkbox
 
                     rightPadding = dip(8)
-                }.lparams(wrapContent, wrapContent)
+                }.lparams(wrapContent, wrapContent) {
+                    leftMargin = dip(16)
+                }
 
                 val amountText = appCompatTextView {
                     id = R.id.transaction_text_amount
@@ -235,7 +239,7 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                     TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
                         this,
                         1,
-                        24,
+                        18,
                         1,
                         TypedValue.COMPLEX_UNIT_SP
                     )
@@ -266,13 +270,13 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                     id = R.id.transaction_separator
                     backgroundColorResource = R.color.palladium
                 }.lparams(matchConstraint, dip(1)) {
-                    topMargin = dip(4)
+                    topMargin = dip(8)
                     marginStart = dip(24)
                 }
 
                 applyConstraintSet {
                     connect(
-                        START of checkBox to START of separator,
+                        START of checkBox to START of PARENT_ID,
                         TOP of checkBox to TOP of PARENT_ID,
                         BOTTOM of checkBox to BOTTOM of PARENT_ID
                     )
@@ -284,7 +288,7 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                     )
 
                     connect(
-                        START of commentIcon to END of checkBox,
+                        START of commentIcon to START of amountText,
                         TOP of commentIcon to BOTTOM of amountText
                     )
 

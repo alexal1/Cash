@@ -18,7 +18,6 @@ import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
 
 class HistoryViewModel(
     application: Application,
@@ -42,17 +41,21 @@ class HistoryViewModel(
         repository.query(HistorySpecification())
             .map(this::toItems)
             .subscribe { items ->
-                val newState = if (items.isEmpty()) {
-                    historyState.copy(items = items, showLoading = false, showEmpty = true)
-                } else {
-                    historyState.copy(items = items, showLoading = false, showEmpty = false)
-                }
-
+                val newState = historyState.copy(items = items, showLoading = false)
                 historyStateSubject.onNext(newState)
             }
             .cache(dc)
     }
 
+
+    fun deleteCheckedItems() {
+        val newState = historyState.copy(
+            items = historyState.items.removeChecked(),
+            checkedTransactions = emptySet()
+        )
+
+        historyStateSubject.onNext(newState)
+    }
 
     fun dismissDeleteMode() {
         val newState = historyState.copy(
@@ -76,7 +79,6 @@ class HistoryViewModel(
 
 
     private fun getDefaultHistoryState() = HistoryState(
-        showEmpty = false,
         showLoading = true,
         items = emptyList(),
         checkedTransactions = emptySet()
@@ -87,7 +89,7 @@ class HistoryViewModel(
             return emptyList()
         }
 
-        val result = ArrayList<TransactionsList.Item>()
+        val result = LinkedList<TransactionsList.Item>()
         var prevTimestamp: Long? = null
 
         for (transaction in transactions) {
@@ -101,6 +103,36 @@ class HistoryViewModel(
 
             val transactionItem = TransactionsList.Item.TransactionItem(transaction)
             result.add(transactionItem)
+        }
+
+        return result
+    }
+
+    private fun List<TransactionsList.Item>.removeChecked(): List<TransactionsList.Item> {
+        val result = LinkedList<TransactionsList.Item>()
+        val itemsOnSingleDate = LinkedList<TransactionsList.Item>()
+
+        forEach { item ->
+            when (item) {
+                is TransactionsList.Item.DateItem -> {
+                    if (itemsOnSingleDate.size > 1) {
+                        result.addAll(itemsOnSingleDate)
+                    }
+
+                    itemsOnSingleDate.clear()
+                    itemsOnSingleDate.add(item)
+                }
+
+                is TransactionsList.Item.TransactionItem -> {
+                    if (!item.isChecked) {
+                        itemsOnSingleDate.add(item)
+                    }
+                }
+            }
+        }
+
+        if (itemsOnSingleDate.size > 1) {
+            result.addAll(itemsOnSingleDate)
         }
 
         return result
@@ -126,11 +158,11 @@ class HistoryViewModel(
 
 
     data class HistoryState(
-        val showEmpty: Boolean,
         val showLoading: Boolean,
         val items: List<TransactionsList.Item>,
         val checkedTransactions: Set<Transaction>
     ) {
+        val showEmpty: Boolean get() = items.isEmpty()
         val deleteModeOn: Boolean get() = checkedTransactions.isNotEmpty()
     }
 

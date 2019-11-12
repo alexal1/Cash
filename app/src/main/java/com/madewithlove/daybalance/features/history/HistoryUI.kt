@@ -38,7 +38,6 @@ class HistoryUI : AnkoComponent<HistoryFragment> {
 
             floatingActionButton = floatingActionButton {
                 id = R.id.floating_action_button
-                setImageResource(R.drawable.ic_double_arrow)
             }.lparams(wrapContent, wrapContent) {
                 rightMargin = dip(16)
                 bottomMargin = dip(16)
