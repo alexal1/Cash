@@ -14,12 +14,13 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.utils.*
+import com.madewithlove.daybalance.utils.navigation.BackPressHandler
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class HistoryFragment : Fragment() {
+class HistoryFragment : Fragment(), BackPressHandler {
 
     companion object {
 
@@ -111,6 +112,15 @@ class HistoryFragment : Fragment() {
         view.post {
             startPostponedEnterTransition()
         }
+    }
+
+    override fun handleBackPress(): Boolean {
+        if (viewModel.historyState.deleteModeOn) {
+            viewModel.dismissDeleteMode()
+            return true
+        }
+
+        return false
     }
 
     override fun onDestroyView() {

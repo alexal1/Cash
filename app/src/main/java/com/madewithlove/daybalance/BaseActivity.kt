@@ -47,7 +47,7 @@ class BaseActivity : AppCompatActivity(), FragmentNavigator {
     }
 
     override fun onBackPressed() {
-        if (!onNavigatorBackPressed()) {
+        if (!handleBackPress()) {
             super.onBackPressed()
         }
     }

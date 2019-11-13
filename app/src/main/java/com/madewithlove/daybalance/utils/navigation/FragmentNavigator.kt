@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.madewithlove.daybalance.R
 
-interface FragmentNavigator {
+interface FragmentNavigator : BackPressHandler {
 
     fun setFragment(fragment: Fragment) {
         getNavigatorFragmentManager()
@@ -39,10 +39,10 @@ interface FragmentNavigator {
             .commit()
     }
 
-    fun onNavigatorBackPressed(): Boolean {
+    override fun handleBackPress(): Boolean {
         val topFragment = getNavigatorFragmentManager().fragments.lastOrNull() ?: return false
 
-        if (topFragment !is FragmentNavigator || !topFragment.onNavigatorBackPressed()) {
+        if (topFragment !is BackPressHandler || !topFragment.handleBackPress()) {
             return getNavigatorFragmentManager().popBackStackImmediate()
         }
 
