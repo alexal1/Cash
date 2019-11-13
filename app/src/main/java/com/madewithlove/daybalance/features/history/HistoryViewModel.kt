@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit
 
 class HistoryViewModel(
     application: Application,
-    repository: TransactionsRepository
+    private val repository: TransactionsRepository
 ) : AndroidViewModel(application) {
 
     val historyStateObservable: Observable<HistoryState>
@@ -49,12 +49,14 @@ class HistoryViewModel(
 
 
     fun deleteCheckedItems() {
-        val newState = historyState.copy(
-            items = historyState.items.removeChecked(),
-            checkedTransactions = emptySet()
-        )
+        repository.removeAllTransactions(historyState.checkedTransactions.map { it.id }).subscribe {
+            val newState = historyState.copy(
+                items = historyState.items.removeChecked(),
+                checkedTransactions = emptySet()
+            )
 
-        historyStateSubject.onNext(newState)
+            historyStateSubject.onNext(newState)
+        }.cache(dc)
     }
 
     fun dismissDeleteMode() {

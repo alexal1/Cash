@@ -80,14 +80,20 @@ class TransactionsRepository {
         }
         .subscribeOn(realmScheduler)
 
-    fun removeAllTransactions(): Completable = Completable
+    fun removeAllTransactions(transactionIds: List<String> = emptyList()): Completable = Completable
         .create { emitter ->
             getRealm().executeTransaction { realm ->
                 try {
-                    realm
-                        .where(Transaction::class.java)
-                        .findAll()
-                        .deleteAllFromRealm()
+                    var realmQuery = realm.where(Transaction::class.java)
+                    transactionIds.forEachIndexed { i, transactionId ->
+                        realmQuery = realmQuery.equalTo("id", transactionId)
+
+                        if (i < transactionIds.size - 1) {
+                            realmQuery = realmQuery.or()
+                        }
+                    }
+
+                    realmQuery.findAll().deleteAllFromRealm()
 
                     emitter.onComplete()
                 } catch (e: Exception) {
