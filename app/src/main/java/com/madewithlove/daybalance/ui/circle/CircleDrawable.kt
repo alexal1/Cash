@@ -14,7 +14,7 @@ import org.jetbrains.anko.dip
 
 class CircleDrawable(ctx: Context) : Drawable() {
 
-    val thickness = ctx.dip(8)
+    val thickness = ctx.dip(12)
 
     private val rect = RectF()
 
