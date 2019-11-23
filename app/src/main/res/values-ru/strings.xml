@@ -185,4 +185,11 @@
         <item quantity="few">Удалить %d транзакции?</item>
         <item quantity="many">Удалить %d транзакций?</item>
     </plurals>
+    <string name="plan_title">План на {month}</string>
+    <string name="plan_section_gain_title">Заработано</string>
+    <string name="plan_section_gain_description">Это деньги на {month}, которые вы заработали за предыдущие месяцы. Часть из них вы потратите, часть пойдет в копилку.</string>
+    <string name="plan_section_loss_title">Обязательные расходы</string>
+    <string name="plan_section_loss_description">Некоторые расходы известны заранее. Это может быть арендная плата или месячная подписка. Такие расходы лучше внести прямо сейчас, чтобы они сразу учлись в лимите на день.</string>
+    <string name="plan_section_moneybox_title">В копилку</string>
+    <string name="plan_section_moneybox_description">Здесь можно задать, какую часть денег положить в копилку. Вы не видите этих денег в лимите на день. Зато можете посмотреть на них на экране \"Копилка\".</string>
 </resources>

@@ -60,4 +60,6 @@ fun Context.string(@StringRes res: Int, vararg replacements: Pair<String, String
     result
 }
 
-fun View.string(@StringRes stringRes: Int): String = context.getString(stringRes)
+fun View.string(@StringRes stringRes: Int): String = context.string(stringRes)
+
+fun View.string(@StringRes res: Int, vararg replacements: Pair<String, String>): String = context.string(res, *replacements)

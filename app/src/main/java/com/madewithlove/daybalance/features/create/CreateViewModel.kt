@@ -27,6 +27,14 @@ class CreateViewModel(
     private val initialType: Type
 ) : AndroidViewModel(application) {
 
+    companion object {
+
+        private const val MAX_DIGITS_COUNT_BEFORE_DOT = 16
+        private const val DIGITS_COUNT_AFTER_DOT = 2
+
+    }
+
+
     val createStateObservable: Observable<CreateState>
     val createState: CreateState get() = createStateSubject.value!!
     val keypadActionsConsumer = Consumer<KeypadView.Action>(this::handleKeypadAction)
@@ -73,6 +81,17 @@ class CreateViewModel(
     private fun handleKeypadAction(action: KeypadView.Action) {
         when (action.type) {
             KeypadView.Type.NUMBER -> {
+                val hasDot = createState.amountString.contains('.')
+                val maxDigitsCount = if (hasDot) {
+                    MAX_DIGITS_COUNT_BEFORE_DOT + DIGITS_COUNT_AFTER_DOT
+                } else {
+                    MAX_DIGITS_COUNT_BEFORE_DOT
+                }
+
+                if (createState.amountString.count { it.isDigit() } == maxDigitsCount) {
+                    return
+                }
+
                 val newAmountString = createState.amountString + action.payload.toString()
                 createStateSubject.onNext(createState.copy(amountString = newAmountString.format()))
             }
@@ -169,24 +188,20 @@ class CreateViewModel(
     }
 
     private fun createTransaction(money: Money): Transaction = Transaction().apply {
-        val sign = if (createState.type == Type.LOSS) "-" else ""
+        val sign = if (createState.type == Type.LOSS) -1L else 1L
 
-        value = "$sign${money.amount.toPlainString()}"
+        value = money.toUnscaledLong() * sign
         comment = createState.comment
         addedTimestamp = System.currentTimeMillis()
 
         if (createState.type == Type.LOSS) {
-            calendar.time = datesManager.currentDate
-            calendar.add(Calendar.DAY_OF_MONTH, 1)
-
-            startTimestamp = datesManager.currentDate.time
-            endTimestamp = calendar.timeInMillis
+            actionTimestamp = datesManager.currentDate.time
+            displayTimestamp = actionTimestamp
+            setType(Transaction.Type.INSTANT)
         } else {
-            calendar.time = createState.gainAvailableMonths[createState.gainChosenMonth]
-            calendar.add(Calendar.MONTH, 1)
-
-            startTimestamp = createState.gainAvailableMonths[createState.gainChosenMonth].time
-            endTimestamp = calendar.timeInMillis
+            actionTimestamp = createState.gainAvailableMonths[createState.gainChosenMonth].time
+            displayTimestamp = addedTimestamp
+            setType(Transaction.Type.MONTH)
         }
     }
 

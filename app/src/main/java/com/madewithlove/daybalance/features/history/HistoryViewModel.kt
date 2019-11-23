@@ -95,7 +95,7 @@ class HistoryViewModel(
         var prevTimestamp: Long? = null
 
         for (transaction in transactions) {
-            val timestamp = if (transaction.isGain()) transaction.addedTimestamp else transaction.startTimestamp
+            val timestamp = transaction.displayTimestamp
 
             if (prevTimestamp?.isTheSameDayAs(timestamp) != true) {
                 val dateItem = TransactionsList.Item.DateItem(Date(timestamp))

@@ -13,7 +13,7 @@ class HistorySpecification : RealmSpecification {
 
     override fun toRealmResults(realm: Realm): RealmResults<Transaction> = realm
         .where(Transaction::class.java)
-        .sort("startTimestamp", Sort.DESCENDING, "addedTimestamp", Sort.DESCENDING)
+        .sort("displayTimestamp", Sort.DESCENDING, "addedTimestamp", Sort.DESCENDING)
         .findAll()
 
 }

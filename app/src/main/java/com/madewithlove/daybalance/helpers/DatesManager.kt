@@ -5,6 +5,7 @@
 package com.madewithlove.daybalance.helpers
 
 import android.text.format.DateUtils
+import com.madewithlove.daybalance.utils.CalendarFactory
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
@@ -29,6 +30,7 @@ class DatesManager {
     private val now = Date(System.currentTimeMillis() / millisInDay * millisInDay)
     private val currentDateSubject = BehaviorSubject.createDefault(now)
     private val midnightSubject = PublishSubject.create<Unit>()
+    private val calendar = CalendarFactory.getInstance()
 
 
     init {
@@ -60,6 +62,12 @@ class DatesManager {
         }
 
         currentDateSubject.onNext(date)
+    }
+
+    fun getCurrentMonthFirstDay(): Date {
+        calendar.time = currentDate
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        return calendar.time
     }
 
 }

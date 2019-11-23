@@ -17,6 +17,7 @@ object TextFormatter {
     }
 
     private val decimalFormat = DecimalFormat("#,###.##", decimalFormatSymbols)
+    private val savingsFormat = DecimalFormat("##'%'")
 
 
     fun formatMoney(money: Money, withGrouping: Boolean = true, withFixedFraction: Boolean = true, withPositivePrefix: Boolean = false): String {
@@ -32,6 +33,11 @@ object TextFormatter {
         return decimalFormat.format(money)
     }
 
+    fun formatSavingsRatio(ratio: Float): String {
+        return savingsFormat.format(ratio * 100)
+    }
+
+    @Deprecated("Old concept")
     fun formatDouble(value: Double): String {
         var stringValue = BigDecimal.valueOf(value).toPlainString()
         while (stringValue.contains('.') && (stringValue.last() == '0' || stringValue.last() == '.')) {

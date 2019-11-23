@@ -199,4 +199,11 @@
         <item quantity="one">Delete %d transaction?</item>
         <item quantity="other">Delete %d transactions?</item>
     </plurals>
+    <string name="plan_title">The plan for {month}</string>
+    <string name="plan_section_gain_title">Earned</string>
+    <string name="plan_section_gain_description">The money for {month}, which you earned previously. You will spend part of them, and part will be kept in the moneybox.</string>
+    <string name="plan_section_loss_title">Mandatory expenses</string>
+    <string name="plan_section_loss_description">Some expenses are known in advance. It can be an apartment rent or a month subscription. Such expenses are better to be entered right now. Then they will be immediately taken into account for calculating day limits.</string>
+    <string name="plan_section_moneybox_title">In the moneybox</string>
+    <string name="plan_section_moneybox_description">Here you can specify which part of the money to keep in the moneybox. You won\'t see these money in your day limit. Instead you can see them on the \"Moneybox\" screen.</string>
 </resources>

@@ -18,6 +18,7 @@ import com.madewithlove.daybalance.BaseViewModel
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.create.CreateFragment
 import com.madewithlove.daybalance.features.create.CreateViewModel
+import com.madewithlove.daybalance.features.plan.PlanFragment
 import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.helpers.DatesManager
 import com.madewithlove.daybalance.utils.*
@@ -26,7 +27,6 @@ import io.reactivex.Observable
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
-import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.textResource
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -144,9 +144,10 @@ class MainFragment : Fragment(), FragmentNavigator {
         }
 
         ui.monthPlanButton.apply {
-            setOnClickListener {
-                toast("In development")
-            }
+            setOnClickListenerWithThrottle {
+                val fragment = PlanFragment.create()
+                addFragment(fragment)
+            }.cache(dc)
         }
 
         ui.gainButton.apply {

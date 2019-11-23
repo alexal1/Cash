@@ -17,7 +17,7 @@ open class Transaction : RealmObject(), Serializable {
     @PrimaryKey
     var id: String = UUID.randomUUID().toString()
 
-    var value: String = ""
+    var value: Long = 0
 
     var comment: String = ""
 
@@ -30,15 +30,38 @@ open class Transaction : RealmObject(), Serializable {
     @Deprecated("Old concept")
     var period: String = ""
 
+    @Deprecated("Old concept")
     var startTimestamp: Long = 0
 
+    @Deprecated("Old concept")
     var endTimestamp: Long = 0
 
+    /**
+     * When transaction was actually added to the database.
+     */
     var addedTimestamp: Long = 0
+
+    /**
+     * When transaction starts to work.
+     */
+    var actionTimestamp: Long = 0
+
+    /**
+     * Defines the order of showing transactions. Equals either addedTimestamp or actionTimestamp.
+     */
+    var displayTimestamp: Long = 0
+
+    var typeName: String = ""
 
     @Deprecated("Old concept")
     var account: Account? = null
 
+
+    fun getType() = Type.valueOf(typeName)
+
+    fun setType(type: Type) {
+        typeName = type.name
+    }
 
     fun getMoney() = Money.by(value)
 
@@ -63,5 +86,8 @@ open class Transaction : RealmObject(), Serializable {
     override fun hashCode(): Int {
         return id.hashCode()
     }
+
+
+    enum class Type { INSTANT, MONTH }
 
 }
