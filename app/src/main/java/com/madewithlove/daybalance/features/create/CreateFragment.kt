@@ -52,7 +52,7 @@ class CreateFragment : Fragment() {
     private val initialType by lazy { arguments!!.getSerializable(TYPE) as CreateViewModel.Type }
     private val viewModel by viewModel<CreateViewModel> { parametersOf(initialType) }
     private val dateLossFormatter  by lazy { SimpleDateFormat("d MMM", ctx.currentLocale()) }
-    private val dateGainFormatter by lazy { SimpleDateFormat("MMMM", ctx.currentLocale()) }
+    private val dateGainFormatter by lazy { SimpleDateFormat("LLLL", ctx.currentLocale()) }
     private val ui: CreateUI get() = createUI ?: CreateUI().also { createUI = it }
     private val dc = DisposableCache()
 
