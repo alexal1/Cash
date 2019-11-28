@@ -13,7 +13,6 @@ import android.view.MotionEvent.*
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.marginTop
-import androidx.fragment.app.Fragment
 import com.madewithlove.daybalance.BaseViewModel
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.create.CreateFragment
@@ -21,6 +20,7 @@ import com.madewithlove.daybalance.features.create.CreateViewModel
 import com.madewithlove.daybalance.features.plan.PlanFragment
 import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.helpers.DatesManager
+import com.madewithlove.daybalance.repository.specifications.HistorySpecification
 import com.madewithlove.daybalance.utils.*
 import com.madewithlove.daybalance.utils.navigation.FragmentNavigator
 import io.reactivex.Observable
@@ -35,10 +35,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
 
-class MainFragment : Fragment(), FragmentNavigator {
-    override fun getNavigatorFragmentManager() = childFragmentManager
-
-    override fun getFragmentContainerId() = R.id.main_container
+class MainFragment : FragmentNavigator() {
 
     companion object {
 
@@ -180,12 +177,24 @@ class MainFragment : Fragment(), FragmentNavigator {
             setOnClickListenerWithThrottle {
                 when (viewModel.mainState.largeButtonType) {
                     MainViewModel.LargeButtonType.HISTORY -> {
-                        baseViewModel.openHistorySubject.onNext(Unit)
+                        baseViewModel.openHistorySubject.onNext(HistorySpecification.Empty)
                     }
 
                     MainViewModel.LargeButtonType.KEYBOARD -> {
                         viewModel.openKeyboard()
                     }
+
+                    MainViewModel.LargeButtonType.PLAN_GAIN -> {
+                        val currentMonthFirstDay = datesManager.getCurrentMonthFirstDay()
+                        baseViewModel.openHistorySubject.onNext(HistorySpecification.MonthTotalGainFilter(currentMonthFirstDay))
+                    }
+
+                    MainViewModel.LargeButtonType.PLAN_LOSS -> {
+                        val currentMonthFirstDay = datesManager.getCurrentMonthFirstDay()
+                        baseViewModel.openHistorySubject.onNext(HistorySpecification.MonthMandatoryLossFilter(currentMonthFirstDay))
+                    }
+
+                    MainViewModel.LargeButtonType.PLAN_MODEYBOX -> {}
                 }
             }.cache(dc)
         }
@@ -202,8 +211,22 @@ class MainFragment : Fragment(), FragmentNavigator {
                         }
 
                         MainViewModel.LargeButtonType.KEYBOARD -> {
-                            textResource = R.string.large_button_ketboard
+                            textResource = R.string.large_button_keyboard
                             setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_keyboard, 0)
+                        }
+
+                        MainViewModel.LargeButtonType.PLAN_GAIN -> {
+                            textResource = R.string.large_button_plan_gain
+                            setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_down, 0)
+                        }
+
+                        MainViewModel.LargeButtonType.PLAN_LOSS -> {
+                            textResource = R.string.large_button_plan_loss
+                            setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_down, 0)
+                        }
+
+                        MainViewModel.LargeButtonType.PLAN_MODEYBOX -> {
+                            textResource = R.string.large_button_plan_moneybox
                         }
                     }
                 }
@@ -230,6 +253,10 @@ class MainFragment : Fragment(), FragmentNavigator {
             startPostponedEnterTransition()
         }
     }
+
+    override fun getNavigatorFragmentManager() = childFragmentManager
+
+    override fun getFragmentContainerId() = R.id.main_container
 
     override fun onDestroyView() {
         animator?.cancel()

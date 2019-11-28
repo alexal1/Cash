@@ -8,23 +8,30 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.dto.Money
 import com.madewithlove.daybalance.helpers.DatesManager
+import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.ui.KeypadView
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.TextFormatter
 import com.madewithlove.daybalance.utils.cache
+import com.madewithlove.daybalance.viewmodels.cache.CacheLogicAdapter
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 import java.math.BigDecimal.ZERO
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 class CreateViewModel(
     application: Application,
     private val datesManager: DatesManager,
-    private val initialType: Type
+    private val cache: CacheLogicAdapter,
+    private val repository: TransactionsRepository,
+    private val initialType: Type,
+    private val initialChosenMonth: Int?
 ) : AndroidViewModel(application) {
 
     companion object {
@@ -40,6 +47,7 @@ class CreateViewModel(
     val keypadActionsConsumer = Consumer<KeypadView.Action>(this::handleKeypadAction)
     val commentTextConsumer = Consumer<CharSequence>(this::handleCommentText)
 
+    private val millisInDay = TimeUnit.DAYS.toMillis(1)
     private val calendar = GregorianCalendar()
     private val createStateSubject = BehaviorSubject.createDefault(getDefaultCreateState())
     private val dc = DisposableCache()
@@ -53,8 +61,10 @@ class CreateViewModel(
         datesManager.currentDateObservable.subscribe { currentDate ->
             val newState = createState.copy(
                 lossDate = currentDate,
-                gainAvailableMonths = getAvailableMonths(currentDate),
-                gainChosenMonth = 1
+                gainAvailableMonths = getAvailableMonths(datesManager.currentDate),
+                gainChosenMonth = if (initialType == Type.GAIN && initialChosenMonth != null) initialChosenMonth else 1,
+                mandatoryLossAvailableMonths = getAvailableMonths(datesManager.currentDate),
+                mandatoryLossChosenMonth = if (initialType == Type.MANDATORY_LOSS && initialChosenMonth != null) initialChosenMonth else 1
             )
             createStateSubject.onNext(newState)
         }.cache(dc)
@@ -62,8 +72,18 @@ class CreateViewModel(
 
 
     fun switchType() {
-        val newType = if (createState.type == Type.LOSS) Type.GAIN else Type.LOSS
+        val newType = if (initialType == Type.MANDATORY_LOSS) {
+            if (createState.type == Type.MANDATORY_LOSS) Type.GAIN else Type.MANDATORY_LOSS
+        } else {
+            if (createState.type == Type.LOSS) Type.GAIN else Type.LOSS
+        }
+
         val newState = createState.copy(type = newType)
+        createStateSubject.onNext(newState)
+    }
+
+    fun setMandatoryLossChosenMonth(chosenMonth: Int) {
+        val newState = createState.copy(mandatoryLossChosenMonth = chosenMonth)
         createStateSubject.onNext(newState)
     }
 
@@ -111,13 +131,20 @@ class CreateViewModel(
             }
 
             KeypadView.Type.ENTER -> {
+                if (createState.inputValidation == InputValidation.OK) {
+                    return
+                }
+
                 val money = createState.amountString.toMoney()
                 if (money == null) {
                     createStateSubject.onNext(createState.copy(inputValidation = InputValidation.ERROR))
                     createStateSubject.onNext(createState.copy(inputValidation = InputValidation.NONE))
                 } else {
                     val transaction = createTransaction(money)
-                    createStateSubject.onNext(createState.copy(inputValidation = InputValidation.OK(transaction)))
+                    saveTransaction(transaction).subscribe {
+                        val newState = createState.copy(inputValidation = InputValidation.OK)
+                        createStateSubject.onNext(newState)
+                    }.cache(dc)
                 }
             }
         }
@@ -163,6 +190,8 @@ class CreateViewModel(
         lossDate = datesManager.currentDate,
         gainAvailableMonths = getAvailableMonths(datesManager.currentDate),
         gainChosenMonth = 1,
+        mandatoryLossAvailableMonths = getAvailableMonths(datesManager.currentDate),
+        mandatoryLossChosenMonth = 1,
         amountString = "",
         comment = "",
         inputValidation = InputValidation.NONE
@@ -188,21 +217,41 @@ class CreateViewModel(
     }
 
     private fun createTransaction(money: Money): Transaction = Transaction().apply {
-        val sign = if (createState.type == Type.LOSS) -1L else 1L
-
-        value = money.toUnscaledLong() * sign
-        comment = createState.comment
         addedTimestamp = System.currentTimeMillis()
+        comment = createState.comment
 
-        if (createState.type == Type.LOSS) {
-            actionTimestamp = datesManager.currentDate.time
-            displayTimestamp = actionTimestamp
-            setType(Transaction.Type.INSTANT)
-        } else {
-            actionTimestamp = createState.gainAvailableMonths[createState.gainChosenMonth].time
-            displayTimestamp = addedTimestamp
-            setType(Transaction.Type.MONTH)
+        when (createState.type) {
+            Type.LOSS -> {
+                value = -money.toUnscaledLong()
+                actionTimestamp = datesManager.currentDate.time
+                displayTimestamp = actionTimestamp
+                setType(Transaction.Type.INSTANT)
+            }
+
+            Type.MANDATORY_LOSS -> {
+                value = -money.toUnscaledLong()
+                actionTimestamp = createState.mandatoryLossAvailableMonths[createState.mandatoryLossChosenMonth].time
+                displayTimestamp = addedTimestamp / millisInDay * millisInDay
+                setType(Transaction.Type.MONTH)
+            }
+
+            Type.GAIN -> {
+                value = money.toUnscaledLong()
+                actionTimestamp = createState.gainAvailableMonths[createState.gainChosenMonth].time
+                displayTimestamp = addedTimestamp / millisInDay * millisInDay
+                setType(Transaction.Type.MONTH)
+            }
         }
+    }
+
+    private fun saveTransaction(transaction: Transaction): Completable {
+        return cache
+            .clear()
+            .andThen(repository.addTransaction(transaction))
+            .andThen(cache.requestDate(datesManager.currentDate))
+            .take(1)
+            .singleOrError()
+            .ignoreElement()
     }
 
 
@@ -211,19 +260,17 @@ class CreateViewModel(
         val lossDate: Date,
         val gainAvailableMonths: List<Date>,
         val gainChosenMonth: Int,
+        val mandatoryLossAvailableMonths: List<Date>,
+        val mandatoryLossChosenMonth: Int,
         val amountString: String,
         val comment: String,
         val inputValidation: InputValidation
     )
 
 
-    enum class Type { GAIN, LOSS }
+    enum class Type { GAIN, LOSS, MANDATORY_LOSS }
 
 
-    sealed class InputValidation {
-        class OK(val transaction: Transaction) : InputValidation()
-        object ERROR : InputValidation()
-        object NONE : InputValidation()
-    }
+    enum class InputValidation { OK, ERROR, NONE }
 
 }

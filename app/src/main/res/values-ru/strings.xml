@@ -173,8 +173,12 @@
     <string name="circle_text">на этот день</string>
     <string name="month_plan">План на этот месяц</string>
     <string name="large_button_history">История</string>
-    <string name="large_button_ketboard">Добавить комментарий</string>
+    <string name="large_button_keyboard">Добавить комментарий</string>
+    <string name="large_button_plan_gain">Откуда эта сумма?</string>
+    <string name="large_button_plan_loss">Откуда эта сумма?</string>
+    <string name="large_button_plan_moneybox">Открыть Копилку</string>
     <string name="create_loss">Расход</string>
+    <string name="create_mandatory_loss">Обязательный расход</string>
     <string name="create_gain">Доход</string>
     <string name="create_gain_chosen_month_title">В какой месяц вы будете тратить эти деньги?</string>
     <string name="create_gain_chosen_month_description">Выбор влияет на бюджет в том или ином месяце</string>

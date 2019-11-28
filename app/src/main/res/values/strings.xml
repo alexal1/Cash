@@ -187,8 +187,12 @@
     <string name="circle_text">for this day</string>
     <string name="month_plan">The plan for this month</string>
     <string name="large_button_history">History</string>
-    <string name="large_button_ketboard">Add comment</string>
+    <string name="large_button_keyboard">Add comment</string>
+    <string name="large_button_plan_gain">Where did this amount come from?</string>
+    <string name="large_button_plan_loss">Where did this amount come from?</string>
+    <string name="large_button_plan_moneybox">Open the Moneybox</string>
     <string name="create_loss">Expense</string>
+    <string name="create_mandatory_loss">Mandatory Expense</string>
     <string name="create_gain">Income</string>
     <string name="create_gain_chosen_month_title">On which month are you going to spend these money?</string>
     <string name="create_gain_chosen_month_description">This affects budget for one or another month</string>

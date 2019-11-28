@@ -39,10 +39,11 @@ class CreateFragment : Fragment() {
         const val KEYPAD_ANIMATION_DURATION = 200L
 
         private const val TYPE = "type"
+        private const val CHOSEN_MONTH = "chosen_month"
 
 
-        fun create(type: CreateViewModel.Type): CreateFragment = CreateFragment().apply {
-            arguments = bundleOf(TYPE to type)
+        fun create(type: CreateViewModel.Type, chosenMonth: Int? = null): CreateFragment = CreateFragment().apply {
+            arguments = bundleOf(TYPE to type, CHOSEN_MONTH to chosenMonth)
         }
 
     }
@@ -50,8 +51,10 @@ class CreateFragment : Fragment() {
 
     private val mainViewModel by sharedViewModel<MainViewModel>(from = { parentFragment!! })
     private val initialType by lazy { arguments!!.getSerializable(TYPE) as CreateViewModel.Type }
-    private val viewModel by viewModel<CreateViewModel> { parametersOf(initialType) }
+    private val initialChosenMonth by lazy { arguments!!.getInt(CHOSEN_MONTH, -1).toPositiveOrNull() }
+    private val viewModel by viewModel<CreateViewModel> { parametersOf(initialType, initialChosenMonth) }
     private val dateLossFormatter  by lazy { SimpleDateFormat("d MMM", ctx.currentLocale()) }
+    private val dateMandatoryLossFormatter by lazy { SimpleDateFormat("LLLL", ctx.currentLocale()) }
     private val dateGainFormatter by lazy { SimpleDateFormat("LLLL", ctx.currentLocale()) }
     private val ui: CreateUI get() = createUI ?: CreateUI().also { createUI = it }
     private val dc = DisposableCache()
@@ -73,6 +76,7 @@ class CreateFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View = ui.createView(AnkoContext.create(ctx, this))
 
+    @SuppressLint("DefaultLocale")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -91,12 +95,21 @@ class CreateFragment : Fragment() {
                 .map { it.type }
                 .distinctUntilChanged()
                 .subscribeOnUi { type ->
-                    if (type == CreateViewModel.Type.LOSS) {
-                        textResource = R.string.create_loss
-                        backgroundResource = R.drawable.bg_loss
-                    } else {
-                        textResource = R.string.create_gain
-                        backgroundResource = R.drawable.bg_gain
+                    when (type!!) {
+                        CreateViewModel.Type.LOSS -> {
+                            textResource = R.string.create_loss
+                            backgroundResource = R.drawable.bg_loss
+                        }
+
+                        CreateViewModel.Type.MANDATORY_LOSS -> {
+                            textResource = R.string.create_mandatory_loss
+                            backgroundResource = R.drawable.bg_loss
+                        }
+
+                        CreateViewModel.Type.GAIN -> {
+                            textResource = R.string.create_gain
+                            backgroundResource = R.drawable.bg_gain
+                        }
                     }
                 }
                 .cache(dc)
@@ -105,28 +118,45 @@ class CreateFragment : Fragment() {
         ui.datePicker.apply {
             viewModel.createStateObservable
                 .map {
-                    if (it.type == CreateViewModel.Type.LOSS) {
-                        it.type to it.lossDate
-                    } else {
-                        it.type to it.gainAvailableMonths[it.gainChosenMonth]
+                    when (it.type) {
+                        CreateViewModel.Type.LOSS -> {
+                            it.type to it.lossDate
+                        }
+
+                        CreateViewModel.Type.MANDATORY_LOSS -> {
+                            it.type to it.mandatoryLossAvailableMonths[it.mandatoryLossChosenMonth]
+                        }
+
+                        CreateViewModel.Type.GAIN -> {
+                            it.type to it.gainAvailableMonths[it.gainChosenMonth]
+                        }
                     }
                 }
                 .distinctUntilChanged()
                 .subscribeOnUi { (type, date) ->
                     val formattedDate = when (type) {
                         CreateViewModel.Type.LOSS -> dateLossFormatter.format(date)
+                        CreateViewModel.Type.MANDATORY_LOSS -> dateMandatoryLossFormatter.format(date)
                         CreateViewModel.Type.GAIN -> dateGainFormatter.format(date)
                     }
 
-                    text = formattedDate
+                    text = formattedDate.capitalize()
                 }
                 .cache(dc)
 
             setOnClickListener {
-                if (viewModel.createState.type == CreateViewModel.Type.LOSS) {
-                    mainViewModel.showCalendar()
-                } else {
-                    openMonthPickerDialog(viewModel.createState.gainAvailableMonths, viewModel.createState.gainChosenMonth)
+                when (viewModel.createState.type) {
+                    CreateViewModel.Type.LOSS -> {
+                        mainViewModel.showCalendar()
+                    }
+
+                    CreateViewModel.Type.MANDATORY_LOSS -> {
+                        openMonthPickerDialog(viewModel.createState.mandatoryLossAvailableMonths, viewModel.createState.mandatoryLossChosenMonth)
+                    }
+
+                    CreateViewModel.Type.GAIN -> {
+                        openMonthPickerDialog(viewModel.createState.gainAvailableMonths, viewModel.createState.gainChosenMonth)
+                    }
                 }
             }
         }
@@ -222,10 +252,8 @@ class CreateFragment : Fragment() {
 
         viewModel.createStateObservable
             .map { it.inputValidation }
-            .ofType(CreateViewModel.InputValidation.OK::class.java)
-            .map { it.transaction }
+            .filter { it == CreateViewModel.InputValidation.OK }
             .subscribeOnUi {
-                mainViewModel.saveTransaction(it)
                 act.onBackPressed()
             }
             .cache(dc)
@@ -289,6 +317,7 @@ class CreateFragment : Fragment() {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private fun openMonthPickerDialog(availableMonths: List<Date>, chosenMonth: Int) {
         monthPickerDialog?.dismiss()
 
@@ -312,16 +341,36 @@ class CreateFragment : Fragment() {
             setPadding(dip(16), dip(16), dip(16), dip(16))
         }
 
+        val formatter = if (viewModel.createState.type == CreateViewModel.Type.GAIN) {
+            dateGainFormatter
+        } else {
+            dateMandatoryLossFormatter
+        }
+
         monthPickerDialog = AlertDialog.Builder(ctx)
             .setCustomTitle(customTitle)
             .setSingleChoiceItems(
-                availableMonths.map { dateGainFormatter.format(it) }.toTypedArray(),
+                availableMonths.map { formatter.format(it).capitalize() }.toTypedArray(),
                 chosenMonth
-            ) { _, index -> viewModel.setGainChosenMonth(index) }
+            ) { _, index ->
+                if (viewModel.createState.type == CreateViewModel.Type.GAIN) {
+                    viewModel.setGainChosenMonth(index)
+                } else {
+                    viewModel.setMandatoryLossChosenMonth(index)
+                }
+            }
             .setPositiveButton(R.string.ok) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
+    }
+
+    private fun Int.toPositiveOrNull(): Int? {
+        return if (this >= 0) {
+            this
+        } else {
+            null
+        }
     }
 
 }

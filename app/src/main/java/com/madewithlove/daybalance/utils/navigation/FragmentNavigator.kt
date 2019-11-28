@@ -4,53 +4,34 @@
 
 package com.madewithlove.daybalance.utils.navigation
 
+import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.madewithlove.daybalance.R
 
-interface FragmentNavigator : BackPressHandler {
+abstract class FragmentNavigator : Fragment(), Navigator {
 
-    fun setFragment(fragment: Fragment) {
-        getNavigatorFragmentManager()
-            .beginTransaction()
-            .setReorderingAllowed(true)
-            .setCustomAnimations(R.anim.fade_in, 0)
-            .add(getFragmentContainerId(), fragment)
-            .commit()
-    }
+    private var backStackChangedListener: FragmentManager.OnBackStackChangedListener? = null
 
-    fun replaceFragment(fragment: Fragment) {
-        getNavigatorFragmentManager()
-            .beginTransaction()
-            .setReorderingAllowed(true)
-            .setCustomAnimations(R.anim.go_in_up, R.anim.go_out_up, R.anim.go_in_down, R.anim.go_out_down)
-            .replace(getFragmentContainerId(), fragment)
-            .addToBackStack(null)
-            .commit()
-    }
 
-    fun addFragment(fragment: Fragment) {
-        getNavigatorFragmentManager()
-            .beginTransaction()
-            .setReorderingAllowed(true)
-            .setCustomAnimations(R.anim.slide_in_left, 0, 0, R.anim.slide_out_right)
-            .add(getFragmentContainerId(), fragment)
-            .addToBackStack(null)
-            .commit()
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    override fun handleBackPress(): Boolean {
-        val topFragment = getNavigatorFragmentManager().fragments.lastOrNull() ?: return false
-
-        if (topFragment !is BackPressHandler || !topFragment.handleBackPress()) {
-            return getNavigatorFragmentManager().popBackStackImmediate()
+        val backStackChangedListener = FragmentManager.OnBackStackChangedListener {
+            val topFragment = getNavigatorFragmentManager().fragments.lastOrNull()
+            if (topFragment != null && topFragment is BackStackListener) {
+                topFragment.onResumedFromBackStack()
+            }
         }
 
-        return true
+        getNavigatorFragmentManager().addOnBackStackChangedListener(backStackChangedListener)
+        this.backStackChangedListener = backStackChangedListener
     }
 
-    fun getNavigatorFragmentManager(): FragmentManager
-
-    fun getFragmentContainerId(): Int
+    override fun onDestroyView() {
+        backStackChangedListener?.let(getNavigatorFragmentManager()::removeOnBackStackChangedListener)
+        backStackChangedListener = null
+        super.onDestroyView()
+    }
 
 }

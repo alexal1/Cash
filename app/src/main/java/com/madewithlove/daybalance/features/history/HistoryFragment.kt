@@ -10,26 +10,34 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.madewithlove.daybalance.R
+import com.madewithlove.daybalance.repository.specifications.HistorySpecification
 import com.madewithlove.daybalance.utils.*
 import com.madewithlove.daybalance.utils.navigation.BackPressHandler
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class HistoryFragment : Fragment(), BackPressHandler {
 
     companion object {
 
-        fun create(): HistoryFragment = HistoryFragment()
+        private const val FILTER = "filter"
+
+        fun create(filter: HistorySpecification.Filter): HistoryFragment = HistoryFragment().apply {
+            arguments = bundleOf(FILTER to filter)
+        }
 
     }
 
 
-    private val viewModel: HistoryViewModel by viewModel()
+    private val filter by lazy { arguments!!.getSerializable(FILTER) as HistorySpecification.Filter }
+    private val viewModel: HistoryViewModel by viewModel { parametersOf(filter) }
     private val ui: HistoryUI get() = historyUI ?: HistoryUI().also { historyUI = it }
     private val dc = DisposableCache()
 

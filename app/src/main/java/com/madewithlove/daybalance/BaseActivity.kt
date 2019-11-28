@@ -11,12 +11,12 @@ import com.madewithlove.daybalance.features.history.HistoryFragment
 import com.madewithlove.daybalance.features.main.MainFragment
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
-import com.madewithlove.daybalance.utils.navigation.FragmentNavigator
+import com.madewithlove.daybalance.utils.navigation.Navigator
 import com.madewithlove.daybalance.utils.subscribeOnUi
 import org.jetbrains.anko.frameLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class BaseActivity : AppCompatActivity(), FragmentNavigator {
+class BaseActivity : AppCompatActivity(), Navigator {
 
     private val viewModel: BaseViewModel by viewModel()
     private val dc = DisposableCache()
@@ -41,8 +41,8 @@ class BaseActivity : AppCompatActivity(), FragmentNavigator {
             setFragment(MainFragment.create())
         }
 
-        viewModel.openHistorySubject.subscribeOnUi {
-            replaceFragment(HistoryFragment.create())
+        viewModel.openHistorySubject.subscribeOnUi { filter ->
+            replaceFragment(HistoryFragment.create(filter))
         }.cache(dc)
     }
 

@@ -8,15 +8,13 @@ import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.dto.Money
+import com.madewithlove.daybalance.features.plan.PlanViewModel
 import com.madewithlove.daybalance.helpers.DatesManager
-import com.madewithlove.daybalance.repository.TransactionsRepository
-import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.ui.circle.CircleView
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
 import com.madewithlove.daybalance.utils.currentLocale
 import com.madewithlove.daybalance.utils.onNextConsumer
-import com.madewithlove.daybalance.viewmodels.cache.CacheLogicAdapter
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.BehaviorSubject
@@ -30,9 +28,7 @@ import java.util.concurrent.TimeUnit
 @SuppressLint("DefaultLocale")
 class MainViewModel(
     application: Application,
-    private val datesManager: DatesManager,
-    private val cache: CacheLogicAdapter,
-    private val repository: TransactionsRepository
+    datesManager: DatesManager
 ) : AndroidViewModel(application) {
 
     val mainStateObservable: Observable<MainState>
@@ -79,6 +75,21 @@ class MainViewModel(
         mainStateSubject.onNext(newMainState)
     }
 
+    fun notifyPlanOpened(section: PlanViewModel.Section) {
+        val largeButtonType = when (section) {
+            PlanViewModel.Section.GAIN -> LargeButtonType.PLAN_GAIN
+            PlanViewModel.Section.LOSS -> LargeButtonType.PLAN_LOSS
+            PlanViewModel.Section.MONEYBOX -> LargeButtonType.PLAN_MODEYBOX
+        }
+        val newMainState = mainState.copy(largeButtonType = largeButtonType)
+        mainStateSubject.onNext(newMainState)
+    }
+
+    fun notifyPlanClosed() {
+        val newMainState = mainState.copy(largeButtonType = LargeButtonType.HISTORY)
+        mainStateSubject.onNext(newMainState)
+    }
+
     fun openKeyboard() {
         val newMainState = mainState.copy(isKeyboardOpened = true)
         mainStateSubject.onNext(newMainState)
@@ -91,15 +102,6 @@ class MainViewModel(
 
     fun showCalendar() {
         showCalendarSubject.onNext(Unit)
-    }
-
-    fun saveTransaction(transaction: Transaction) {
-        cache
-            .clear()
-            .andThen(repository.addTransaction(transaction))
-            .andThen(cache.requestDate(datesManager.currentDate))
-            .subscribe()
-            .cache(dc)
     }
 
 
@@ -128,6 +130,6 @@ class MainViewModel(
     )
 
 
-    enum class LargeButtonType { HISTORY, KEYBOARD }
+    enum class LargeButtonType { HISTORY, KEYBOARD, PLAN_GAIN, PLAN_LOSS, PLAN_MODEYBOX }
 
 }

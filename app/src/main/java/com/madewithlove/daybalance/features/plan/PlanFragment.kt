@@ -14,18 +14,23 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.madewithlove.daybalance.R
+import com.madewithlove.daybalance.features.create.CreateFragment
+import com.madewithlove.daybalance.features.create.CreateViewModel
 import com.madewithlove.daybalance.features.main.MainViewModel
 import com.madewithlove.daybalance.utils.*
+import com.madewithlove.daybalance.utils.navigation.BackStackListener
+import com.madewithlove.daybalance.utils.navigation.Navigator
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
-class PlanFragment : Fragment() {
+class PlanFragment : Fragment(), BackStackListener {
 
     companion object {
 
@@ -97,6 +102,7 @@ class PlanFragment : Fragment() {
                     lastSectionIndex.set(position)
                     val section = PlanViewModel.Section.values()[position]
                     viewModel.setSection(section)
+                    mainViewModel.notifyPlanOpened(PlanViewModel.Section.values()[position])
                 }
 
             })
@@ -125,11 +131,35 @@ class PlanFragment : Fragment() {
                     }
                 }
                 .cache(dc)
+
+            setOnClickListenerWithThrottle {
+                when (viewModel.planState.currentSection) {
+                    PlanViewModel.Section.GAIN -> {
+                        val createFragment = CreateFragment.create(CreateViewModel.Type.GAIN, 0)
+                        (parentFragment as Navigator).addFragment(createFragment)
+                    }
+
+                    PlanViewModel.Section.LOSS -> {
+                        val createFragment = CreateFragment.create(CreateViewModel.Type.MANDATORY_LOSS, 0)
+                        (parentFragment as Navigator).addFragment(createFragment)
+                    }
+
+                    PlanViewModel.Section.MONEYBOX -> {
+
+                    }
+                }
+            }.cache(dc)
         }
 
         view.post {
             startPostponedEnterTransition()
+            mainViewModel.notifyPlanOpened(viewModel.planState.currentSection)
         }
+    }
+
+    override fun onResumedFromBackStack() {
+        viewModel.requestData()
+        mainViewModel.notifyPlanOpened(viewModel.planState.currentSection)
     }
 
     override fun onDestroyView() {
@@ -137,6 +167,8 @@ class PlanFragment : Fragment() {
         dc.drain()
         planUI = null
         super.onDestroyView()
+
+        mainViewModel.notifyPlanClosed()
     }
 
 

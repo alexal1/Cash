@@ -14,6 +14,7 @@ import com.madewithlove.daybalance.features.plan.PlanViewModel
 import com.madewithlove.daybalance.helpers.*
 import com.madewithlove.daybalance.helpers.push.PushManager
 import com.madewithlove.daybalance.repository.TransactionsRepository
+import com.madewithlove.daybalance.repository.specifications.HistorySpecification
 import com.madewithlove.daybalance.repository.utils.RandomTransactionsIterator
 import com.madewithlove.daybalance.repository.utils.RandomTransactionsIteratorFactory
 import com.madewithlove.daybalance.utils.currentLocale
@@ -28,9 +29,9 @@ import org.koin.dsl.module
 
 val viewModelsModule = module {
     viewModel { BaseViewModel(androidApplication()) }
-    viewModel { MainViewModel(androidApplication(), get(), get(), get()) }
-    viewModel { HistoryViewModel(androidApplication(), get()) }
-    viewModel { (type: CreateViewModel.Type) -> CreateViewModel(androidApplication(), get(), type) }
+    viewModel { MainViewModel(androidApplication(), get()) }
+    viewModel { (filter: HistorySpecification.Filter) -> HistoryViewModel(androidApplication(), get(), filter) }
+    viewModel { (type: CreateViewModel.Type, chosenMonth: Int?) -> CreateViewModel(androidApplication(), get(), get(), get(), type, chosenMonth) }
     viewModel { PlanViewModel(androidApplication(), get(), get(), get()) }
     viewModel { NewTransactionViewModel(androidApplication()) }
     viewModel { DayTransactionsViewModel(androidApplication()) }

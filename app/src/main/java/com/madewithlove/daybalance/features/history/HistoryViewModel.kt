@@ -21,7 +21,8 @@ import java.util.concurrent.TimeUnit
 
 class HistoryViewModel(
     application: Application,
-    private val repository: TransactionsRepository
+    private val repository: TransactionsRepository,
+    filter: HistorySpecification.Filter
 ) : AndroidViewModel(application) {
 
     val historyStateObservable: Observable<HistoryState>
@@ -38,7 +39,7 @@ class HistoryViewModel(
             .distinctUntilChanged()
             .doOnNext { Timber.i(it.toString()) }
 
-        repository.query(HistorySpecification())
+        repository.query(HistorySpecification(filter))
             .map(this::toItems)
             .subscribe { items ->
                 val newState = historyState.copy(items = items, showLoading = false)

@@ -83,7 +83,7 @@ class PlanSectionFragment : Fragment() {
                         .map { it.loss!! }
                         .distinctUntilChanged()
                         .subscribeOnUi { money ->
-                            text = TextFormatter.formatMoney(money)
+                            text = TextFormatter.formatMoney(money, withNegativePrefix = false)
                         }
                         .cache(dc)
                 }

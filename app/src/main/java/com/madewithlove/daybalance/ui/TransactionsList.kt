@@ -97,7 +97,7 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
     private class TransactionsAdapter(
         var data: List<Item>,
         var deleteModeOn: Boolean,
-        locale: Locale,
+        private val locale: Locale,
         private val onChecked: (Item.TransactionItem) -> Unit,
         private val onUnchecked: (Item.TransactionItem) -> Unit
     ) : RecyclerView.Adapter<ViewHolder>() {
@@ -184,7 +184,7 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
 
                     holder as DateViewHolder
                     holder.apply {
-                        val weekday = weekdayFormatter.format(date)
+                        val weekday = weekdayFormatter.format(date).toUpperCase(locale)
                         val mediumDate = mediumDateFormatter.format(date)
                         dateText.text = SpannableStringBuilder(itemView.string(R.string.history_date_template))
                                 .replace(

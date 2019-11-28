@@ -58,21 +58,10 @@ class PlanViewModel(
         planStateSubject.onNext(newState)
     }
 
+    fun requestData() {
+        val loadingState = planState.copy(gain = null, loss = null, savingsRatio = null)
+        planStateSubject.onNext(loadingState)
 
-    override fun onCleared() {
-        dc.drain()
-    }
-
-
-    private fun getDefaultPlanState(): PlanState = PlanState(
-        currentDate = datesManager.currentDate,
-        currentSection = Section.GAIN,
-        gain = null,
-        loss = null,
-        savingsRatio = null
-    )
-
-    private fun requestData() {
         val currentMonthFirstDay = datesManager.getCurrentMonthFirstDay()
 
         Single
@@ -90,6 +79,20 @@ class PlanViewModel(
             .subscribe()
             .cache(dc)
     }
+
+
+    override fun onCleared() {
+        dc.drain()
+    }
+
+
+    private fun getDefaultPlanState(): PlanState = PlanState(
+        currentDate = datesManager.currentDate,
+        currentSection = Section.GAIN,
+        gain = null,
+        loss = null,
+        savingsRatio = null
+    )
 
 
     data class PlanState(
