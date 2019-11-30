@@ -25,7 +25,7 @@ class PlanSectionUI : AnkoComponent<PlanSectionFragment> {
             orientation = VERTICAL
 
             descriptionText = textView {
-                textSize = 16f
+                textSize = 14f
                 textColorResource = R.color.white_80
             }.lparams(matchParent, dimen(R.dimen.plan_description_height)) {
                 marginStart = dip(16)

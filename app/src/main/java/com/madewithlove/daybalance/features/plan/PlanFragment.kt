@@ -153,6 +153,7 @@ class PlanFragment : Fragment(), BackStackListener {
 
         view.post {
             startPostponedEnterTransition()
+            viewModel.requestData()
             mainViewModel.notifyPlanOpened(viewModel.planState.currentSection)
         }
     }

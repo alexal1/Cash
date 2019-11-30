@@ -46,7 +46,7 @@ class PlanUI : AnkoComponent<PlanFragment> {
                 titleText = textView {
                     id = R.id.create_title
                     textColorResource = R.color.white_80
-                    textSize = 14f
+                    textSize = 16f
                     letterSpacing = 0.02f
                 }.lparams(wrapContent, wrapContent)
             }.lparams(matchConstraint, dimen(R.dimen.toolbar_height))

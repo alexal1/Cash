@@ -48,8 +48,6 @@ class PlanViewModel(
             }
             .subscribe(planStateSubject.onNextConsumer())
             .cache(dc)
-
-        requestData()
     }
 
 
