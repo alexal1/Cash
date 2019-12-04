@@ -24,6 +24,7 @@
     <item name="empty_view" type="id" />
     <item name="loading_view" type="id" />
     <item name="currency_picker_text" type="id" />
+    <item name="percentage_picker_text" type="id" />
     <item name="category_picker" type="id" />
     <item name="category_picker_text" type="id" />
     <item name="day_transactions_root" type="id" />

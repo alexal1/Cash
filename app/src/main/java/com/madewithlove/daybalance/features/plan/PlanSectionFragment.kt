@@ -9,13 +9,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.madewithlove.daybalance.R
+import com.madewithlove.daybalance.dto.Money
 import com.madewithlove.daybalance.utils.*
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.ctx
 import org.jetbrains.anko.textColorResource
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -63,26 +66,34 @@ class PlanSectionFragment : Fragment() {
         ui.amountText.apply {
             when (section) {
                 PlanViewModel.Section.GAIN -> {
-                    textColorResource = R.color.green
-
                     viewModel.planStateObservable
                         .filter { !it.isLoading }
                         .map { it.gain!! }
                         .distinctUntilChanged()
                         .subscribeOnUi { money ->
+                            textColorResource = if (money.amount == BigDecimal.ZERO) {
+                                R.color.smoke
+                            } else {
+                                R.color.green
+                            }
+
                             text = TextFormatter.formatMoney(money)
                         }
                         .cache(dc)
                 }
 
                 PlanViewModel.Section.LOSS -> {
-                    textColorResource = R.color.red
-
                     viewModel.planStateObservable
                         .filter { !it.isLoading }
                         .map { it.loss!! }
                         .distinctUntilChanged()
                         .subscribeOnUi { money ->
+                            textColorResource = if (money.amount == BigDecimal.ZERO) {
+                                R.color.smoke
+                            } else {
+                                R.color.red
+                            }
+
                             text = TextFormatter.formatMoney(money, withNegativePrefix = false)
                         }
                         .cache(dc)
@@ -101,6 +112,22 @@ class PlanSectionFragment : Fragment() {
                         .cache(dc)
                 }
             }
+        }
+
+        ui.annotationText.apply {
+            isVisible = section == PlanViewModel.Section.MONEYBOX
+
+            viewModel.planStateObservable
+                .filter { !it.isLoading }
+                .map { it.gain!! to it.savingsRatio!! }
+                .distinctUntilChanged()
+                .subscribeOnUi { (gain, savingsRatio) ->
+                    val savingsBigDecimal = BigDecimal(savingsRatio.toDouble())
+                    val savingsAmount = gain.amount.multiply(savingsBigDecimal)
+                    val savings = Money(savingsAmount)
+                    text = getString(R.string.plan_section_moneybox_annotation, TextFormatter.formatMoney(savings))
+                }
+                .cache(dc)
         }
     }
 

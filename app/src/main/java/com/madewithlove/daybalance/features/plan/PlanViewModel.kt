@@ -78,6 +78,14 @@ class PlanViewModel(
             .cache(dc)
     }
 
+    fun setSavingsRatio(ratio: Float) {
+        val currentMonthFirstDay = datesManager.getCurrentMonthFirstDay()
+        savingsManager.setSavingsForMonth(currentMonthFirstDay, ratio)
+
+        val newState = planState.copy(savingsRatio = ratio)
+        planStateSubject.onNext(newState)
+    }
+
 
     override fun onCleared() {
         dc.drain()

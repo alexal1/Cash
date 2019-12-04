@@ -209,5 +209,7 @@
     <string name="plan_section_loss_title">Mandatory expenses</string>
     <string name="plan_section_loss_description">Some expenses are known in advance. It can be an apartment rent or a month subscription. Such expenses are better to be entered right now. Then they will be immediately taken into account for calculating day limits.</string>
     <string name="plan_section_moneybox_title">In the moneybox</string>
-    <string name="plan_section_moneybox_description">Here you can specify which part of the money to keep in the moneybox. You won\'t see these money in your day limit. Instead you can see them on the \"Moneybox\" screen.</string>
+    <string name="plan_section_moneybox_description">Here you can specify which part of the money to save in the moneybox. These money will be hidden to leave no chance to spend them. You can check how much you\'ve saved on the \"Moneybox\" screen.</string>
+    <string name="plan_section_moneybox_percentage_picker_title">How much to save?</string>
+    <string name="plan_section_moneybox_annotation">it\'s %s per month</string>
 </resources>

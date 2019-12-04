@@ -18,6 +18,7 @@ class PlanSectionUI : AnkoComponent<PlanSectionFragment> {
 
     lateinit var descriptionText: TextView
     lateinit var amountText: TextView
+    lateinit var annotationText: TextView
 
 
     override fun createView(ui: AnkoContext<PlanSectionFragment>): View = with(ui) {
@@ -34,7 +35,6 @@ class PlanSectionUI : AnkoComponent<PlanSectionFragment> {
             }
 
             amountText = appCompatTextView {
-                textColorResource = R.color.white
                 gravity = CENTER
 
                 TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
@@ -48,6 +48,23 @@ class PlanSectionUI : AnkoComponent<PlanSectionFragment> {
                 marginStart = dip(16)
                 marginEnd = dip(16)
                 topMargin = dip(8)
+            }
+
+            annotationText = appCompatTextView {
+                gravity = CENTER
+                textColorResource = R.color.blue_80
+
+                TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                    this,
+                    1,
+                    32,
+                    1,
+                    TypedValue.COMPLEX_UNIT_SP
+                )
+            }.lparams(matchParent, dimen(R.dimen.plan_annotation_height)) {
+                marginStart = dip(16)
+                marginEnd = dip(16)
+                topMargin = dip(16)
             }
         }
     }

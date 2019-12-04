@@ -94,3 +94,7 @@ inline fun ViewManager.circleView(init: CircleView.() -> Unit = {}): CircleView 
 inline fun ViewManager.keypadView(init: KeypadView.() -> Unit = {}): KeypadView {
     return ankoView({ KeypadView(it) }, theme = 0, init = init)
 }
+
+inline fun ViewManager.percentagePicker(init: PercentagePicker.() -> Unit = {}): PercentagePicker {
+    return ankoView({ PercentagePicker(it) }, theme = 0, init = init)
+}
