@@ -39,7 +39,7 @@ class PlanUI : AnkoComponent<PlanFragment> {
             isFocusable = true
 
             toolbar = appCompatToolbar {
-                id = R.id.create_toolbar
+                id = R.id.plan_toolbar
                 navigationIconResource = R.drawable.ic_arrow_back
                 backgroundColorResource = R.color.soft_dark
 

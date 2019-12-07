@@ -12,6 +12,7 @@ import android.view.Gravity.CENTER_VERTICAL
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
@@ -26,6 +27,7 @@ import com.madewithlove.daybalance.utils.anko.datesRecyclerView
 import com.madewithlove.daybalance.utils.anko.fancyButton
 import com.madewithlove.daybalance.utils.getRect
 import com.madewithlove.daybalance.utils.screenSize
+import com.madewithlove.daybalance.utils.setSelectableBackground
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
 import org.jetbrains.anko.constraint.layout.applyConstraintSet
@@ -37,6 +39,8 @@ class MainUI : AnkoComponent<MainFragment> {
 
     lateinit var weekdayText: TextView
     lateinit var datesRecyclerView: DatesRecyclerView
+    lateinit var settingsButton: ImageButton
+    lateinit var moneyboxButton: ImageButton
     lateinit var container: FrameLayout
     lateinit var circleView: CircleView
     lateinit var nextButton: ImageView
@@ -54,7 +58,9 @@ class MainUI : AnkoComponent<MainFragment> {
 
             val datesSpace = space {
                 id = View.generateViewId()
-            }.lparams(matchConstraint, dimen(R.dimen.date_height_visual))
+            }.lparams(matchConstraint, dimen(R.dimen.date_height_visual)) {
+                topMargin = dip(16)
+            }
 
             weekdayText = textView {
                 id = View.generateViewId()
@@ -69,6 +75,30 @@ class MainUI : AnkoComponent<MainFragment> {
             datesRecyclerView = datesRecyclerView {
                 id = R.id.dates_recycler_view
             }.lparams(matchConstraint, matchConstraint)
+
+            settingsButton = imageButton {
+                id = View.generateViewId()
+                padding = dip(12)
+                alpha = 0.8f
+                setImageResource(R.drawable.ic_settings_white)
+
+                setSelectableBackground(true)
+            }.lparams(wrapContent, wrapContent) {
+                leftMargin = dip(2)
+                topMargin = dip(2)
+            }
+
+            moneyboxButton = imageButton {
+                id = View.generateViewId()
+                padding = dip(12)
+                alpha = 0.8f
+                setImageResource(R.drawable.ic_keyhole)
+
+                setSelectableBackground(true)
+            }.lparams(wrapContent, wrapContent) {
+                rightMargin = dip(2)
+                topMargin = dip(2)
+            }
 
             circleView = circleView {
                 id = R.id.circle_view
@@ -190,15 +220,25 @@ class MainUI : AnkoComponent<MainFragment> {
 
             applyConstraintSet {
                 connect(
+                    START of settingsButton to START of PARENT_ID,
+                    TOP of settingsButton to TOP of PARENT_ID
+                )
+
+                connect(
+                    END of moneyboxButton to END of PARENT_ID,
+                    TOP of moneyboxButton to TOP of PARENT_ID
+                )
+
+                connect(
                     START of weekdayText to START of PARENT_ID,
                     END of weekdayText to END of PARENT_ID,
-                    TOP of weekdayText to TOP of PARENT_ID
+                    TOP of weekdayText to TOP of datesSpace
                 )
 
                 connect(
                     START of datesRecyclerView to START of PARENT_ID,
                     END of datesRecyclerView to END of PARENT_ID,
-                    TOP of datesRecyclerView to TOP of PARENT_ID,
+                    TOP of datesRecyclerView to TOP of datesSpace,
                     BOTTOM of datesRecyclerView to BOTTOM of PARENT_ID
                 )
 

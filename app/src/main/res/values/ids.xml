@@ -45,6 +45,9 @@
     <item name="transaction_total_amount" type="id" />
     <item name="settings_scroll_view" type="id" />
     <item name="web_view" type="id" />
+    <item name="plan_toolbar" type="id" />
     <item name="plan_title" type="id" />
     <item name="plan_tab_layout" type="id" />
+    <item name="moneybox_toolbar" type="id" />
+    <item name="moneybox_title" type="id" />
 </resources>

@@ -212,4 +212,5 @@
     <string name="plan_section_moneybox_description">Here you can specify which part of the money to save in the moneybox. These money will be hidden to leave no chance to spend them. You can check how much you\'ve saved on the \"Moneybox\" screen.</string>
     <string name="plan_section_moneybox_percentage_picker_title">How much to save?</string>
     <string name="plan_section_moneybox_annotation">it\'s %s per month</string>
+    <string name="moneybox_title">Moneybox</string>
 </resources>

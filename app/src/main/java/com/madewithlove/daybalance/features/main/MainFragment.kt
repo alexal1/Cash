@@ -17,6 +17,7 @@ import com.madewithlove.daybalance.BaseViewModel
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.create.CreateFragment
 import com.madewithlove.daybalance.features.create.CreateViewModel
+import com.madewithlove.daybalance.features.moneybox.MoneyboxFragment
 import com.madewithlove.daybalance.features.plan.PlanFragment
 import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.helpers.DatesManager
@@ -132,6 +133,13 @@ class MainFragment : FragmentNavigator() {
                 .cache(dc)
         }
 
+        ui.moneyboxButton.apply {
+            setOnClickListenerWithThrottle {
+                val fragment = MoneyboxFragment.create()
+                addFragment(fragment)
+            }.cache(dc)
+        }
+
         ui.circleView.apply {
             viewModel.mainStateObservable
                 .map { it.circleState }
@@ -194,7 +202,10 @@ class MainFragment : FragmentNavigator() {
                         baseViewModel.openHistorySubject.onNext(HistorySpecification.MonthMandatoryLossFilter(currentMonthFirstDay))
                     }
 
-                    MainViewModel.LargeButtonType.PLAN_MODEYBOX -> {}
+                    MainViewModel.LargeButtonType.PLAN_MODEYBOX -> {
+                        val fragment = MoneyboxFragment.create()
+                        addFragment(fragment)
+                    }
                 }
             }.cache(dc)
         }
@@ -227,6 +238,7 @@ class MainFragment : FragmentNavigator() {
 
                         MainViewModel.LargeButtonType.PLAN_MODEYBOX -> {
                             textResource = R.string.large_button_plan_moneybox
+                            setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_keyhole_small, 0)
                         }
                     }
                 }
