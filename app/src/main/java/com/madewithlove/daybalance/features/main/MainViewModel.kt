@@ -114,7 +114,7 @@ class MainViewModel(
         currentDate = Date(),
         isToday = false,
         weekday = "",
-        circleState = CircleView.CircleState(Money(BigDecimal(1234.56)), 0.8f),
+        circleState = CircleView.CircleState(Money.by(BigDecimal(1234.56)), 0.8f),
         largeButtonType = LargeButtonType.HISTORY,
         isKeyboardOpened = false
     )

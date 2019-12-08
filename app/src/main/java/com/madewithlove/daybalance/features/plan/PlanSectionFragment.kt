@@ -124,7 +124,7 @@ class PlanSectionFragment : Fragment() {
                 .subscribeOnUi { (gain, savingsRatio) ->
                     val savingsBigDecimal = BigDecimal(savingsRatio.toDouble())
                     val savingsAmount = gain.amount.multiply(savingsBigDecimal)
-                    val savings = Money(savingsAmount)
+                    val savings = Money.by(savingsAmount)
                     text = getString(R.string.plan_section_moneybox_annotation, TextFormatter.formatMoney(savings))
                 }
                 .cache(dc)
