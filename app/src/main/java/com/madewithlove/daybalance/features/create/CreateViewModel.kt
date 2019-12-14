@@ -61,6 +61,7 @@ class CreateViewModel(
         datesManager.currentDateObservable.subscribe { currentDate ->
             val newState = createState.copy(
                 lossDate = currentDate,
+                intoMoneyboxDate = currentDate,
                 gainAvailableMonths = getAvailableMonths(datesManager.currentDate),
                 gainChosenMonth = if (initialType == Type.GAIN && initialChosenMonth != null) initialChosenMonth else 1,
                 mandatoryLossAvailableMonths = getAvailableMonths(datesManager.currentDate),
@@ -72,10 +73,18 @@ class CreateViewModel(
 
 
     fun switchType() {
-        val newType = if (initialType == Type.MANDATORY_LOSS) {
-            if (createState.type == Type.MANDATORY_LOSS) Type.GAIN else Type.MANDATORY_LOSS
-        } else {
-            if (createState.type == Type.LOSS) Type.GAIN else Type.LOSS
+        val newType = when (initialType) {
+            Type.MANDATORY_LOSS -> {
+                if (createState.type == Type.MANDATORY_LOSS) Type.GAIN else Type.MANDATORY_LOSS
+            }
+
+            Type.LOSS, Type.GAIN -> {
+                if (createState.type == Type.LOSS) Type.GAIN else Type.LOSS
+            }
+
+            else -> {
+                createState.type
+            }
         }
 
         val newState = createState.copy(type = newType)
@@ -188,6 +197,7 @@ class CreateViewModel(
     private fun getDefaultCreateState(): CreateState = CreateState(
         type = initialType,
         lossDate = datesManager.currentDate,
+        intoMoneyboxDate = datesManager.currentDate,
         gainAvailableMonths = getAvailableMonths(datesManager.currentDate),
         gainChosenMonth = 1,
         mandatoryLossAvailableMonths = getAvailableMonths(datesManager.currentDate),
@@ -241,6 +251,13 @@ class CreateViewModel(
                 displayTimestamp = addedTimestamp / millisInDay * millisInDay
                 setType(Transaction.Type.MONTH)
             }
+
+            Type.INTO_MONEYBOX -> {
+                value = money.toUnscaledLong()
+                actionTimestamp = datesManager.currentDate.time
+                displayTimestamp = actionTimestamp
+                setType(Transaction.Type.INTO_MONEYBOX)
+            }
         }
     }
 
@@ -258,6 +275,7 @@ class CreateViewModel(
     data class CreateState(
         val type: Type,
         val lossDate: Date,
+        val intoMoneyboxDate: Date,
         val gainAvailableMonths: List<Date>,
         val gainChosenMonth: Int,
         val mandatoryLossAvailableMonths: List<Date>,
@@ -268,7 +286,7 @@ class CreateViewModel(
     )
 
 
-    enum class Type { GAIN, LOSS, MANDATORY_LOSS }
+    enum class Type { GAIN, LOSS, MANDATORY_LOSS, INTO_MONEYBOX }
 
 
     enum class InputValidation { OK, ERROR, NONE }

@@ -191,9 +191,13 @@
     <string name="large_button_plan_gain">Where did this amount come from?</string>
     <string name="large_button_plan_loss">Where did this amount come from?</string>
     <string name="large_button_plan_moneybox">Open the Moneybox</string>
+    <string name="large_button_moneybox">Add money to the Moneybox</string>
     <string name="create_loss">Expense</string>
     <string name="create_mandatory_loss">Mandatory Expense</string>
     <string name="create_gain">Income</string>
+    <string name="create_moneybox">In the Moneybox</string>
+    <string name="create_mandatory_loss_chosen_month_title">For which month is this expense?</string>
+    <string name="create_mandatory_loss_chosen_month_description">This affects budget for one or another month</string>
     <string name="create_gain_chosen_month_title">On which month are you going to spend these money?</string>
     <string name="create_gain_chosen_month_description">This affects budget for one or another month</string>
     <string name="history_empty">Nothing\nhere yet</string>

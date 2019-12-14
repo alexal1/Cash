@@ -53,9 +53,10 @@ class CreateFragment : Fragment() {
     private val initialType by lazy { arguments!!.getSerializable(TYPE) as CreateViewModel.Type }
     private val initialChosenMonth by lazy { arguments!!.getInt(CHOSEN_MONTH, -1).toPositiveOrNull() }
     private val viewModel by viewModel<CreateViewModel> { parametersOf(initialType, initialChosenMonth) }
-    private val dateLossFormatter  by lazy { SimpleDateFormat("d MMM", ctx.currentLocale()) }
+    private val dateLossFormatter by lazy { SimpleDateFormat("d MMM", ctx.currentLocale()) }
     private val dateMandatoryLossFormatter by lazy { SimpleDateFormat("LLLL", ctx.currentLocale()) }
     private val dateGainFormatter by lazy { SimpleDateFormat("LLLL", ctx.currentLocale()) }
+    private val dateIntoMoneyboxFormatter by lazy { SimpleDateFormat("d MMM", ctx.currentLocale()) }
     private val ui: CreateUI get() = createUI ?: CreateUI().also { createUI = it }
     private val dc = DisposableCache()
 
@@ -110,6 +111,11 @@ class CreateFragment : Fragment() {
                             textResource = R.string.create_gain
                             backgroundResource = R.drawable.bg_gain
                         }
+
+                        CreateViewModel.Type.INTO_MONEYBOX -> {
+                            textResource = R.string.create_moneybox
+                            backgroundResource = R.drawable.bg_moneybox
+                        }
                     }
                 }
                 .cache(dc)
@@ -130,6 +136,10 @@ class CreateFragment : Fragment() {
                         CreateViewModel.Type.GAIN -> {
                             it.type to it.gainAvailableMonths[it.gainChosenMonth]
                         }
+
+                        CreateViewModel.Type.INTO_MONEYBOX -> {
+                            it.type to it.intoMoneyboxDate
+                        }
                     }
                 }
                 .distinctUntilChanged()
@@ -138,6 +148,7 @@ class CreateFragment : Fragment() {
                         CreateViewModel.Type.LOSS -> dateLossFormatter.format(date)
                         CreateViewModel.Type.MANDATORY_LOSS -> dateMandatoryLossFormatter.format(date)
                         CreateViewModel.Type.GAIN -> dateGainFormatter.format(date)
+                        CreateViewModel.Type.INTO_MONEYBOX -> dateIntoMoneyboxFormatter.format(date)
                     }
 
                     text = formattedDate.capitalize()
@@ -156,6 +167,10 @@ class CreateFragment : Fragment() {
 
                     CreateViewModel.Type.GAIN -> {
                         openMonthPickerDialog(viewModel.createState.gainAvailableMonths, viewModel.createState.gainChosenMonth)
+                    }
+
+                    CreateViewModel.Type.INTO_MONEYBOX -> {
+                        mainViewModel.showCalendar()
                     }
                 }
             }
@@ -327,7 +342,11 @@ class CreateFragment : Fragment() {
             textView {
                 textColorResource = R.color.white
                 textSize = 16f
-                textResource = R.string.create_gain_chosen_month_title
+                textResource = if (viewModel.createState.type == CreateViewModel.Type.GAIN) {
+                    R.string.create_gain_chosen_month_title
+                } else {
+                    R.string.create_mandatory_loss_chosen_month_title
+                }
             }.lparams(matchParent, wrapContent) {
                 bottomMargin = dip(8)
             }
@@ -335,7 +354,11 @@ class CreateFragment : Fragment() {
             textView {
                 textColorResource = R.color.white_80
                 textSize = 14f
-                textResource = R.string.create_gain_chosen_month_description
+                textResource = if (viewModel.createState.type == CreateViewModel.Type.GAIN) {
+                    R.string.create_gain_chosen_month_description
+                } else {
+                    R.string.create_mandatory_loss_chosen_month_description
+                }
             }.lparams(matchParent, wrapContent)
 
             setPadding(dip(16), dip(16), dip(16), dip(16))

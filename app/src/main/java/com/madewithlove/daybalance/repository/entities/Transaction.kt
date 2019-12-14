@@ -88,6 +88,6 @@ open class Transaction : RealmObject(), Serializable {
     }
 
 
-    enum class Type { INSTANT, MONTH }
+    enum class Type { INSTANT, MONTH, INTO_MONEYBOX }
 
 }

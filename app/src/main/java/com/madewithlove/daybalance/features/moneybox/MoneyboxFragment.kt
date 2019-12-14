@@ -9,11 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.madewithlove.daybalance.features.main.MainViewModel
+import com.madewithlove.daybalance.utils.navigation.BackStackListener
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class MoneyboxFragment : Fragment() {
+class MoneyboxFragment : Fragment(), BackStackListener {
 
     companion object {
 
@@ -22,10 +25,17 @@ class MoneyboxFragment : Fragment() {
     }
 
 
+    private val mainViewModel by sharedViewModel<MainViewModel>(from = { parentFragment!! })
     private val ui: MoneyboxUI get() = moneyboxUI ?: MoneyboxUI().also { moneyboxUI = it }
 
     private var moneyboxUI: MoneyboxUI? = null
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        postponeEnterTransition()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,11 +51,22 @@ class MoneyboxFragment : Fragment() {
                 act.onBackPressed()
             }
         }
+
+        view.post {
+            startPostponedEnterTransition()
+            mainViewModel.notifyMoneyboxOpened()
+        }
+    }
+
+    override fun onResumedFromBackStack() {
+        mainViewModel.notifyMoneyboxOpened()
     }
 
     override fun onDestroyView() {
         moneyboxUI = null
         super.onDestroyView()
+
+        mainViewModel.notifyMoneyboxClosed()
     }
 
 }

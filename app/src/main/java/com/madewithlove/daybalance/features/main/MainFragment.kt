@@ -206,6 +206,11 @@ class MainFragment : FragmentNavigator() {
                         val fragment = MoneyboxFragment.create()
                         addFragment(fragment)
                     }
+
+                    MainViewModel.LargeButtonType.MONEYBOX -> {
+                        val fragment = CreateFragment.create(CreateViewModel.Type.INTO_MONEYBOX)
+                        addFragment(fragment)
+                    }
                 }
             }.cache(dc)
         }
@@ -238,7 +243,12 @@ class MainFragment : FragmentNavigator() {
 
                         MainViewModel.LargeButtonType.PLAN_MODEYBOX -> {
                             textResource = R.string.large_button_plan_moneybox
-                            setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_keyhole_small, 0)
+                            setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_keyhole_small, 0)
+                        }
+
+                        MainViewModel.LargeButtonType.MONEYBOX -> {
+                            textResource = R.string.large_button_moneybox
+                            setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_coin_stack, 0)
                         }
                     }
                 }

@@ -177,9 +177,13 @@
     <string name="large_button_plan_gain">Откуда эта сумма?</string>
     <string name="large_button_plan_loss">Откуда эта сумма?</string>
     <string name="large_button_plan_moneybox">Открыть Копилку</string>
+    <string name="large_button_moneybox">Положить деньги в Копилку</string>
     <string name="create_loss">Расход</string>
     <string name="create_mandatory_loss">Обязательный расход</string>
     <string name="create_gain">Доход</string>
+    <string name="create_moneybox">В Копилку</string>
+    <string name="create_mandatory_loss_chosen_month_title">На какой месяц этот расход?</string>
+    <string name="create_mandatory_loss_chosen_month_description">Выбор влияет на бюджет в том или ином месяце</string>
     <string name="create_gain_chosen_month_title">В какой месяц вы будете тратить эти деньги?</string>
     <string name="create_gain_chosen_month_description">Выбор влияет на бюджет в том или ином месяце</string>
     <string name="history_empty">Здесь пока\nничего нет</string>
