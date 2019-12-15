@@ -134,10 +134,10 @@ class MainFragment : FragmentNavigator() {
         }
 
         ui.moneyboxButton.apply {
-            setOnClickListenerWithThrottle {
+            setOnClickListener {
                 val fragment = MoneyboxFragment.create()
                 addFragment(fragment)
-            }.cache(dc)
+            }
         }
 
         ui.circleView.apply {
@@ -149,24 +149,24 @@ class MainFragment : FragmentNavigator() {
         }
 
         ui.monthPlanButton.apply {
-            setOnClickListenerWithThrottle {
+            setOnClickListener {
                 val fragment = PlanFragment.create()
                 addFragment(fragment)
-            }.cache(dc)
+            }
         }
 
         ui.gainButton.apply {
-            setOnClickListenerWithThrottle {
+            setOnClickListener {
                 val fragment = CreateFragment.create(CreateViewModel.Type.GAIN)
                 addFragment(fragment)
-            }.cache(dc)
+            }
         }
 
         ui.lossButton.apply {
-            setOnClickListenerWithThrottle {
+            setOnClickListener {
                 val fragment = CreateFragment.create(CreateViewModel.Type.LOSS)
                 addFragment(fragment)
-            }.cache(dc)
+            }
         }
 
         ui.largeButtonBackground.apply {
@@ -182,7 +182,7 @@ class MainFragment : FragmentNavigator() {
                 }
                 .cache(dc)
 
-            setOnClickListenerWithThrottle {
+            setOnClickListener {
                 when (viewModel.mainState.largeButtonType) {
                     MainViewModel.LargeButtonType.HISTORY -> {
                         baseViewModel.openHistorySubject.onNext(HistorySpecification.Empty)
@@ -212,7 +212,7 @@ class MainFragment : FragmentNavigator() {
                         addFragment(fragment)
                     }
                 }
-            }.cache(dc)
+            }
         }
 
         ui.largeButtonText.apply {
