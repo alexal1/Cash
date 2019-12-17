@@ -8,7 +8,7 @@ import com.madewithlove.daybalance.CashApp
 import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.specifications.DaySpecification
-import com.madewithlove.daybalance.repository.specifications.MonthDiffSpecification
+import com.madewithlove.daybalance.repository.specifications.MonthDiffSpecificationOld
 import com.madewithlove.daybalance.repository.specifications.RealBalanceSpecification
 import io.reactivex.Single
 import io.reactivex.functions.Function3
@@ -22,7 +22,7 @@ class DataSource(private val repository: TransactionsRepository, private val cur
 
         val transactionsSingle = repository.query(DaySpecification(date, currencyIndex))
         val realBalanceSingle = repository.query(RealBalanceSpecification(date, currencyIndex))
-        val monthDiffSingle = repository.query(MonthDiffSpecification(date, currencyIndex))
+        val monthDiffSingle = repository.query(MonthDiffSpecificationOld(date, currencyIndex))
 
         return Single.zip(
             transactionsSingle,

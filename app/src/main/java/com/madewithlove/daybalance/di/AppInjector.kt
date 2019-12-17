@@ -10,6 +10,7 @@ import com.madewithlove.daybalance.CashApp.Companion.CASH_APP_PREFERENCES
 import com.madewithlove.daybalance.features.create.CreateViewModel
 import com.madewithlove.daybalance.features.history.HistoryViewModel
 import com.madewithlove.daybalance.features.main.MainViewModel
+import com.madewithlove.daybalance.features.moneybox.MoneyboxViewModel
 import com.madewithlove.daybalance.features.plan.PlanViewModel
 import com.madewithlove.daybalance.helpers.*
 import com.madewithlove.daybalance.helpers.push.PushManager
@@ -33,6 +34,7 @@ val viewModelsModule = module {
     viewModel { (filter: HistorySpecification.Filter) -> HistoryViewModel(androidApplication(), get(), filter) }
     viewModel { (type: CreateViewModel.Type, chosenMonth: Int?) -> CreateViewModel(androidApplication(), get(), get(), get(), type, chosenMonth) }
     viewModel { PlanViewModel(androidApplication(), get(), get(), get()) }
+    viewModel { MoneyboxViewModel(androidApplication(), get(), get(), get()) }
     viewModel { NewTransactionViewModel(androidApplication()) }
     viewModel { DayTransactionsViewModel(androidApplication()) }
     viewModel { SettingsViewModel(androidApplication()) }

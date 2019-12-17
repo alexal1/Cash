@@ -39,6 +39,8 @@ class Money private constructor(val amount: BigDecimal) {
 
     fun isGain(): Boolean = amount.signum() > 0
 
+    fun isZero(): Boolean = amount.signum() == 0
+
     fun toUnscaledLong(): Long = amount.multiply(hundred).toLong()
 
 }

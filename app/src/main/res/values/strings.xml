@@ -215,6 +215,10 @@
     <string name="plan_section_moneybox_title">In the moneybox</string>
     <string name="plan_section_moneybox_description">Here you can specify which part of the money to save in the moneybox. These money will be hidden to leave no chance to spend them. You can check how much you\'ve saved on the \"Moneybox\" screen.</string>
     <string name="plan_section_moneybox_percentage_picker_title">How much to save?</string>
-    <string name="plan_section_moneybox_annotation">it\'s %s per month</string>
+    <string name="plan_section_moneybox_annotation">it\'s %s for %s</string>
     <string name="moneybox_title">Moneybox</string>
+    <string name="moneybox_total_money_title">You have in the Moneybox</string>
+    <string name="moneybox_total_money_description">This is the amount of money you\'ve saved until this month. These money are better to be invested or put on a deposit.</string>
+    <string name="moneybox_month_money_title">To be added for %s</string>
+    <string name="moneybox_month_money_description">This is how much will be added to the Moneybox at the end of the month. It is %s of your income initially. But it can become less if you exceed your expenses.</string>
 </resources>

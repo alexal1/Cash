@@ -201,6 +201,10 @@
     <string name="plan_section_moneybox_title">В копилку</string>
     <string name="plan_section_moneybox_description">Здесь можно задать, какую часть денег положить в копилку. Эти деньги будут скрыты, чтобы не было соблазна их потратить. Накопленные деньги можно посмотреть на экране \"Копилка\".</string>
     <string name="plan_section_moneybox_percentage_picker_title">Сколько откладываем?</string>
-    <string name="plan_section_moneybox_annotation">это %s в месяц</string>
+    <string name="plan_section_moneybox_annotation">это %s за %s</string>
     <string name="moneybox_title">Копилка</string>
+    <string name="moneybox_total_money_title">У вас в Копилке</string>
+    <string name="moneybox_total_money_description">Столько вы накопили за всё время до этого месяца. Эти деньги стоит инвестировать или положить на вклады.</string>
+    <string name="moneybox_month_money_title">Добавится за %s</string>
+    <string name="moneybox_month_money_description">Столько денег добавится в Копилку в конце месяца. Изначально это %s от дохода, но может быть и меньше, если вы превысите расходы.</string>
 </resources>

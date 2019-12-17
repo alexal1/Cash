@@ -71,7 +71,7 @@ class PlanSectionFragment : Fragment() {
                         .map { it.gain!! }
                         .distinctUntilChanged()
                         .subscribeOnUi { money ->
-                            textColorResource = if (money.amount == BigDecimal.ZERO) {
+                            textColorResource = if (money.isZero()) {
                                 R.color.smoke
                             } else {
                                 R.color.green
@@ -88,7 +88,7 @@ class PlanSectionFragment : Fragment() {
                         .map { it.loss!! }
                         .distinctUntilChanged()
                         .subscribeOnUi { money ->
-                            textColorResource = if (money.amount == BigDecimal.ZERO) {
+                            textColorResource = if (money.isZero()) {
                                 R.color.smoke
                             } else {
                                 R.color.red
@@ -125,7 +125,11 @@ class PlanSectionFragment : Fragment() {
                     val savingsBigDecimal = BigDecimal(savingsRatio.toDouble())
                     val savingsAmount = gain.amount.multiply(savingsBigDecimal)
                     val savings = Money.by(savingsAmount)
-                    text = getString(R.string.plan_section_moneybox_annotation, TextFormatter.formatMoney(savings))
+                    text = getString(
+                        R.string.plan_section_moneybox_annotation,
+                        TextFormatter.formatMoney(savings),
+                        viewModel.planState.currentDate.toMonth()
+                    )
                 }
                 .cache(dc)
         }

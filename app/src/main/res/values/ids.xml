@@ -48,6 +48,4 @@
     <item name="plan_toolbar" type="id" />
     <item name="plan_title" type="id" />
     <item name="plan_tab_layout" type="id" />
-    <item name="moneybox_toolbar" type="id" />
-    <item name="moneybox_title" type="id" />
 </resources>
