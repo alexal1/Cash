@@ -13,7 +13,6 @@ import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
 import com.madewithlove.daybalance.utils.navigation.Navigator
 import com.madewithlove.daybalance.utils.subscribeOnUi
-import org.jetbrains.anko.frameLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class BaseActivity : AppCompatActivity(), Navigator {
@@ -30,11 +29,6 @@ class BaseActivity : AppCompatActivity(), Navigator {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
-
-
-        frameLayout {
-            id = R.id.base_container
         }
 
         if (savedInstanceState == null) {
@@ -54,7 +48,7 @@ class BaseActivity : AppCompatActivity(), Navigator {
 
     override fun getNavigatorFragmentManager() = supportFragmentManager
 
-    override fun getFragmentContainerId() = R.id.base_container
+    override fun getFragmentContainerId() = android.R.id.content
 
     override fun onDestroy() {
         dc.drain()
