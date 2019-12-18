@@ -6,7 +6,7 @@ package com.madewithlove.daybalance
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import com.madewithlove.daybalance.features.history.HistoryFragment
 import com.madewithlove.daybalance.features.main.MainFragment
 import com.madewithlove.daybalance.utils.DisposableCache
@@ -15,7 +15,7 @@ import com.madewithlove.daybalance.utils.navigation.Navigator
 import com.madewithlove.daybalance.utils.subscribeOnUi
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class BaseActivity : AppCompatActivity(), Navigator {
+class BaseActivity : FragmentActivity(), Navigator {
 
     private val viewModel: BaseViewModel by viewModel()
     private val dc = DisposableCache()
