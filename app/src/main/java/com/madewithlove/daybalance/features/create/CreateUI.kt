@@ -5,6 +5,7 @@
 package com.madewithlove.daybalance.features.create
 
 import android.graphics.Typeface
+import android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity.CENTER_VERTICAL
@@ -130,6 +131,7 @@ class CreateUI : AnkoComponent<CreateFragment> {
                 textSize = 32f
                 gravity = CENTER_VERTICAL
                 imeOptions = EditorInfo.IME_ACTION_DONE
+                inputType = TYPE_TEXT_FLAG_CAP_SENTENCES
                 singleLine = true
                 background = null
             }.lparams(matchConstraint, dimen(R.dimen.input_icon_height)) {
