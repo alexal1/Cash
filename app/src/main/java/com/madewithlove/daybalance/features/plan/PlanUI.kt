@@ -15,6 +15,7 @@ import com.madewithlove.daybalance.utils.anko._Toolbar
 import com.madewithlove.daybalance.utils.anko.appCompatToolbar
 import com.madewithlove.daybalance.utils.anko.floatingActionButton
 import com.madewithlove.daybalance.utils.anko.tabLayout
+import com.madewithlove.daybalance.utils.color
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.navigationIconResource
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
@@ -55,6 +56,8 @@ class PlanUI : AnkoComponent<PlanFragment> {
                 id = R.id.plan_tab_layout
                 tabMode = TabLayout.MODE_SCROLLABLE
                 backgroundColorResource = R.color.steel_gray
+
+                setTabTextColors(color(R.color.fog_white), color(R.color.white))
             }.lparams(matchParent, dimen(R.dimen.plan_tab_layout_height))
 
             viewPager = viewPager {
