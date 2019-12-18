@@ -79,7 +79,7 @@ class MainViewModel(
         val largeButtonType = when (section) {
             PlanViewModel.Section.GAIN -> LargeButtonType.PLAN_GAIN
             PlanViewModel.Section.LOSS -> LargeButtonType.PLAN_LOSS
-            PlanViewModel.Section.MONEYBOX -> LargeButtonType.PLAN_MODEYBOX
+            PlanViewModel.Section.MONEYBOX -> LargeButtonType.PLAN_MONEYBOX
         }
         val newMainState = mainState.copy(largeButtonType = largeButtonType)
         mainStateSubject.onNext(newMainState)
@@ -140,6 +140,6 @@ class MainViewModel(
     )
 
 
-    enum class LargeButtonType { HISTORY, KEYBOARD, PLAN_GAIN, PLAN_LOSS, PLAN_MODEYBOX, MONEYBOX }
+    enum class LargeButtonType { HISTORY, KEYBOARD, PLAN_GAIN, PLAN_LOSS, PLAN_MONEYBOX, MONEYBOX }
 
 }

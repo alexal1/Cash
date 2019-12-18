@@ -23,6 +23,7 @@ import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.main.MainFragment
 import com.madewithlove.daybalance.features.main.MainViewModel
 import com.madewithlove.daybalance.utils.*
+import com.madewithlove.daybalance.utils.navigation.Navigator
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
@@ -49,10 +50,11 @@ class CreateFragment : Fragment() {
     }
 
 
-    private val mainViewModel by sharedViewModel<MainViewModel>(from = { parentFragment!! })
+    private val mainViewModel by sharedViewModel<MainViewModel>(from = { requireParentFragment() })
     private val initialType by lazy { arguments!!.getSerializable(TYPE) as CreateViewModel.Type }
     private val initialChosenMonth by lazy { arguments!!.getInt(CHOSEN_MONTH, -1).toPositiveOrNull() }
     private val viewModel by viewModel<CreateViewModel> { parametersOf(initialType, initialChosenMonth) }
+    private val navigator by lazy { parentFragment as Navigator }
     private val dateLossFormatter by lazy { SimpleDateFormat("d MMM", ctx.currentLocale()) }
     private val dateMandatoryLossFormatter by lazy { SimpleDateFormat("LLLL", ctx.currentLocale()) }
     private val dateGainFormatter by lazy { SimpleDateFormat("LLLL", ctx.currentLocale()) }
@@ -255,8 +257,8 @@ class CreateFragment : Fragment() {
             mainViewModel.mainStateObservable
                 .map { it.isKeyboardOpened }
                 .distinctUntilChanged()
-                .subscribeOnUi { isKeyboradOpened ->
-                    if (isKeyboradOpened) {
+                .subscribeOnUi { isKeyboardOpened ->
+                    if (isKeyboardOpened) {
                         hideKeypad()
                     } else {
                         showKeypad()
@@ -275,7 +277,10 @@ class CreateFragment : Fragment() {
 
         view.post {
             startPostponedEnterTransition()
-            mainViewModel.notifyCreateOpened()
+
+            if (navigator.isFragmentOnTop(this@CreateFragment)) {
+                mainViewModel.notifyCreateOpened()
+            }
         }
     }
 

@@ -15,6 +15,7 @@ import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.main.MainViewModel
 import com.madewithlove.daybalance.utils.*
 import com.madewithlove.daybalance.utils.navigation.BackStackListener
+import com.madewithlove.daybalance.utils.navigation.Navigator
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
@@ -33,8 +34,9 @@ class MoneyboxFragment : Fragment(), BackStackListener {
     }
 
 
-    private val mainViewModel by sharedViewModel<MainViewModel>(from = { parentFragment!! })
+    private val mainViewModel by sharedViewModel<MainViewModel>(from = { requireParentFragment() })
     private val viewModel by viewModel<MoneyboxViewModel>()
+    private val navigator by lazy { parentFragment as Navigator }
     private val monthFormatter by lazy { SimpleDateFormat("LLLL", ctx.currentLocale()) }
     private val ui: MoneyboxUI get() = moneyboxUI ?: MoneyboxUI().also { moneyboxUI = it }
     private val dc = DisposableCache()
@@ -119,11 +121,21 @@ class MoneyboxFragment : Fragment(), BackStackListener {
                 .cache(dc)
         }
 
-        view.post {
-            startPostponedEnterTransition()
-            viewModel.requestData()
-            mainViewModel.notifyMoneyboxOpened()
-        }
+        viewModel.requestData()
+
+        viewModel.moneyboxStateObservable
+            .map { it.isLoading }
+            .distinctUntilChanged()
+            .filter { isLoading -> !isLoading }
+            .take(1)
+            .subscribeOnUi {
+                startPostponedEnterTransition()
+
+                if (navigator.isFragmentOnTop(this@MoneyboxFragment)) {
+                    mainViewModel.notifyMoneyboxOpened()
+                }
+            }
+            .cache(dc)
     }
 
     override fun onResumedFromBackStack() {

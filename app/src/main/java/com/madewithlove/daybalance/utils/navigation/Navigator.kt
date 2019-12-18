@@ -33,7 +33,7 @@ interface Navigator : BackPressHandler {
             .setReorderingAllowed(true)
             .setCustomAnimations(R.anim.go_in_up, R.anim.go_out_up, R.anim.go_in_down, R.anim.go_out_down)
             .replace(getFragmentContainerId(), fragment, fragment.getNavigatorTag())
-            .addToBackStack(null)
+            .addToBackStack(fragment.getNavigatorName())
             .commit()
     }
 
@@ -47,7 +47,7 @@ interface Navigator : BackPressHandler {
             .setReorderingAllowed(true)
             .setCustomAnimations(R.anim.slide_in_left, 0, 0, R.anim.slide_out_right)
             .add(getFragmentContainerId(), fragment, fragment.getNavigatorTag())
-            .addToBackStack(null)
+            .addToBackStack(fragment.getNavigatorName())
             .commit()
     }
 
@@ -61,12 +61,22 @@ interface Navigator : BackPressHandler {
         return true
     }
 
+    fun isFragmentOnTop(fragment: Fragment): Boolean {
+        val topEntryIndex = getNavigatorFragmentManager().backStackEntryCount - 1
+        val topEntry = getNavigatorFragmentManager().getBackStackEntryAt(topEntryIndex)
+        return topEntry.name == fragment.getNavigatorName()
+    }
+
     fun getNavigatorFragmentManager(): FragmentManager
 
     fun getFragmentContainerId(): Int
 
 
     private fun Fragment.getNavigatorTag(): String {
+        return this.javaClass.simpleName
+    }
+
+    private fun Fragment.getNavigatorName(): String {
         return this.javaClass.simpleName
     }
 

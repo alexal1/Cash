@@ -36,7 +36,7 @@ class PlanSectionFragment : Fragment() {
     }
 
 
-    private val viewModel by sharedViewModel<PlanViewModel>(from = { parentFragment!! })
+    private val viewModel by sharedViewModel<PlanViewModel>(from = { requireParentFragment() })
     private val section by lazy { arguments!!.get(SECTION) as PlanViewModel.Section }
     private val monthFormatter by lazy { SimpleDateFormat("LLLL", ctx.currentLocale()) }
     private val ui: PlanSectionUI get() = planSectionUI ?: PlanSectionUI().also { planSectionUI = it }

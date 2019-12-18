@@ -202,7 +202,7 @@ class MainFragment : FragmentNavigator() {
                         baseViewModel.openHistorySubject.onNext(HistorySpecification.MonthMandatoryLossFilter(currentMonthFirstDay))
                     }
 
-                    MainViewModel.LargeButtonType.PLAN_MODEYBOX -> {
+                    MainViewModel.LargeButtonType.PLAN_MONEYBOX -> {
                         val fragment = MoneyboxFragment.create()
                         addFragment(fragment)
                     }
@@ -241,7 +241,7 @@ class MainFragment : FragmentNavigator() {
                             setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_down, 0)
                         }
 
-                        MainViewModel.LargeButtonType.PLAN_MODEYBOX -> {
+                        MainViewModel.LargeButtonType.PLAN_MONEYBOX -> {
                             textResource = R.string.large_button_plan_moneybox
                             setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_keyhole_small, 0)
                         }

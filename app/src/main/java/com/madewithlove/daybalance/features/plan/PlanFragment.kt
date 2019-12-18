@@ -42,8 +42,9 @@ class PlanFragment : Fragment(), BackStackListener {
     }
 
 
-    private val mainViewModel by sharedViewModel<MainViewModel>(from = { parentFragment!! })
+    private val mainViewModel by sharedViewModel<MainViewModel>(from = { requireParentFragment() })
     private val viewModel by viewModel<PlanViewModel>()
+    private val navigator by lazy { parentFragment as Navigator }
     private val monthFormatter by lazy { SimpleDateFormat("LLLL", ctx.currentLocale()) }
     private val ui: PlanUI get() = planUI ?: PlanUI().also { planUI = it }
     private val dc = DisposableCache()
@@ -106,7 +107,10 @@ class PlanFragment : Fragment(), BackStackListener {
                     lastSectionIndex.set(position)
                     val section = PlanViewModel.Section.values()[position]
                     viewModel.setSection(section)
-                    mainViewModel.notifyPlanOpened(PlanViewModel.Section.values()[position])
+
+                    if (navigator.isFragmentOnTop(this@PlanFragment)) {
+                        mainViewModel.notifyPlanOpened(PlanViewModel.Section.values()[position])
+                    }
                 }
 
             })
@@ -159,7 +163,10 @@ class PlanFragment : Fragment(), BackStackListener {
         view.post {
             startPostponedEnterTransition()
             viewModel.requestData()
-            mainViewModel.notifyPlanOpened(viewModel.planState.currentSection)
+
+            if (navigator.isFragmentOnTop(this@PlanFragment)) {
+                mainViewModel.notifyPlanOpened(viewModel.planState.currentSection)
+            }
         }
     }
 
