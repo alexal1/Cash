@@ -209,16 +209,16 @@
     </plurals>
     <string name="plan_title">The plan for {month}</string>
     <string name="plan_section_gain_title">Earned</string>
-    <string name="plan_section_gain_description">The money for {month}, which you earned previously. You will spend part of them, and part will be kept in the moneybox.</string>
+    <string name="plan_section_gain_description">The money for {month}, which you earned previously. You will spend part of them, and part will be kept in the Moneybox.</string>
     <string name="plan_section_loss_title">Mandatory expenses</string>
     <string name="plan_section_loss_description">Some expenses are known in advance. It can be an apartment rent or a month subscription. Such expenses are better to be entered right now. Then they will be immediately taken into account for calculating day limits.</string>
     <string name="plan_section_moneybox_title">In the moneybox</string>
-    <string name="plan_section_moneybox_description">Here you can specify which part of the money to save in the moneybox. These money will be hidden to leave no chance to spend them. You can check how much you\'ve saved on the \"Moneybox\" screen.</string>
+    <string name="plan_section_moneybox_description">Which part of money to save in the Moneybox? The choice will affect the day expenses limit. You can check the amount of already saved money on the \"Moneybox\" screen.</string>
     <string name="plan_section_moneybox_percentage_picker_title">How much to save?</string>
     <string name="plan_section_moneybox_annotation">it\'s %s for %s</string>
     <string name="moneybox_title">Moneybox</string>
     <string name="moneybox_total_money_title">You have in the Moneybox</string>
     <string name="moneybox_total_money_description">This is the amount of money you\'ve saved until this month. These money are better to be invested or put on a deposit.</string>
     <string name="moneybox_month_money_title">To be added for %s</string>
-    <string name="moneybox_month_money_description">This is how much will be added to the Moneybox at the end of the month. It is %s of your income initially. But it can become less if you exceed your expenses.</string>
+    <string name="moneybox_month_money_description">This is how much will be added to the Moneybox at the end of the month. It is {percent} of your income initially. But it can become less if you exceed your expenses.</string>
 </resources>

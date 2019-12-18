@@ -177,7 +177,7 @@
     <string name="large_button_plan_gain">Откуда эта сумма?</string>
     <string name="large_button_plan_loss">Откуда эта сумма?</string>
     <string name="large_button_plan_moneybox">Открыть Копилку</string>
-    <string name="large_button_moneybox">Положить деньги в Копилку</string>
+    <string name="large_button_moneybox">Добавить денег в Копилку</string>
     <string name="create_loss">Расход</string>
     <string name="create_mandatory_loss">Обязательный расход</string>
     <string name="create_gain">Доход</string>
@@ -195,16 +195,16 @@
     </plurals>
     <string name="plan_title">План на {month}</string>
     <string name="plan_section_gain_title">Заработано</string>
-    <string name="plan_section_gain_description">Это деньги на {month}, которые вы заработали за предыдущие месяцы. Часть из них вы потратите, часть пойдет в копилку.</string>
+    <string name="plan_section_gain_description">Это деньги на {month}, которые вы заработали за предыдущие месяцы. Часть из них вы потратите, часть пойдет в Копилку.</string>
     <string name="plan_section_loss_title">Обязательные расходы</string>
     <string name="plan_section_loss_description">Некоторые расходы известны заранее. Это может быть арендная плата или месячная подписка. Такие расходы лучше внести прямо сейчас, чтобы они сразу учлись в лимите на день.</string>
     <string name="plan_section_moneybox_title">В копилку</string>
-    <string name="plan_section_moneybox_description">Здесь можно задать, какую часть денег положить в копилку. Эти деньги будут скрыты, чтобы не было соблазна их потратить. Накопленные деньги можно посмотреть на экране \"Копилка\".</string>
+    <string name="plan_section_moneybox_description">Какую часть денег отложить в Копилку? Выбор повлияет на ваш дневной лимит на расходы. На экране \"Копилка\" можно посмотреть, сколько денег уже накоплено.</string>
     <string name="plan_section_moneybox_percentage_picker_title">Сколько откладываем?</string>
     <string name="plan_section_moneybox_annotation">это %s за %s</string>
     <string name="moneybox_title">Копилка</string>
     <string name="moneybox_total_money_title">У вас в Копилке</string>
     <string name="moneybox_total_money_description">Столько вы накопили за всё время до этого месяца. Эти деньги стоит инвестировать или положить на вклады.</string>
     <string name="moneybox_month_money_title">Добавится за %s</string>
-    <string name="moneybox_month_money_description">Столько денег добавится в Копилку в конце месяца. Изначально это %s от дохода, но может быть и меньше, если вы превысите расходы.</string>
+    <string name="moneybox_month_money_description">Столько денег добавится в Копилку в конце месяца. Изначально это {percent} от дохода, но может быть и меньше, если вы переборщите с расходами.</string>
 </resources>

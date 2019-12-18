@@ -4,7 +4,9 @@
 
 package com.madewithlove.daybalance.features.moneybox
 
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -78,7 +80,9 @@ class MoneyboxFragment : Fragment(), BackStackListener {
                 .distinctUntilChanged()
                 .subscribeOnUi { ratio ->
                     val formattedRatio = TextFormatter.formatSavingsRatio(ratio)
-                    text = getString(R.string.moneybox_month_money_description, formattedRatio)
+                    text = getString(R.string.moneybox_month_money_description)
+                        .asSpannableBuilder()
+                        .replace("{percent}", formattedRatio, StyleSpan(Typeface.BOLD))
                 }
                 .cache(dc)
         }
