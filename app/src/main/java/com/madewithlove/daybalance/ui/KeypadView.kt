@@ -10,8 +10,13 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.util.SparseArray
 import android.view.MotionEvent
+import android.view.MotionEvent.*
 import android.view.View
+import androidx.core.util.contains
+import androidx.core.util.containsValue
+import androidx.core.util.set
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.utils.color
 import com.madewithlove.daybalance.utils.drawable
@@ -74,9 +79,10 @@ class KeypadView(context: Context) : View(context) {
         buttonEnter
     )
 
+    private val selectedButtons = SparseArray<Button>()
+
     private var buttonWidth = 0f
     private var buttonHeight = 0f
-    private var selectedButton: Button? = null
 
 
     init {
@@ -98,7 +104,7 @@ class KeypadView(context: Context) : View(context) {
 
             buttons.forEach { button ->
                 // Draw background
-                if (selectedButton == button) {
+                if (selectedButtons.containsValue(button)) {
                     backgroundPaint.color = button.selectedColor
                     drawRect(button.bounds.left * buttonWidth, button.bounds.top * buttonHeight, button.bounds.right * buttonWidth, button.bounds.bottom * buttonHeight, backgroundPaint)
                 } else if (button.backgroundColor != null) {
@@ -134,12 +140,18 @@ class KeypadView(context: Context) : View(context) {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
+        when (event.actionMasked) {
+            ACTION_DOWN, ACTION_POINTER_DOWN -> {
+                val id = event.getPointerId(event.actionIndex)
+                val x = event.getX(event.actionIndex)
+                val y = event.getY(event.actionIndex)
                 for (button in buttons) {
-                    if (event.x > button.bounds.left * buttonWidth && event.x < button.bounds.right * buttonWidth && event.y > button.bounds.top * buttonHeight && event.y < button.bounds.bottom * buttonHeight) {
-                        selectedButton = button
-                        invalidate()
+                    if (x > button.bounds.left * buttonWidth && x < button.bounds.right * buttonWidth && y > button.bounds.top * buttonHeight && y < button.bounds.bottom * buttonHeight) {
+                        if (!selectedButtons.contains(id)) {
+                            selectedButtons[id] = button
+                            actionSubject.onNext(button.action)
+                            invalidate()
+                        }
                         break
                     }
                 }
@@ -147,14 +159,9 @@ class KeypadView(context: Context) : View(context) {
                 return true
             }
 
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                selectedButton?.let { button ->
-                    if (event.x > button.bounds.left * buttonWidth && event.x < button.bounds.right * buttonWidth && event.y > button.bounds.top * buttonHeight && event.y < button.bounds.bottom * buttonHeight) {
-                        actionSubject.onNext(button.action)
-                    }
-                }
-
-                selectedButton = null
+            ACTION_UP, ACTION_POINTER_UP, ACTION_CANCEL -> {
+                val id = event.getPointerId(event.actionIndex)
+                selectedButtons.delete(id)
                 invalidate()
             }
         }
