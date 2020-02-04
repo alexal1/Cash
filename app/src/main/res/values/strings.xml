@@ -185,6 +185,7 @@
 
     <!-- v1.0.0 -->
     <string name="circle_text">for this day</string>
+    <string name="circle_text_past">spent</string>
     <string name="month_plan">The plan for this month</string>
     <string name="large_button_history">History</string>
     <string name="large_button_keyboard">Add comment</string>

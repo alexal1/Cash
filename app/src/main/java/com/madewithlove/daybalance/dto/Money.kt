@@ -43,4 +43,8 @@ class Money private constructor(val amount: BigDecimal) {
 
     fun toUnscaledLong(): Long = amount.multiply(hundred).toLong()
 
+    override fun toString(): String {
+        return amount.toString()
+    }
+
 }

@@ -43,6 +43,8 @@ class MoneyboxViewModel(
         moneyboxStateObservable = moneyboxStateSubject
             .distinctUntilChanged()
             .doOnNext { Timber.i(it.toString()) }
+            .replay(1)
+            .autoConnect()
 
         datesManager.isTodayObservable
             .skip(1)

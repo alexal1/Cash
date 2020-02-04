@@ -14,6 +14,8 @@ import com.madewithlove.daybalance.features.moneybox.MoneyboxViewModel
 import com.madewithlove.daybalance.features.plan.PlanViewModel
 import com.madewithlove.daybalance.helpers.*
 import com.madewithlove.daybalance.helpers.push.PushManager
+import com.madewithlove.daybalance.model.Cache
+import com.madewithlove.daybalance.model.CacheDatesMapper
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.specifications.HistorySpecification
 import com.madewithlove.daybalance.repository.utils.RandomTransactionsIterator
@@ -30,10 +32,10 @@ import org.koin.dsl.module
 
 val viewModelsModule = module {
     viewModel { BaseViewModel(androidApplication()) }
-    viewModel { MainViewModel(androidApplication(), get()) }
-    viewModel { (filter: HistorySpecification.Filter) -> HistoryViewModel(androidApplication(), get(), filter) }
+    viewModel { MainViewModel(androidApplication(), get(), get()) }
+    viewModel { (filter: HistorySpecification.Filter) -> HistoryViewModel(androidApplication(), get(), get(), filter) }
     viewModel { (type: CreateViewModel.Type, chosenMonth: Int?) -> CreateViewModel(androidApplication(), get(), get(), get(), type, chosenMonth) }
-    viewModel { PlanViewModel(androidApplication(), get(), get(), get()) }
+    viewModel { PlanViewModel(androidApplication(), get(), get(), get(), get()) }
     viewModel { MoneyboxViewModel(androidApplication(), get(), get(), get()) }
     viewModel { NewTransactionViewModel(androidApplication()) }
     viewModel { DayTransactionsViewModel(androidApplication()) }
@@ -67,4 +69,8 @@ val cacheModule = module {
         val cacheLogic = CacheLogic(dataSource)
         CacheLogicAdapter(cacheLogic)
     }
+}
+
+val modelModule = module {
+    single { Cache(get(), get(), get(), CacheDatesMapper()) }
 }

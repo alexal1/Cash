@@ -18,6 +18,7 @@ import com.madewithlove.daybalance.helpers.push.PushManager
 import com.madewithlove.daybalance.helpers.timber.CashDebugTree
 import com.madewithlove.daybalance.helpers.timber.CashReleaseTree
 import com.madewithlove.daybalance.helpers.timber.KoinLogger
+import com.madewithlove.daybalance.model.Cache
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.utils.CalendarFactory
 import io.reactivex.plugins.RxJavaPlugins
@@ -56,6 +57,7 @@ class CashApp : Application(), LifecycleObserver {
     private val sharedPreferences: SharedPreferences by inject()
     private val pushManager: PushManager by inject()
     private val transactionsRepository: TransactionsRepository by inject()
+    private val cache: Cache by inject()
 
     val todayDate: Date by lazy { CalendarFactory.getInstance().time }
 
@@ -88,7 +90,14 @@ class CashApp : Application(), LifecycleObserver {
         startKoin {
             logger(KoinLogger())
             androidContext(this@CashApp)
-            modules(viewModelsModule, sharedPreferencesModule, helpersModule, repositoryModule, cacheModule)
+            modules(
+                viewModelsModule,
+                sharedPreferencesModule,
+                helpersModule,
+                repositoryModule,
+                cacheModule,
+                modelModule
+            )
         }
 
 
@@ -142,6 +151,13 @@ class CashApp : Application(), LifecycleObserver {
         Timber.i("App is in background")
         isInForeground = false
         transactionsRepository.dispose()
+    }
+
+    @Suppress("unused")
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    private fun onAppDestroyed() {
+        Timber.i("App destroyed")
+        cache.dispose()
     }
 
 }

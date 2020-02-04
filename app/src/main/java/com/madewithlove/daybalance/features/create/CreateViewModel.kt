@@ -8,13 +8,13 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.dto.Money
 import com.madewithlove.daybalance.helpers.DatesManager
+import com.madewithlove.daybalance.model.Cache
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.ui.KeypadView
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.TextFormatter
 import com.madewithlove.daybalance.utils.cache
-import com.madewithlove.daybalance.viewmodels.cache.CacheLogicAdapter
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
@@ -28,7 +28,7 @@ import kotlin.collections.ArrayList
 class CreateViewModel(
     application: Application,
     private val datesManager: DatesManager,
-    private val cache: CacheLogicAdapter,
+    private val cache: Cache,
     private val repository: TransactionsRepository,
     private val initialType: Type,
     private val initialChosenMonth: Int?
@@ -57,14 +57,16 @@ class CreateViewModel(
         createStateObservable = createStateSubject
             .distinctUntilChanged()
             .doOnNext { Timber.i(it.toString()) }
+            .replay(1)
+            .autoConnect()
 
         datesManager.currentDateObservable.subscribe { currentDate ->
             val newState = createState.copy(
                 lossDate = currentDate,
                 intoMoneyboxDate = currentDate,
-                gainAvailableMonths = getAvailableMonths(datesManager.currentDate),
+                gainAvailableMonths = getAvailableMonths(currentDate),
                 gainChosenMonth = if (initialType == Type.GAIN && initialChosenMonth != null) initialChosenMonth else 1,
-                mandatoryLossAvailableMonths = getAvailableMonths(datesManager.currentDate),
+                mandatoryLossAvailableMonths = getAvailableMonths(currentDate),
                 mandatoryLossChosenMonth = if (initialType == Type.MANDATORY_LOSS && initialChosenMonth != null) initialChosenMonth else 1
             )
             createStateSubject.onNext(newState)
@@ -262,13 +264,9 @@ class CreateViewModel(
     }
 
     private fun saveTransaction(transaction: Transaction): Completable {
-        return cache
-            .clear()
-            .andThen(repository.addTransaction(transaction))
-            .andThen(cache.requestDate(datesManager.currentDate))
-            .take(1)
-            .singleOrError()
-            .ignoreElement()
+        return repository
+            .addTransaction(transaction)
+            .andThen(cache.invalidate())
     }
 
 

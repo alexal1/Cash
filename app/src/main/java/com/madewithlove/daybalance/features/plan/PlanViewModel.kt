@@ -9,6 +9,7 @@ import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.dto.Money
 import com.madewithlove.daybalance.helpers.DatesManager
 import com.madewithlove.daybalance.helpers.SavingsManager
+import com.madewithlove.daybalance.model.Cache
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.specifications.MonthMandatoryLossSpecification
 import com.madewithlove.daybalance.repository.specifications.MonthTotalGainSpecification
@@ -26,7 +27,8 @@ class PlanViewModel(
     application: Application,
     private val datesManager: DatesManager,
     private val repository: TransactionsRepository,
-    private val savingsManager: SavingsManager
+    private val savingsManager: SavingsManager,
+    private val cache: Cache
 ) : AndroidViewModel(application) {
 
     val planStateObservable: Observable<PlanState>
@@ -40,6 +42,8 @@ class PlanViewModel(
         planStateObservable = planStateSubject
             .distinctUntilChanged()
             .doOnNext { Timber.i(it.toString()) }
+            .replay(1)
+            .autoConnect()
 
         datesManager.currentDateObservable
             .skip(1)
@@ -84,6 +88,8 @@ class PlanViewModel(
 
         val newState = planState.copy(savingsRatio = ratio)
         planStateSubject.onNext(newState)
+
+        cache.invalidate().subscribe().cache(dc)
     }
 
 

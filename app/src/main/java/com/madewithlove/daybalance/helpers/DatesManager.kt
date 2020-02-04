@@ -4,50 +4,37 @@
 
 package com.madewithlove.daybalance.helpers
 
-import android.text.format.DateUtils
 import com.madewithlove.daybalance.utils.CalendarFactory
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.PublishSubject
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class DatesManager {
 
-    /**
-     * Time is emitted as GMT+00:00 date with hours, minutes, seconds, milliseconds set to zero.
-     */
+    val extendedDateObservable: Observable<ExtendedDate>
     val currentDateObservable: Observable<Date>
-    val currentDate: Date get() = currentDateSubject.value!!
-
-    /**
-     * Whether current date is today in default time zone.
-     */
     val isTodayObservable: Observable<Boolean>
-    val isToday: Boolean get() = DateUtils.isToday(currentDate.time)
+    val extendedDate: ExtendedDate get() = extendedDateSubject.value!!
+    val currentDate: Date get() = extendedDate.date
+    val todayDate: Date get() = now
 
     private val millisInDay = TimeUnit.DAYS.toMillis(1)
     private val now get() = Date(System.currentTimeMillis() / millisInDay * millisInDay)
-    private val currentDateSubject = BehaviorSubject.createDefault(now)
-    private val midnightSubject = PublishSubject.create<Unit>()
+    private val extendedNow get() = ExtendedDate(now, 0)
+    private val extendedDateSubject = BehaviorSubject.createDefault(extendedNow)
     private val calendar = CalendarFactory.getInstance()
 
 
     init {
-        currentDateObservable = currentDateSubject.distinctUntilChanged()
-
-        isTodayObservable = Observable
-            .merge(
-                currentDateSubject,
-                midnightSubject
-            )
-            .map { isToday }
-            .distinctUntilChanged()
+        extendedDateObservable = extendedDateSubject.distinctUntilChanged()
+        currentDateObservable = extendedDateSubject.map { it.date }.distinctUntilChanged()
+        isTodayObservable = extendedDateSubject.map { it.isToday }.distinctUntilChanged()
 
         Timer("DatesManagerThread").schedule(
             object : TimerTask() {
                 override fun run() {
-                    midnightSubject.onNext(Unit)
+                    extendedDateSubject.onNext(extendedNow)
                 }
             },
             Date(now.time - TimeZone.getDefault().rawOffset + millisInDay),
@@ -61,11 +48,12 @@ class DatesManager {
             "Only dates in GMT+00:00 with hours, minutes, seconds, milliseconds set to zero are accepted here"
         }
 
-        currentDateSubject.onNext(date)
+        val extendedDate = ExtendedDate(date, getTodayRelation(date))
+        extendedDateSubject.onNext(extendedDate)
     }
 
     fun getCurrentMonthFirstDay(): Date {
-        calendar.time = currentDate
+        calendar.time = extendedDate.date
         calendar.set(Calendar.DAY_OF_MONTH, 1)
         return calendar.time
     }
@@ -74,6 +62,33 @@ class DatesManager {
         calendar.time = now
         calendar.set(Calendar.DAY_OF_MONTH, 1)
         return calendar.time
+    }
+
+
+    private fun getTodayRelation(date: Date): Byte {
+        val timeZoneOffset = TimeZone.getDefault().rawOffset
+        val todayStart = now.time - timeZoneOffset
+        val todayEnd = todayStart + millisInDay
+
+        return when {
+            date.time < todayStart -> -1
+            date.time >= todayEnd -> 1
+            else -> 0
+        }
+    }
+
+
+    /**
+     * Class that represents complete info about date.
+     *
+     * @property date GMT+00:00 date with hours, minutes, seconds, milliseconds set to zero.
+     */
+    data class ExtendedDate(val date: Date, private val todayRelation: Byte) {
+
+        val isPast: Boolean = todayRelation < 0
+        val isFuture: Boolean = todayRelation > 0
+        val isToday: Boolean = !isPast && !isFuture
+
     }
 
 }

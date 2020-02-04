@@ -81,7 +81,15 @@ class CircleView(context: Context) : ViewGroup(context) {
 
 
     fun setData(state: CircleState) {
-        val (newMoney, newProgress) = state
+        val (newMoney, newProgress, isPast) = state
+
+        labelTextView.textResource = if (isPast) R.string.circle_text_past else R.string.circle_text
+
+        if (newMoney == null) {
+            circleDrawable.progress = newProgress
+            amountTextView.text = ""
+            return
+        }
 
         val newAmount = newMoney.amount.toFloat()
         val prevAmount = Money.by(amountTextView.text.toString()).amount.toFloat()
@@ -181,6 +189,10 @@ class CircleView(context: Context) : ViewGroup(context) {
     }
 
 
-    data class CircleState(val amount: Money, val progress: Float)
+    data class CircleState(
+        val amount: Money? = null,
+        val progress: Float = 0f,
+        val isPast: Boolean = false
+    )
 
 }

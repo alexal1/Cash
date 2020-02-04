@@ -12,7 +12,7 @@ import com.madewithlove.daybalance.helpers.CurrencyManager
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.repository.specifications.DayGainSpecification
-import com.madewithlove.daybalance.repository.specifications.DayLossSpecification
+import com.madewithlove.daybalance.repository.specifications.DayLossSpecificationOld
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
 import com.madewithlove.daybalance.utils.onNextConsumer
@@ -71,7 +71,7 @@ class DayTransactionsViewModel(application: Application) : AndroidViewModel(appl
 
     private fun obtainData() {
         repository
-            .query(DayLossSpecification(app.currentDate.value!!, currentCurrencyIndex))
+            .query(DayLossSpecificationOld(app.currentDate.value!!, currentCurrencyIndex))
             .subscribe { transactions ->
                 dayLossTransactionsSubject.onNext(transactions)
             }

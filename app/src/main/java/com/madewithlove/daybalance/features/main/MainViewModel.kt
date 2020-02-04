@@ -7,28 +7,30 @@ package com.madewithlove.daybalance.features.main
 import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import com.madewithlove.daybalance.dto.Balance
 import com.madewithlove.daybalance.dto.Money
 import com.madewithlove.daybalance.features.plan.PlanViewModel
 import com.madewithlove.daybalance.helpers.DatesManager
+import com.madewithlove.daybalance.model.Cache
 import com.madewithlove.daybalance.ui.circle.CircleView
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
 import com.madewithlove.daybalance.utils.currentLocale
 import com.madewithlove.daybalance.utils.onNextConsumer
 import io.reactivex.Observable
-import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
-import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.pow
 
 @SuppressLint("DefaultLocale")
 class MainViewModel(
     application: Application,
-    datesManager: DatesManager
+    datesManager: DatesManager,
+    cache: Cache
 ) : AndroidViewModel(application) {
 
     val mainStateObservable: Observable<MainState>
@@ -45,21 +47,27 @@ class MainViewModel(
         mainStateObservable = mainStateSubject
             .distinctUntilChanged()
             .doOnNext { Timber.i(it.toString()) }
+            .replay(1)
+            .autoConnect()
 
         showCalendarObservable = showCalendarSubject.throttleFirst(1, TimeUnit.SECONDS)
 
-        Observable
-            .combineLatest<Date, Boolean, MainState>(
-                datesManager.currentDateObservable,
-                datesManager.isTodayObservable,
-                BiFunction { currentDate, isToday ->
-                    mainState.copy(
-                        currentDate = currentDate,
-                        isToday = isToday,
-                        weekday = weekdayFormat.format(currentDate).capitalize()
-                    )
-                }
-            )
+        cache.balanceObservable
+            .map(this::getCircleState)
+            .map {
+                mainState.copy(circleState = it)
+            }
+            .subscribe(mainStateSubject.onNextConsumer())
+            .cache(dc)
+
+        datesManager.extendedDateObservable
+            .map { extendedDate ->
+                mainState.copy(
+                    currentDate = extendedDate.date,
+                    isToday = extendedDate.isToday,
+                    weekday = weekdayFormat.format(extendedDate.date).capitalize()
+                )
+            }
             .subscribe(mainStateSubject.onNextConsumer())
             .cache(dc)
     }
@@ -120,11 +128,61 @@ class MainViewModel(
     }
 
 
+    private fun getCircleState(balance: Balance): CircleView.CircleState {
+        val amount: Money
+        val progress: Float
+        val isPast: Boolean = balance.dayLimit == null
+
+        balance.apply {
+            if (isPast) {
+                progress = 0f
+                amount = dayLoss
+            } else {
+                when {
+                    // Normal
+                    total == null
+                            && dayLimit != null
+                            && dayLimit.amount.signum() > 0 -> {
+                        amount = Money.by(dayLimit.amount - dayLoss.amount)
+                        progress = 1f - (dayLoss.amount.toFloat() / dayLimit.amount.toFloat())
+                    }
+
+                    // Zero limit & zero loss
+                    total == null
+                            && dayLimit != null
+                            && dayLimit.amount.signum() == 0 -> {
+                        amount = dayLoss
+                        progress = 0f
+                    }
+
+                    // Overrun
+                    total != null
+                            && total.amount > dayLoss.amount
+                            && dayLimit != null -> {
+                        amount = Money.by(dayLimit.amount - dayLoss.amount)
+                        progress = (dayLoss.amount.toDouble() / total.amount.toDouble() - 1.0).pow(4.0).toFloat() - 1f
+                    }
+
+                    // No money
+                    total != null
+                            && dayLimit != null -> {
+                        amount = Money.by(dayLimit.amount - dayLoss.amount)
+                        progress = -1f
+                    }
+
+                    else -> throw IllegalStateException("Unexpected balance: $this")
+                }
+            }
+        }
+
+        return CircleView.CircleState(amount, progress, isPast)
+    }
+
     private fun getDefaultMainState(): MainState = MainState(
         currentDate = Date(),
         isToday = false,
         weekday = "",
-        circleState = CircleView.CircleState(Money.by(BigDecimal(1234.56)), 0.8f),
+        circleState = CircleView.CircleState(),
         largeButtonType = LargeButtonType.HISTORY,
         isKeyboardOpened = false
     )

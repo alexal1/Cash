@@ -6,6 +6,7 @@ package com.madewithlove.daybalance.features.history
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import com.madewithlove.daybalance.model.Cache
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.repository.specifications.HistorySpecification
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit
 class HistoryViewModel(
     application: Application,
     private val repository: TransactionsRepository,
+    private val cache: Cache,
     filter: HistorySpecification.Filter
 ) : AndroidViewModel(application) {
 
@@ -38,6 +40,8 @@ class HistoryViewModel(
         historyStateObservable = historyStateSubject
             .distinctUntilChanged()
             .doOnNext { Timber.i(it.toString()) }
+            .replay(1)
+            .autoConnect()
 
         repository.query(HistorySpecification(filter))
             .map(this::toItems)
@@ -50,14 +54,22 @@ class HistoryViewModel(
 
 
     fun deleteCheckedItems() {
-        repository.removeAllTransactions(historyState.checkedTransactions.map { it.id }).subscribe {
-            val newState = historyState.copy(
-                items = historyState.items.removeChecked(),
-                checkedTransactions = emptySet()
-            )
+        val affectedDates = historyState.checkedTransactions
+            .map { Date(it.actionTimestamp) }
+            .toSet()
 
-            historyStateSubject.onNext(newState)
-        }.cache(dc)
+        repository
+            .removeAllTransactions(historyState.checkedTransactions.map { it.id })
+            .andThen(cache.invalidate(affectedDates))
+            .subscribe {
+                val newState = historyState.copy(
+                    items = historyState.items.removeChecked(),
+                    checkedTransactions = emptySet()
+                )
+
+                historyStateSubject.onNext(newState)
+            }
+            .cache(dc)
     }
 
     fun dismissDeleteMode() {
