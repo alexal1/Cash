@@ -9,15 +9,20 @@ import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import com.madewithlove.daybalance.features.history.HistoryFragment
 import com.madewithlove.daybalance.features.main.MainFragment
+import com.madewithlove.daybalance.helpers.Analytics
+import com.madewithlove.daybalance.ui.activities.SplashActivity
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
 import com.madewithlove.daybalance.utils.navigation.Navigator
 import com.madewithlove.daybalance.utils.subscribeOnUi
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class BaseActivity : FragmentActivity(), Navigator {
 
     private val viewModel: BaseViewModel by viewModel()
+    private val analytics: Analytics by inject()
     private val dc = DisposableCache()
 
 
@@ -29,6 +34,12 @@ class BaseActivity : FragmentActivity(), Navigator {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
+
+        val isOpenedByPush = intent.getBooleanExtra(SplashActivity.OPENED_BY_PUSH, false)
+        if (isOpenedByPush) {
+            Timber.i("BaseActivity is opened by push")
+            analytics.clickOnPush()
         }
 
         if (savedInstanceState == null) {

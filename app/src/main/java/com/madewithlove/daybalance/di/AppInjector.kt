@@ -12,6 +12,7 @@ import com.madewithlove.daybalance.features.history.HistoryViewModel
 import com.madewithlove.daybalance.features.main.MainViewModel
 import com.madewithlove.daybalance.features.moneybox.MoneyboxViewModel
 import com.madewithlove.daybalance.features.plan.PlanViewModel
+import com.madewithlove.daybalance.features.settings.SettingsViewModel
 import com.madewithlove.daybalance.helpers.*
 import com.madewithlove.daybalance.helpers.push.PushManager
 import com.madewithlove.daybalance.model.Cache
@@ -21,7 +22,10 @@ import com.madewithlove.daybalance.repository.specifications.HistorySpecificatio
 import com.madewithlove.daybalance.repository.utils.RandomTransactionsIterator
 import com.madewithlove.daybalance.repository.utils.RandomTransactionsIteratorFactory
 import com.madewithlove.daybalance.utils.currentLocale
-import com.madewithlove.daybalance.viewmodels.*
+import com.madewithlove.daybalance.viewmodels.DayTransactionsViewModel
+import com.madewithlove.daybalance.viewmodels.DebugSettingsViewModel
+import com.madewithlove.daybalance.viewmodels.NewTransactionViewModel
+import com.madewithlove.daybalance.viewmodels.SplashViewModel
 import com.madewithlove.daybalance.viewmodels.cache.CacheLogic
 import com.madewithlove.daybalance.viewmodels.cache.CacheLogicAdapter
 import com.madewithlove.daybalance.viewmodels.cache.DataSource
@@ -37,9 +41,9 @@ val viewModelsModule = module {
     viewModel { (type: CreateViewModel.Type, chosenMonth: Int?) -> CreateViewModel(androidApplication(), get(), get(), get(), type, chosenMonth) }
     viewModel { PlanViewModel(androidApplication(), get(), get(), get(), get()) }
     viewModel { MoneyboxViewModel(androidApplication(), get(), get(), get()) }
+    viewModel { SettingsViewModel(androidApplication(), get(), get()) }
     viewModel { NewTransactionViewModel(androidApplication()) }
     viewModel { DayTransactionsViewModel(androidApplication()) }
-    viewModel { SettingsViewModel(androidApplication()) }
     viewModel { DebugSettingsViewModel(androidApplication()) }
     viewModel { SplashViewModel(androidApplication()) }
 }
@@ -52,7 +56,7 @@ val helpersModule = module {
     single { DatesManager() }
     single { CategoriesManager(androidContext(), get()) }
     single { CurrencyManager(get(), androidContext().currentLocale()) }
-    single { PushManager(androidContext()) }
+    single { PushManager(androidContext(), get(), get()) }
     single { TipsManager(androidContext(), get()) }
     single { Analytics(androidContext()) }
     single { SavingsManager(get()) }

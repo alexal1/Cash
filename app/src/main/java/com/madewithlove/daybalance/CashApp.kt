@@ -157,6 +157,7 @@ class CashApp : Application(), LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun onAppDestroyed() {
         Timber.i("App destroyed")
+        pushManager.dispose()
         cache.dispose()
     }
 

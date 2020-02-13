@@ -46,8 +46,8 @@
     <string name="settings_auto_switch_title">Автопереключение валюты</string>
     <string name="settings_auto_switch_subtitle">При добавлении транзакции в другой валюте</string>
     <string name="settings_push_notifications_title">Пуш-уведомления</string>
-    <string name="settings_push_notifications_subtitle">Ежедневные отчеты с итоговым балансом за день</string>
-    <string name="settings_push_notifications_dialog_message">Пуш-уведмоления этого приложения запрещены в настройках устройства. Открыть настройки?</string>
+    <string name="settings_push_notifications_subtitle">Итог дня каждый день в 22:00</string>
+    <string name="settings_push_notifications_dialog_message">Пуш-уведмоления запрещены в Настройках. Открыть Настройки?</string>
     <string name="settings_tips_title">Подсказки</string>
     <string name="settings_tips_subtitle">Нажмите чтобы показать все подсказки заново</string>
     <string name="settings_tips_reset">Показать все</string>
@@ -60,11 +60,13 @@
     <string name="mismatched_currency_message">Последняя транзакция была в %s.\nХотите переключить отображаемую валюту на %s?</string>
     <string name="mismatched_currency_remember_choice">Запомнить выбор</string>
     <string name="push_notifications_channel_name">Ежедневные отчеты</string>
-    <string name="push_notifications_channel_description">Ваш итоговый баланс за день</string>
-    <string name="push_notification_title_positive">+%s – ваша прибыль за сегодня</string>
-    <string name="push_notification_title_negative">-%s – ваш убыток за сегодня</string>
-    <string name="push_notification_title_empty">Нет данных за сегодня</string>
-    <string name="push_notification_subtitle">Нажмите чтобы добавить больше транзакций</string>
+    <string name="push_notifications_channel_description">@string/settings_push_notifications_subtitle</string>
+    <string name="push_notification_title_positive">Сэкономили %s</string>
+    <string name="push_notification_text_positive">Эти деньги будут распределены на оставшиеся дни месяца</string>
+    <string name="push_notification_text_positive_last_day">Эти деньги будут добавлены в Копилку</string>
+    <string name="push_notification_title_negative">Перерасход %s</string>
+    <string name="push_notification_text_negative">Эти деньги будут вычтены из оставшихся дней месяца</string>
+    <string name="push_notification_text_negative_last_day">Эти деньги будут вычтены из Копилки</string>
     <string name="privacy_policy">Политика конфиденциальности</string>
     <string name="connection_error">Нет соединения</string>
     <string name="short_statistics">Остаток {balance}, в том числе {month_diff} за {month}</string>
@@ -179,6 +181,7 @@
     <string name="large_button_plan_loss">Откуда эта сумма?</string>
     <string name="large_button_plan_moneybox">Открыть Копилку</string>
     <string name="large_button_moneybox">Добавить денег в Копилку</string>
+    <string name="large_button_settings">Оцените приложение</string>
     <string name="create_loss">Расход</string>
     <string name="create_mandatory_loss">Обязательный расход</string>
     <string name="create_gain">Доход</string>

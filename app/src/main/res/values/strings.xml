@@ -46,8 +46,8 @@
     <string name="settings_auto_switch_title">Auto switch currency</string>
     <string name="settings_auto_switch_subtitle">When adding transaction in a different currency</string>
     <string name="settings_push_notifications_title">Push notifications</string>
-    <string name="settings_push_notifications_subtitle">Daily reports with your day balance summary</string>
-    <string name="settings_push_notifications_dialog_message">Push notifications are disabled for this app in device Settings. Do you want to open Settings?</string>
+    <string name="settings_push_notifications_subtitle">Results of the day each day at 10 p.m.</string>
+    <string name="settings_push_notifications_dialog_message">Push notifications are forbidden in Settings. Open Settings?</string>
     <string name="settings_tips_title">Tips</string>
     <string name="settings_tips_subtitle">Tap to show all tips again</string>
     <string name="settings_tips_reset">Show all</string>
@@ -61,7 +61,7 @@
     <string name="mismatched_currency_remember_choice">Remember choice</string>
     <string name="debug_settings" translatable="false">Debug</string>
     <string name="debug_settings_show_push_title" translatable="false">Show push</string>
-    <string name="debug_settings_show_push_subtitle" translatable="false">Forced push notification for today data</string>
+    <string name="debug_settings_show_push_subtitle" translatable="false">Forced push notification for the current date</string>
     <string name="debug_settings_add_transactions_to_current_date_title" translatable="false">+ 100 transactions to this day</string>
     <string name="debug_settings_add_transactions_to_current_date_subtitle" translatable="false">Add 100 random transactions to this day</string>
     <string name="debug_settings_add_transactions_to_current_month_title" translatable="false">+ 100 transactions to each day of this month</string>
@@ -74,11 +74,13 @@
     <string name="debug_settings_enable_logs_title" translatable="false">Logs in release build</string>
     <string name="debug_settings_enable_logs_subtitle" translatable="false">Restart the app after change</string>
     <string name="push_notifications_channel_name">Daily reports</string>
-    <string name="push_notifications_channel_description">Your day balance summary</string>
-    <string name="push_notification_title_positive">+%s is your net income today</string>
-    <string name="push_notification_title_negative">-%s is your net loss today</string>
-    <string name="push_notification_title_empty">No data for today</string>
-    <string name="push_notification_subtitle">Tap to add more transactions</string>
+    <string name="push_notifications_channel_description">@string/settings_push_notifications_subtitle</string>
+    <string name="push_notification_title_positive">Saved %s</string>
+    <string name="push_notification_text_positive">These money will be distributed over the remaining days of the month</string>
+    <string name="push_notification_text_positive_last_day">These money will be added to the Moneybox</string>
+    <string name="push_notification_title_negative">Overspent %s</string>
+    <string name="push_notification_text_negative">These money will be deducted from the remaining days of the month</string>
+    <string name="push_notification_text_negative_last_day">These money will be taken from the Moneybox</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="connection_error">No connection</string>
     <string name="short_statistics">Balance {balance}, including {month_diff} in {month}</string>
@@ -193,6 +195,7 @@
     <string name="large_button_plan_loss">Where did this amount come from?</string>
     <string name="large_button_plan_moneybox">Open the Moneybox</string>
     <string name="large_button_moneybox">Add money to the Moneybox</string>
+    <string name="large_button_settings">Rate the app</string>
     <string name="create_loss">Expense</string>
     <string name="create_mandatory_loss">Mandatory Expense</string>
     <string name="create_gain">Income</string>

@@ -9,34 +9,36 @@ import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import android.os.Build
-import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.madewithlove.daybalance.BaseActivity
 import com.madewithlove.daybalance.CashApp
 import com.madewithlove.daybalance.R
-import com.madewithlove.daybalance.helpers.CurrencyManager
-import com.madewithlove.daybalance.repository.TransactionsRepository
-import com.madewithlove.daybalance.repository.specifications.DaySpecification
-import com.madewithlove.daybalance.ui.activities.SplashActivity
-import com.madewithlove.daybalance.ui.activities.SplashActivity.Companion.OPENED_BY_PUSH
-import com.madewithlove.daybalance.utils.subscribeOnUi
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import com.madewithlove.daybalance.dto.Money
+import com.madewithlove.daybalance.helpers.DatesManager
+import com.madewithlove.daybalance.model.Cache
+import com.madewithlove.daybalance.utils.*
 import java.util.*
 
-class PushManager(private val context: Context) : KoinComponent {
+class PushManager(
+    private val context: Context,
+    private val cache: Cache,
+    private val datesManager: DatesManager
+) {
 
     companion object {
-        private const val HOUR_TO_SHOW_PUSH = 21
+
+        const val OPENED_BY_PUSH = "opened_by_push"
+
+        private const val HOUR_TO_SHOW_PUSH = 22
         private const val CHANNEL_ID = "daily_reports_push_notifications"
+
     }
 
 
     private val app by lazy { context.applicationContext as CashApp }
     private val alarmManager by lazy { context.getSystemService(ALARM_SERVICE) as AlarmManager }
     private val notificationManager by lazy { NotificationManagerCompat.from(context) }
-    private val repository: TransactionsRepository by inject()
-    private val currencyManager: CurrencyManager by inject()
 
     private val alarmPendingIntent by lazy {
         val intent = Intent(context, AlarmReceiver::class.java)
@@ -44,11 +46,14 @@ class PushManager(private val context: Context) : KoinComponent {
     }
 
     private val pushPendingIntent by lazy {
-        val intent = Intent(context, SplashActivity::class.java).apply {
+        val intent = Intent(context, BaseActivity::class.java).apply {
             putExtra(OPENED_BY_PUSH, true)
         }
         PendingIntent.getActivity(context, 0, intent, 0)
     }
+
+    private val calendar = CalendarFactory.getInstance()
+    private val dc = DisposableCache()
 
     private var notificationId = 0
 
@@ -87,58 +92,63 @@ class PushManager(private val context: Context) : KoinComponent {
             return
         }
 
-        val currentDate = app.currentDate.value!!
-        val currentCurrencyIndex = currencyManager.getCurrentCurrencyIndex()
-        repository
-            .query(DaySpecification(currentDate, currentCurrencyIndex))
-            .map { transactions ->
-                val totalGain = transactions.filter { it.isGain() }.sumByDouble { it.getAmountPerDay() }
-                val totalLoss = transactions.filter { !it.isGain() }.sumByDouble { it.getAmountPerDay() }
-                totalGain to totalLoss
+        cache.balanceObservable
+            .take(1)
+            .map { balance ->
+                val dayLimit = balance.dayLimit ?: throw IllegalArgumentException("dayLimit is null in the balance for push notification")
+                Money.by(dayLimit.amount - balance.dayLoss.amount)
             }
-            .subscribeOnUi { (totalGain, totalLoss) ->
-                val notification: Notification
+            .subscribeOnUi { diff ->
+                val diffString = TextFormatter.formatMoney(Money.by(diff.amount.abs()))
+                val title: String
+                val text: String
 
-                if (totalGain > 0.0 || totalLoss > 0.0) {
-                    val diff = totalGain - totalLoss
-                    val title = if (diff >= 0.0) {
-                        app.getString(
-                            R.string.push_notification_title_positive,
-                            currencyManager.formatMoney(diff, currencyManager.getCurrentCurrencyIndex())
-                        )
+                if (diff.amount.signum() >= 0) {
+                    title = context.getString(R.string.push_notification_title_positive, diffString)
+                    text = if (datesManager.currentDate.isLastMonthDay()) {
+                        context.getString(R.string.push_notification_text_positive_last_day)
                     } else {
-                        app.getString(
-                            R.string.push_notification_title_negative,
-                            currencyManager.formatMoney(-diff, currencyManager.getCurrentCurrencyIndex())
-                        )
+                        context.getString(R.string.push_notification_text_positive)
                     }
-
-                    notification = createNotification(title, R.string.push_notification_subtitle)
                 } else {
-                    notification = createNotification(
-                        app.getString(R.string.push_notification_title_empty),
-                        R.string.push_notification_subtitle
-                    )
+                    title = context.getString(R.string.push_notification_title_negative, diffString)
+                    text = if (datesManager.currentDate.isLastMonthDay()) {
+                        context.getString(R.string.push_notification_text_negative_last_day)
+                    } else {
+                        context.getString(R.string.push_notification_text_negative)
+                    }
                 }
 
-                notificationManager.notify(
-                    ++notificationId,
-                    notification
-                )
+                val notification = createNotification(title, text)
+                notificationManager.notify(++notificationId, notification)
             }
+            .cache(dc)
     }
 
-    fun checkIfNotificationsEnabled(): Boolean = notificationManager.areNotificationsEnabled()
+    fun areNotificationsEnabled(): Boolean {
+        if (!notificationManager.areNotificationsEnabled()) {
+            return false
+        }
 
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return true
+        }
 
-    private fun createNotification(title: String, @StringRes text: Int) = createNotification(title, app.getString(text))
+        val channel = notificationManager.getNotificationChannel(CHANNEL_ID) ?: return true
+        return channel.importance != NotificationManager.IMPORTANCE_NONE
+    }
+
+    fun dispose() {
+        dc.drain()
+    }
+
 
     private fun createNotification(
         title: String,
         text: String
     ): Notification = NotificationCompat.Builder(context, CHANNEL_ID)
         .setContentTitle(title)
-        .setContentText(text)
+        .setStyle(NotificationCompat.BigTextStyle().bigText(text))
         .setSmallIcon(R.drawable.ic_notification)
         .setPriority(NotificationCompat.PRIORITY_MAX)
         .setContentIntent(pushPendingIntent)
@@ -154,6 +164,14 @@ class PushManager(private val context: Context) : KoinComponent {
             channel.description = descriptionText
             notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    private fun Date.isLastMonthDay(): Boolean {
+        calendar.time = this
+
+        val maxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+        return currentDay == maxDay
     }
 
 }

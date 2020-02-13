@@ -7,6 +7,8 @@ package com.madewithlove.daybalance.features.main
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.app.DatePickerDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent.*
@@ -19,12 +21,12 @@ import com.madewithlove.daybalance.features.create.CreateFragment
 import com.madewithlove.daybalance.features.create.CreateViewModel
 import com.madewithlove.daybalance.features.moneybox.MoneyboxFragment
 import com.madewithlove.daybalance.features.plan.PlanFragment
+import com.madewithlove.daybalance.features.settings.SettingsFragment
 import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.helpers.DatesManager
 import com.madewithlove.daybalance.repository.specifications.HistorySpecification
 import com.madewithlove.daybalance.utils.*
 import com.madewithlove.daybalance.utils.navigation.FragmentNavigator
-import io.reactivex.Observable
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
@@ -33,7 +35,6 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
 
 class MainFragment : FragmentNavigator() {
@@ -133,6 +134,13 @@ class MainFragment : FragmentNavigator() {
                 .cache(dc)
         }
 
+        ui.settingsButton.apply {
+            setOnClickListener {
+                val fragment = SettingsFragment.create()
+                addFragment(fragment)
+            }
+        }
+
         ui.moneyboxButton.apply {
             setOnClickListener {
                 val fragment = MoneyboxFragment.create()
@@ -211,6 +219,17 @@ class MainFragment : FragmentNavigator() {
                         val fragment = CreateFragment.create(CreateViewModel.Type.INTO_MONEYBOX)
                         addFragment(fragment)
                     }
+
+                    MainViewModel.LargeButtonType.SETTINGS -> {
+                        val intent = Intent(Intent.ACTION_VIEW).apply {
+                            data = Uri.parse("https://play.google.com/store/apps/details?id=com.madewithlove.daybalance")
+                            setPackage("com.android.vending")
+                        }
+
+                        if (intent.resolveActivity(ctx.packageManager) != null) {
+                            startActivity(intent)
+                        }
+                    }
                 }
             }
         }
@@ -250,14 +269,15 @@ class MainFragment : FragmentNavigator() {
                             textResource = R.string.large_button_moneybox
                             setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_coin_stack, 0)
                         }
+
+                        MainViewModel.LargeButtonType.SETTINGS -> {
+                            textResource = R.string.large_button_settings
+                            setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_star, 0)
+                        }
                     }
                 }
                 .cache(dc)
         }
-
-        Observable.timer(1, TimeUnit.SECONDS).subscribeOnUi {
-            calendarDialog // pre initialize
-        }.cache(dc)
 
         act.keyboardListener().subscribe { isVisible ->
             if (isVisible) {

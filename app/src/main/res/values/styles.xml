@@ -9,6 +9,7 @@
         <item name="colorAccent">@color/blue</item>
         <item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item>
         <item name="android:editTextStyle">@style/MyEditTextStyle</item>
+        <item name="colorControlHighlight">@color/fog_white</item>
     </style>
 
     <style name="SplashTheme" parent="AppTheme">

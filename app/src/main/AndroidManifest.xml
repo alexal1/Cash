@@ -21,7 +21,7 @@
         <!-- Disable SSAID collection -->
         <meta-data android:name="google_analytics_ssaid_collection_enabled" android:value="false"/>
 
-        <activity android:name="com.madewithlove.daybalance.BaseActivity">
+        <activity android:name="com.madewithlove.daybalance.BaseActivity" android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

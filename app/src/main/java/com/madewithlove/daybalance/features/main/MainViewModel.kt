@@ -108,6 +108,16 @@ class MainViewModel(
         mainStateSubject.onNext(newMainState)
     }
 
+    fun notifySettingsOpened() {
+        val newMainState = mainState.copy(largeButtonType = LargeButtonType.SETTINGS)
+        mainStateSubject.onNext(newMainState)
+    }
+
+    fun notifySettingsClosed() {
+        val newMainState = mainState.copy(largeButtonType = LargeButtonType.HISTORY)
+        mainStateSubject.onNext(newMainState)
+    }
+
     fun openKeyboard() {
         val newMainState = mainState.copy(isKeyboardOpened = true)
         mainStateSubject.onNext(newMainState)
@@ -198,6 +208,6 @@ class MainViewModel(
     )
 
 
-    enum class LargeButtonType { HISTORY, KEYBOARD, PLAN_GAIN, PLAN_LOSS, PLAN_MONEYBOX, MONEYBOX }
+    enum class LargeButtonType { HISTORY, KEYBOARD, PLAN_GAIN, PLAN_LOSS, PLAN_MONEYBOX, MONEYBOX, SETTINGS }
 
 }
