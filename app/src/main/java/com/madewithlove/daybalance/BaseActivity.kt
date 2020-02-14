@@ -30,7 +30,7 @@ class BaseActivity : FragmentActivity(), Navigator {
         super.onCreate(savedInstanceState)
 
         @Suppress("ConstantConditionIf", "LiftReturnOrAssignment")
-        if (BuildConfig.BUILD_TYPE == "debug") {
+        if (CashApp.isDebugBuild) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT

@@ -23,6 +23,7 @@ import com.madewithlove.daybalance.repository.TransactionsRepository
 import io.reactivex.plugins.RxJavaPlugins
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -32,6 +33,7 @@ class CashApp : Application(), LifecycleObserver {
 
     companion object {
 
+        const val isDebugBuild = BuildConfig.BUILD_TYPE == "debug"
         const val CASH_APP_PREFERENCES = "com.madewithlove.daybalance.CASH_APP_PREFERENCES"
         const val PREFS_IS_FIRST_LAUNCH = "is_first_launch"
         const val PREFS_SHOW_PUSH_NOTIFICATIONS = "show_push_notifications"
@@ -40,7 +42,6 @@ class CashApp : Application(), LifecycleObserver {
     }
 
 
-    private val isDebugBuild = BuildConfig.BUILD_TYPE == "debug"
     private val sharedPreferences: SharedPreferences by inject()
     private val pushManager: PushManager by inject()
     private val transactionsRepository: TransactionsRepository by inject()
@@ -51,7 +52,8 @@ class CashApp : Application(), LifecycleObserver {
 
     init {
         RxJavaPlugins.setErrorHandler { throwable ->
-            Timber.e(throwable)
+            Timber.e(throwable.cause)
+            toast(throwable.cause?.message ?: "Unknown exception")
         }
     }
 
@@ -60,9 +62,10 @@ class CashApp : Application(), LifecycleObserver {
     override fun onCreate() {
         super.onCreate()
 
-        val tree = when (BuildConfig.BUILD_TYPE) {
-            "debug" -> CashDebugTree()
-            else -> CashReleaseTree()
+        val tree = if (isDebugBuild) {
+            CashDebugTree()
+        } else {
+            CashReleaseTree()
         }
 
         Timber.plant(tree)
