@@ -1,3 +1,7 @@
+/**
+ * Created by Alexander Mishchenko in 2020
+ */
+
 package com.madewithlove.daybalance.features.settings
 
 import android.app.Application

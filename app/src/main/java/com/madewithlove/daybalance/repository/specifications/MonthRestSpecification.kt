@@ -1,3 +1,7 @@
+/**
+ * Created by Alexander Mishchenko in 2020
+ */
+
 package com.madewithlove.daybalance.repository.specifications
 
 import com.madewithlove.daybalance.repository.entities.Transaction
