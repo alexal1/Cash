@@ -3,9 +3,7 @@
     <color name="nightBlack">#0D0D13</color>
     <color name="deepDark">#12121E</color>
     <color name="dark">#151523</color>
-    <color name="dark_transparent">#00151523</color>
     <color name="soft_dark">#1B1B2A</color>
-    <color name="soft_dark_transparent">#001B1B2A</color>
     <color name="steel_gray">#242433</color>
     <color name="palladium">#323244</color>
     <color name="palladium_80">#CC323244</color>
@@ -15,9 +13,6 @@
     <color name="fog_white_80">#CC9292AD</color>
     <color name="white">#FFFFFF</color>
     <color name="white_80">#CCFFFFFF</color>
-    <color name="white_70">#B3FFFFFF</color>
-    <color name="white_65">#A6FFFFFF</color>
-    <color name="white_60">#66FFFFFF</color>
     <color name="blue">#79A1E0</color>
     <color name="blue_80">#CC79A1E0</color>
     <color name="blue_40">#6679A1E0</color>
@@ -27,7 +22,6 @@
     <color name="green">#00AE8E</color>
     <color name="green_80">#CC00AE8E</color>
     <color name="green_40">#6600AE8E</color>
-    <color name="cherry">#DD5061</color>
     <color name="arterial_blood">#DB4350</color>
     <color name="venous_blood">#B32330</color>
 

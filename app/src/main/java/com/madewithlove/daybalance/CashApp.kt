@@ -20,35 +20,22 @@ import com.madewithlove.daybalance.helpers.timber.CashReleaseTree
 import com.madewithlove.daybalance.helpers.timber.KoinLogger
 import com.madewithlove.daybalance.model.Cache
 import com.madewithlove.daybalance.repository.TransactionsRepository
-import com.madewithlove.daybalance.utils.CalendarFactory
 import io.reactivex.plugins.RxJavaPlugins
-import io.reactivex.subjects.BehaviorSubject
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import timber.log.Timber
-import java.util.*
 
 class CashApp : Application(), LifecycleObserver {
 
     companion object {
 
         const val CASH_APP_PREFERENCES = "com.madewithlove.daybalance.CASH_APP_PREFERENCES"
-        const val PREFS_CURRENT_CURRENCY_INDEX = "current_currency_index"
-        const val PREFS_DEFAULT_PICKER_CURRENCY_INDEX = "default_picker_currency_index"
-        const val PREFS_CATEGORIES_LOSS_PREFIX = "loss_category_"
-        const val PREFS_CATEGORIES_GAIN_PREFIX = "gain_category_"
-        const val PREFS_DEFAULT_LOSS_CATEGORY = "default_loss_category"
-        const val PREFS_DEFAULT_GAIN_CATEGORY = "default_gain_category"
-        const val PREFS_AUTO_SWITCH_CURRENCY = "auto_switch_currency"
         const val PREFS_IS_FIRST_LAUNCH = "is_first_launch"
         const val PREFS_SHOW_PUSH_NOTIFICATIONS = "show_push_notifications"
-        const val PREFS_TIPS_PREFIX = "tip_"
         const val PREFS_LOGS_ENABLED = "logs_enabled"
-
-        const val millisInDay = 24 * 60 * 60 * 1000L
 
     }
 
@@ -58,12 +45,6 @@ class CashApp : Application(), LifecycleObserver {
     private val pushManager: PushManager by inject()
     private val transactionsRepository: TransactionsRepository by inject()
     private val cache: Cache by inject()
-
-    val todayDate: Date by lazy { CalendarFactory.getInstance().time }
-
-    val currentDate by lazy {
-        BehaviorSubject.createDefault(todayDate)
-    }
 
     var isInForeground = false; private set
 
@@ -95,7 +76,6 @@ class CashApp : Application(), LifecycleObserver {
                 sharedPreferencesModule,
                 helpersModule,
                 repositoryModule,
-                cacheModule,
                 modelModule
             )
         }

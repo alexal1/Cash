@@ -29,22 +29,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.madewithlove.daybalance.ui.activities.MainActivity" android:launchMode="singleTask" android:windowSoftInputMode="adjustPan"/>
-
-        <activity android:name="com.madewithlove.daybalance.ui.activities.NewTransactionActivity"/>
-
-        <activity android:name="com.madewithlove.daybalance.ui.activities.DayTransactionsActivity"/>
-
-        <activity android:name="com.madewithlove.daybalance.ui.activities.DetailedTransactionActivity"/>
-
-        <activity android:name="com.madewithlove.daybalance.ui.activities.SettingsActivity"/>
-
-        <activity android:name="com.madewithlove.daybalance.ui.activities.DebugSettingsActivity"/>
-
-        <activity android:name="com.madewithlove.daybalance.ui.activities.WebPageActivity"/>
-
-        <activity android:name="com.madewithlove.daybalance.ui.activities.SplashActivity" android:theme="@style/SplashTheme" />
-
         <receiver android:name="com.madewithlove.daybalance.helpers.push.BootReceiver" android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>

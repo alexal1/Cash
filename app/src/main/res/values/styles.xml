@@ -12,10 +12,6 @@
         <item name="colorControlHighlight">@color/fog_white</item>
     </style>
 
-    <style name="SplashTheme" parent="AppTheme">
-        <item name="android:windowBackground">@drawable/splash_screen</item>
-    </style>
-
     <style name="AppTheme.AlertDialog" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:background">@color/palladium</item>
         <item name="colorAccent">@color/blue</item>
@@ -43,10 +39,6 @@
 
     <style name="MyEditTextStyle" parent="@android:style/Widget.EditText">
         <item name="android:textCursorDrawable">@drawable/ic_cursor</item>
-    </style>
-
-    <style name="MyFAB" parent="Widget.Design.FloatingActionButton">
-        <item name="borderWidth">0dp</item>
     </style>
 
 </resources>

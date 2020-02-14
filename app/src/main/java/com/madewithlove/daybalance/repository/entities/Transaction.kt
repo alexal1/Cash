@@ -4,13 +4,11 @@
 
 package com.madewithlove.daybalance.repository.entities
 
-import com.madewithlove.daybalance.CashApp
 import com.madewithlove.daybalance.dto.Money
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import java.io.Serializable
 import java.util.*
-import kotlin.math.abs
 
 open class Transaction : RealmObject(), Serializable {
 
@@ -20,21 +18,6 @@ open class Transaction : RealmObject(), Serializable {
     var value: Long = 0
 
     var comment: String = ""
-
-    @Deprecated("Old concept")
-    var amount: Double = 0.0
-
-    @Deprecated("Old concept")
-    var categoryId: String = ""
-
-    @Deprecated("Old concept")
-    var period: String = ""
-
-    @Deprecated("Old concept")
-    var startTimestamp: Long = 0
-
-    @Deprecated("Old concept")
-    var endTimestamp: Long = 0
 
     /**
      * When transaction was actually added to the database.
@@ -53,23 +36,12 @@ open class Transaction : RealmObject(), Serializable {
 
     var typeName: String = ""
 
-    @Deprecated("Old concept")
-    var account: Account? = null
-
-
-    fun getType() = Type.valueOf(typeName)
 
     fun setType(type: Type) {
         typeName = type.name
     }
 
     fun getMoney() = Money.by(value)
-
-    fun isGain(): Boolean = getMoney().isGain()
-
-    fun getDaysCount(): Int = ((endTimestamp - startTimestamp) / CashApp.millisInDay).toInt()
-
-    fun getAmountPerDay(): Double = abs(amount) / getDaysCount().toDouble()
 
 
     override fun equals(other: Any?): Boolean {

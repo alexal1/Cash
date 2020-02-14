@@ -31,7 +31,7 @@ class DatesLayoutManager(context: Context) : LinearLayoutManager(context) {
         orientation = HORIZONTAL
     }
 
-    override fun scrollHorizontallyBy(dx: Int, recycler: RecyclerView.Recycler?, state: RecyclerView.State?): Int {
+    override fun scrollHorizontallyBy(dx: Int, recycler: Recycler?, state: RecyclerView.State?): Int {
         val parentMidpoint = width / 2f
         val minDistance = MIN_DISTANCE * parentMidpoint
         val maxDistance = MAX_DISTANCE * parentMidpoint

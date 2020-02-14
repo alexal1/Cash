@@ -10,7 +10,7 @@ import androidx.fragment.app.FragmentActivity
 import com.madewithlove.daybalance.features.history.HistoryFragment
 import com.madewithlove.daybalance.features.main.MainFragment
 import com.madewithlove.daybalance.helpers.Analytics
-import com.madewithlove.daybalance.ui.activities.SplashActivity
+import com.madewithlove.daybalance.helpers.push.PushManager.Companion.OPENED_BY_PUSH
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
 import com.madewithlove.daybalance.utils.navigation.Navigator
@@ -36,7 +36,7 @@ class BaseActivity : FragmentActivity(), Navigator {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
 
-        val isOpenedByPush = intent.getBooleanExtra(SplashActivity.OPENED_BY_PUSH, false)
+        val isOpenedByPush = intent.getBooleanExtra(OPENED_BY_PUSH, false)
         if (isOpenedByPush) {
             Timber.i("BaseActivity is opened by push")
             analytics.clickOnPush()

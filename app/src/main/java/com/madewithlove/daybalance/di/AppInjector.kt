@@ -13,22 +13,14 @@ import com.madewithlove.daybalance.features.main.MainViewModel
 import com.madewithlove.daybalance.features.moneybox.MoneyboxViewModel
 import com.madewithlove.daybalance.features.plan.PlanViewModel
 import com.madewithlove.daybalance.features.settings.SettingsViewModel
-import com.madewithlove.daybalance.helpers.*
+import com.madewithlove.daybalance.helpers.Analytics
+import com.madewithlove.daybalance.helpers.DatesManager
+import com.madewithlove.daybalance.helpers.SavingsManager
 import com.madewithlove.daybalance.helpers.push.PushManager
 import com.madewithlove.daybalance.model.Cache
 import com.madewithlove.daybalance.model.CacheDatesMapper
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.specifications.HistorySpecification
-import com.madewithlove.daybalance.repository.utils.RandomTransactionsIterator
-import com.madewithlove.daybalance.repository.utils.RandomTransactionsIteratorFactory
-import com.madewithlove.daybalance.utils.currentLocale
-import com.madewithlove.daybalance.viewmodels.DayTransactionsViewModel
-import com.madewithlove.daybalance.viewmodels.DebugSettingsViewModel
-import com.madewithlove.daybalance.viewmodels.NewTransactionViewModel
-import com.madewithlove.daybalance.viewmodels.SplashViewModel
-import com.madewithlove.daybalance.viewmodels.cache.CacheLogic
-import com.madewithlove.daybalance.viewmodels.cache.CacheLogicAdapter
-import com.madewithlove.daybalance.viewmodels.cache.DataSource
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -42,10 +34,6 @@ val viewModelsModule = module {
     viewModel { PlanViewModel(androidApplication(), get(), get(), get(), get()) }
     viewModel { MoneyboxViewModel(androidApplication(), get(), get(), get()) }
     viewModel { SettingsViewModel(androidApplication(), get(), get()) }
-    viewModel { NewTransactionViewModel(androidApplication()) }
-    viewModel { DayTransactionsViewModel(androidApplication()) }
-    viewModel { DebugSettingsViewModel(androidApplication()) }
-    viewModel { SplashViewModel(androidApplication()) }
 }
 
 val sharedPreferencesModule = module {
@@ -54,25 +42,13 @@ val sharedPreferencesModule = module {
 
 val helpersModule = module {
     single { DatesManager() }
-    single { CategoriesManager(androidContext(), get()) }
-    single { CurrencyManager(get(), androidContext().currentLocale()) }
     single { PushManager(androidContext(), get(), get()) }
-    single { TipsManager(androidContext(), get()) }
     single { Analytics(androidContext()) }
     single { SavingsManager(get()) }
 }
 
 val repositoryModule = module {
     single { TransactionsRepository() }
-    single { (count: Int, mode: RandomTransactionsIterator.Mode) -> RandomTransactionsIteratorFactory(androidContext(), get(), get(), count, mode) }
-}
-
-val cacheModule = module {
-    single {
-        val dataSource = DataSource(get(), get())
-        val cacheLogic = CacheLogic(dataSource)
-        CacheLogicAdapter(cacheLogic)
-    }
 }
 
 val modelModule = module {
