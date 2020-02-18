@@ -16,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.marginTop
 import com.madewithlove.daybalance.BaseViewModel
+import com.madewithlove.daybalance.CashApp
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.create.CreateFragment
 import com.madewithlove.daybalance.features.create.CreateViewModel
@@ -293,6 +294,11 @@ class MainFragment : FragmentNavigator() {
 
         view.post {
             startPostponedEnterTransition()
+
+            if (savedInstanceState == null) {
+                val splashScreenTime = System.currentTimeMillis() - CashApp.initializationTime
+                analytics.splashScreenTime(splashScreenTime)
+            }
         }
     }
 

@@ -37,6 +37,7 @@ class CashApp : Application(), LifecycleObserver {
         const val PREFS_IS_FIRST_LAUNCH = "is_first_launch"
         const val PREFS_SHOW_PUSH_NOTIFICATIONS = "show_push_notifications"
         const val PREFS_LOGS_ENABLED = "logs_enabled"
+        val initializationTime = System.currentTimeMillis()
         val isDebugBuild get() = BuildConfig.BUILD_TYPE == "debug"
 
     }

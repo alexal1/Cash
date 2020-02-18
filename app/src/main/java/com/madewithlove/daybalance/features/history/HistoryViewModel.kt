@@ -6,6 +6,7 @@ package com.madewithlove.daybalance.features.history
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.model.Cache
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.entities.Transaction
@@ -24,6 +25,7 @@ class HistoryViewModel(
     application: Application,
     private val repository: TransactionsRepository,
     private val cache: Cache,
+    private val analytics: Analytics,
     filter: HistorySpecification.Filter
 ) : AndroidViewModel(application) {
 
@@ -66,8 +68,9 @@ class HistoryViewModel(
                     items = historyState.items.removeChecked(),
                     checkedTransactions = emptySet()
                 )
-
                 historyStateSubject.onNext(newState)
+
+                analytics.deleteTransaction()
             }
             .cache(dc)
     }

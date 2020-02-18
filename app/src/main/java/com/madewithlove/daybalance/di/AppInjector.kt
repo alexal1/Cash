@@ -29,8 +29,8 @@ import org.koin.dsl.module
 val viewModelsModule = module {
     viewModel { BaseViewModel(androidApplication()) }
     viewModel { MainViewModel(androidApplication(), get(), get()) }
-    viewModel { (filter: HistorySpecification.Filter) -> HistoryViewModel(androidApplication(), get(), get(), filter) }
-    viewModel { (type: CreateViewModel.Type, chosenMonth: Int?) -> CreateViewModel(androidApplication(), get(), get(), get(), type, chosenMonth) }
+    viewModel { (filter: HistorySpecification.Filter) -> HistoryViewModel(androidApplication(), get(), get(), get(), filter) }
+    viewModel { (type: CreateViewModel.Type, chosenMonth: Int?) -> CreateViewModel(androidApplication(), get(), get(), get(), get(), type, chosenMonth) }
     viewModel { PlanViewModel(androidApplication(), get(), get(), get(), get()) }
     viewModel { MoneyboxViewModel(androidApplication(), get(), get(), get()) }
     viewModel { SettingsViewModel(androidApplication(), get(), get()) }

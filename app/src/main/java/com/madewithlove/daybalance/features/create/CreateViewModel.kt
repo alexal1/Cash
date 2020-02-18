@@ -7,6 +7,7 @@ package com.madewithlove.daybalance.features.create
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.dto.Money
+import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.helpers.DatesManager
 import com.madewithlove.daybalance.model.Cache
 import com.madewithlove.daybalance.repository.TransactionsRepository
@@ -30,6 +31,7 @@ class CreateViewModel(
     private val datesManager: DatesManager,
     private val cache: Cache,
     private val repository: TransactionsRepository,
+    private val analytics: Analytics,
     private val initialType: Type,
     private val initialChosenMonth: Int?
 ) : AndroidViewModel(application) {
@@ -155,6 +157,8 @@ class CreateViewModel(
                     saveTransaction(transaction).subscribe {
                         val newState = createState.copy(inputValidation = InputValidation.OK)
                         createStateSubject.onNext(newState)
+
+                        analytics.createTransaction()
                     }.cache(dc)
                 }
             }
