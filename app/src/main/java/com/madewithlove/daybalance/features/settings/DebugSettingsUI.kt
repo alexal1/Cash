@@ -7,6 +7,7 @@ package com.madewithlove.daybalance.features.settings
 import android.graphics.Color
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.Switch
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.core.view.isInvisible
 import com.madewithlove.daybalance.R
@@ -24,6 +25,8 @@ class DebugSettingsUI : AnkoComponent<DebugSettingsFragment> {
 
     lateinit var toolbar: _Toolbar
     lateinit var showPushBackground: View
+    lateinit var enableLogsBackground: View
+    lateinit var enableLogsSwitch: Switch
 
 
     override fun createView(ui: AnkoContext<DebugSettingsFragment>): View = with(ui) {
@@ -86,6 +89,51 @@ class DebugSettingsUI : AnkoComponent<DebugSettingsFragment> {
                     val showPushSeparator = view {
                         id = View.generateViewId()
                         backgroundColorResource = R.color.palladium_80
+                    }.lparams(matchConstraint, dip(1)) {
+                        topMargin = dip(12)
+                        leftMargin = dip(24)
+                    }
+
+                    enableLogsBackground = view {
+                        id = View.generateViewId()
+
+                        setSelectableBackground()
+                    }.lparams(matchConstraint, matchConstraint)
+
+                    val enableLogsTitle = textView {
+                        id = View.generateViewId()
+                        textColorResource = R.color.white
+                        textSize = 16f
+                        backgroundColor = Color.TRANSPARENT
+                        textResource = R.string.debug_settings_enable_logs_title
+                    }.lparams(matchConstraint, wrapContent) {
+                        topMargin = dip(12)
+                        leftMargin = dip(24)
+                        rightMargin = dip(24)
+                    }
+
+                    val enableLogsSubtitle = textView {
+                        id = View.generateViewId()
+                        textColorResource = R.color.smoke
+                        textSize = 12f
+                        backgroundColor = Color.TRANSPARENT
+                        textResource = R.string.debug_settings_enable_logs_subtitle
+                    }.lparams(matchConstraint, wrapContent) {
+                        leftMargin = dip(24)
+                        rightMargin = dip(24)
+                    }
+
+                    enableLogsSwitch = switch {
+                        id = View.generateViewId()
+                        isClickable = false
+                        isFocusable = false
+                    }.lparams(wrapContent, wrapContent) {
+                        rightMargin = dip(16)
+                    }
+
+                    val enableLogsSeparator = view {
+                        id = View.generateViewId()
+                        backgroundColorResource = R.color.palladium_80
                         isInvisible = true
                     }.lparams(matchConstraint, dip(1)) {
                         topMargin = dip(12)
@@ -116,6 +164,37 @@ class DebugSettingsUI : AnkoComponent<DebugSettingsFragment> {
                             END of showPushBackground to END of PARENT_ID,
                             TOP of showPushBackground to TOP of PARENT_ID,
                             BOTTOM of showPushBackground to BOTTOM of showPushSeparator
+                        )
+
+                        connect(
+                            START of enableLogsTitle to START of PARENT_ID,
+                            END of enableLogsTitle to START of enableLogsSwitch,
+                            TOP of enableLogsTitle to BOTTOM of showPushSeparator
+                        )
+
+                        connect(
+                            START of enableLogsSubtitle to START of PARENT_ID,
+                            END of enableLogsSubtitle to START of enableLogsSwitch,
+                            TOP of enableLogsSubtitle to BOTTOM of enableLogsTitle
+                        )
+
+                        connect(
+                            START of enableLogsSeparator to START of PARENT_ID,
+                            END of enableLogsSeparator to END of PARENT_ID,
+                            TOP of enableLogsSeparator to BOTTOM of enableLogsSubtitle
+                        )
+
+                        connect(
+                            TOP of enableLogsSwitch to TOP of enableLogsTitle,
+                            BOTTOM of enableLogsSwitch to BOTTOM of enableLogsSubtitle,
+                            END of enableLogsSwitch to END of PARENT_ID
+                        )
+
+                        connect(
+                            START of enableLogsBackground to START of PARENT_ID,
+                            END of enableLogsBackground to END of PARENT_ID,
+                            TOP of enableLogsBackground to BOTTOM of showPushSeparator,
+                            BOTTOM of enableLogsBackground to BOTTOM of enableLogsSeparator
                         )
                     }
                 }.lparams(matchParent, matchParent)

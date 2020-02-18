@@ -9,7 +9,11 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.CashApp
+import com.madewithlove.daybalance.CashApp.Companion.PREFS_LOGS_ENABLED
+import com.madewithlove.daybalance.CashApp.Companion.PREFS_SHOW_PUSH_NOTIFICATIONS
 import com.madewithlove.daybalance.helpers.push.PushManager
+import com.madewithlove.daybalance.helpers.timber.CashDebugTree
+import timber.log.Timber
 
 class SettingsViewModel(
     application: Application,
@@ -17,11 +21,8 @@ class SettingsViewModel(
     private val pushManager: PushManager
 ) : AndroidViewModel(application) {
 
-    private var areSettingsChanged = false
-
-
-    fun getNotificationsEnabled(): Boolean {
-        val isEnabled = sharedPreferences.getBoolean(CashApp.PREFS_SHOW_PUSH_NOTIFICATIONS, true)
+    fun areNotificationsEnabled(): Boolean {
+        val isEnabled = sharedPreferences.getBoolean(PREFS_SHOW_PUSH_NOTIFICATIONS, true)
 
         if (!isEnabled) {
             return false
@@ -31,7 +32,7 @@ class SettingsViewModel(
 
         if (!isEnabledInSettings) {
             sharedPreferences.edit {
-                putBoolean(CashApp.PREFS_SHOW_PUSH_NOTIFICATIONS, false)
+                putBoolean(PREFS_SHOW_PUSH_NOTIFICATIONS, false)
             }
             pushManager.cancelPushNotifications()
             return false
@@ -42,10 +43,9 @@ class SettingsViewModel(
 
     fun disableNotifications() {
         sharedPreferences.edit {
-            putBoolean(CashApp.PREFS_SHOW_PUSH_NOTIFICATIONS, false)
+            putBoolean(PREFS_SHOW_PUSH_NOTIFICATIONS, false)
         }
         pushManager.cancelPushNotifications()
-        areSettingsChanged = true
     }
 
     fun tryEnableNotifications(): Boolean {
@@ -54,16 +54,42 @@ class SettingsViewModel(
         }
 
         sharedPreferences.edit {
-            putBoolean(CashApp.PREFS_SHOW_PUSH_NOTIFICATIONS, true)
+            putBoolean(PREFS_SHOW_PUSH_NOTIFICATIONS, true)
         }
         pushManager.schedulePushNotifications()
-        areSettingsChanged = true
 
         return true
     }
 
     fun showPush() {
         pushManager.showPushNotification(true)
+    }
+
+    fun areLogsEnabled(): Boolean {
+        if (CashApp.isDebugBuild) {
+            return true
+        }
+
+        return sharedPreferences.getBoolean(PREFS_LOGS_ENABLED, false)
+    }
+
+    fun setLogsEnabled(enabled: Boolean): Boolean {
+        if (CashApp.isDebugBuild) {
+            return false
+        }
+
+        sharedPreferences.edit {
+            putBoolean(PREFS_LOGS_ENABLED, enabled)
+        }
+
+        if (enabled) {
+            Timber.plant(CashDebugTree())
+        } else {
+            val debugTree = Timber.forest().firstOrNull { it is CashDebugTree }
+            debugTree?.let(Timber::uproot)
+        }
+
+        return true
     }
 
 }

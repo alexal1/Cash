@@ -33,11 +33,11 @@ class CashApp : Application(), LifecycleObserver {
 
     companion object {
 
-        const val isDebugBuild = BuildConfig.BUILD_TYPE == "debug"
         const val CASH_APP_PREFERENCES = "com.madewithlove.daybalance.CASH_APP_PREFERENCES"
         const val PREFS_IS_FIRST_LAUNCH = "is_first_launch"
         const val PREFS_SHOW_PUSH_NOTIFICATIONS = "show_push_notifications"
         const val PREFS_LOGS_ENABLED = "logs_enabled"
+        val isDebugBuild get() = BuildConfig.BUILD_TYPE == "debug"
 
     }
 
@@ -58,7 +58,6 @@ class CashApp : Application(), LifecycleObserver {
     }
 
 
-    @Suppress("ConstantConditionIf")
     override fun onCreate() {
         super.onCreate()
 

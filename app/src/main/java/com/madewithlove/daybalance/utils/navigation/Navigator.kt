@@ -73,11 +73,11 @@ interface Navigator : BackPressHandler {
 
 
     private fun Fragment.getNavigatorTag(): String {
-        return this.javaClass.simpleName
+        return this.javaClass.name
     }
 
     private fun Fragment.getNavigatorName(): String {
-        return this.javaClass.simpleName
+        return this.javaClass.name
     }
 
     private fun Fragment.isAddedToNavigator(): Boolean {

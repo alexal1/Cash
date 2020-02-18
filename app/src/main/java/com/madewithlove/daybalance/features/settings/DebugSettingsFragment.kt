@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.madewithlove.daybalance.CashApp
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
@@ -45,6 +46,22 @@ class DebugSettingsFragment : Fragment() {
         ui.showPushBackground.apply {
             setOnClickListener {
                 viewModel.showPush()
+            }
+        }
+
+        ui.enableLogsSwitch.apply {
+            isEnabled = !CashApp.isDebugBuild
+        }
+
+        ui.enableLogsBackground.apply {
+            val enableLogsSwitch = ui.enableLogsSwitch
+            enableLogsSwitch.isChecked = viewModel.areLogsEnabled()
+
+            setOnClickListener {
+                val succeed = viewModel.setLogsEnabled(!enableLogsSwitch.isChecked)
+                if (succeed) {
+                    enableLogsSwitch.isChecked = !enableLogsSwitch.isChecked
+                }
             }
         }
     }

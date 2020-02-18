@@ -77,7 +77,7 @@ class SettingsFragment : Fragment() {
         }
 
         ui.pushSwitch.apply {
-            isChecked = viewModel.getNotificationsEnabled()
+            isChecked = viewModel.areNotificationsEnabled()
         }
 
         ui.pushBackground.apply {

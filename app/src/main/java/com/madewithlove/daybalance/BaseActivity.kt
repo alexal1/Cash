@@ -29,11 +29,10 @@ class BaseActivity : FragmentActivity(), Navigator {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        @Suppress("ConstantConditionIf", "LiftReturnOrAssignment")
-        if (CashApp.isDebugBuild) {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        requestedOrientation = if (CashApp.isDebugBuild) {
+            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
 
         val isOpenedByPush = intent.getBooleanExtra(OPENED_BY_PUSH, false)

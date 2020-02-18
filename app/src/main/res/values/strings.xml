@@ -15,6 +15,8 @@
     <string name="debug_settings" translatable="false">Debug</string>
     <string name="debug_settings_show_push_title" translatable="false">Show push</string>
     <string name="debug_settings_show_push_subtitle" translatable="false">Forced push notification for the current date</string>
+    <string name="debug_settings_enable_logs_title" translatable="false">Enable logs</string>
+    <string name="debug_settings_enable_logs_subtitle" translatable="false">Whether logs are enabled in release build</string>
     <string name="push_notifications_channel_name">Daily reports</string>
     <string name="push_notifications_channel_description">@string/settings_push_notifications_subtitle</string>
     <string name="push_notification_title_positive">Saved %s</string>
