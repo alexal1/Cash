@@ -40,8 +40,7 @@ class Analytics(context: Context) {
     }
 
     fun splashScreenTime(millis: Long) {
-        val seconds = (millis / 1000).toInt()
-        val bundle = bundleOf("seconds" to seconds)
+        val bundle = bundleOf("millis" to millis)
         firebaseAnalytics.logEvent("splash_screen_time", bundle)
     }
 
