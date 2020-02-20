@@ -19,7 +19,7 @@ class SavingsManager(private val sharedPreferences: SharedPreferences) {
     }
 
 
-    private val monthIdFormatter = SimpleDateFormat("MM_YYYY", Locale.US)
+    private val monthIdFormatter = SimpleDateFormat("MM_yyyy", Locale.US)
 
 
     fun getSavingsForMonth(monthFirstDay: Date): Float {
