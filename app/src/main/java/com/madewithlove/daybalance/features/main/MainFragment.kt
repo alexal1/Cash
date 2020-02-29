@@ -25,8 +25,10 @@ import com.madewithlove.daybalance.features.plan.PlanFragment
 import com.madewithlove.daybalance.features.settings.SettingsFragment
 import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.helpers.DatesManager
+import com.madewithlove.daybalance.helpers.ShowcaseManager
 import com.madewithlove.daybalance.repository.specifications.HistorySpecification
 import com.madewithlove.daybalance.utils.*
+import com.madewithlove.daybalance.utils.navigation.BackStackListener
 import com.madewithlove.daybalance.utils.navigation.FragmentNavigator
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.act
@@ -38,7 +40,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 
-class MainFragment : FragmentNavigator() {
+class MainFragment : FragmentNavigator(), BackStackListener {
 
     companion object {
 
@@ -54,6 +56,7 @@ class MainFragment : FragmentNavigator() {
     private val viewModel: MainViewModel by viewModel()
     private val datesManager: DatesManager by inject()
     private val analytics: Analytics by inject()
+    private val showcaseManager: ShowcaseManager by inject()
     private val calendarDialog by lazy { createCalendarDialog() }
     private val calendar = GregorianCalendar.getInstance()
     private val ui: MainUI get() = mainUI ?: MainUI().also { mainUI = it }
@@ -300,6 +303,24 @@ class MainFragment : FragmentNavigator() {
                 analytics.splashScreenTime(splashScreenTime)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        showcaseManager.show(this)
+    }
+
+    override fun onResumedFromBackStack() {
+        showcaseManager.show(this)
+    }
+
+    override fun handleBackPress(): Boolean {
+        return showcaseManager.dispose() || super.handleBackPress()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        showcaseManager.dispose()
     }
 
     override fun getNavigatorFragmentManager() = childFragmentManager

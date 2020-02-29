@@ -22,11 +22,13 @@ import com.jakewharton.rxbinding3.widget.textChanges
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.main.MainFragment
 import com.madewithlove.daybalance.features.main.MainViewModel
+import com.madewithlove.daybalance.helpers.ShowcaseManager
 import com.madewithlove.daybalance.utils.*
 import com.madewithlove.daybalance.utils.navigation.Navigator
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -54,6 +56,7 @@ class CreateFragment : Fragment() {
     private val initialType by lazy { arguments!!.getSerializable(TYPE) as CreateViewModel.Type }
     private val initialChosenMonth by lazy { arguments!!.getInt(CHOSEN_MONTH, -1).toPositiveOrNull() }
     private val viewModel by viewModel<CreateViewModel> { parametersOf(initialType, initialChosenMonth) }
+    private val showcaseManager: ShowcaseManager by inject()
     private val navigator by lazy { parentFragment as Navigator }
     private val dateLossFormatter by lazy { SimpleDateFormat("d MMM", ctx.currentLocale()) }
     private val dateMandatoryLossFormatter by lazy { SimpleDateFormat("LLLL", ctx.currentLocale()) }
@@ -281,6 +284,8 @@ class CreateFragment : Fragment() {
             if (navigator.isFragmentOnTop(this@CreateFragment)) {
                 mainViewModel.notifyCreateOpened()
             }
+
+            showcaseManager.dispose()
         }
     }
 

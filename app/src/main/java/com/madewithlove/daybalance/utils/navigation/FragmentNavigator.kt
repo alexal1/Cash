@@ -21,6 +21,8 @@ abstract class FragmentNavigator : Fragment(), Navigator {
             val topFragment = getNavigatorFragmentManager().fragments.lastOrNull()
             if (topFragment != null && topFragment is BackStackListener) {
                 topFragment.onResumedFromBackStack()
+            } else if (this is BackStackListener) {
+                this.onResumedFromBackStack()
             }
         }
 

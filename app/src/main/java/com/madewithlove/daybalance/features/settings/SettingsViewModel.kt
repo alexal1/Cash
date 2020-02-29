@@ -11,6 +11,7 @@ import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.CashApp
 import com.madewithlove.daybalance.CashApp.Companion.PREFS_LOGS_ENABLED
 import com.madewithlove.daybalance.CashApp.Companion.PREFS_SHOW_PUSH_NOTIFICATIONS
+import com.madewithlove.daybalance.helpers.ShowcaseManager
 import com.madewithlove.daybalance.helpers.push.PushManager
 import com.madewithlove.daybalance.helpers.timber.CashDebugTree
 import timber.log.Timber
@@ -18,7 +19,8 @@ import timber.log.Timber
 class SettingsViewModel(
     application: Application,
     private val sharedPreferences: SharedPreferences,
-    private val pushManager: PushManager
+    private val pushManager: PushManager,
+    private val showcaseManager: ShowcaseManager
 ) : AndroidViewModel(application) {
 
     fun areNotificationsEnabled(): Boolean {
@@ -90,6 +92,10 @@ class SettingsViewModel(
         }
 
         return true
+    }
+
+    fun repeatShowcase() {
+        showcaseManager.reset()
     }
 
 }

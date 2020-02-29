@@ -17,6 +17,8 @@
     <string name="debug_settings_show_push_subtitle" translatable="false">Forced push notification for the current date</string>
     <string name="debug_settings_enable_logs_title" translatable="false">Enable logs</string>
     <string name="debug_settings_enable_logs_subtitle" translatable="false">Whether logs are enabled in release build</string>
+    <string name="debug_settings_repeat_showcase_title" translatable="false">Repeat showcase</string>
+    <string name="debug_settings_repeat_showcase_subtitle" translatable="false">Click to watch showcase again</string>
     <string name="push_notifications_channel_name">Daily reports</string>
     <string name="push_notifications_channel_description">@string/settings_push_notifications_subtitle</string>
     <string name="push_notification_title_positive">Saved %s</string>
@@ -66,4 +68,12 @@
     <string name="moneybox_total_money_description">This is the amount of money you\'ve saved until this month. These money are better to be invested or put on a deposit.</string>
     <string name="moneybox_month_money_title">To be added for %s</string>
     <string name="moneybox_month_money_description">This is how much will be added to the Moneybox at the end of the month. It is {percent} of your income initially. But it can become less if you exceed your expenses.</string>
+    <string name="showcase_we_need_a_plan_title">We need a plan!</string>
+    <string name="showcase_we_need_a_plan_description">Hi!\nWe need to know a few things to calculate the day balance. Namely, how much we have for %s and what part of this sum we want to save.</string>
+    <string name="showcase_add_gain_title">Money for %s</string>
+    <string name="showcase_add_gain_description">Enter the amount of money for %s. It\'s usually your salary for the previous month. If you don\'t have salary, then your average monthly income. If you have no income, then just how much you can afford yourself.</string>
+    <string name="showcase_how_much_to_save_title">How much shall we save?</string>
+    <string name="showcase_how_much_to_save_description">Please decide what part of the money we will try to keep. This will be your net profit for %s, provided that you will fit into the day balance.</string>
+    <string name="showcase_add_loss_title">And the final step…</string>
+    <string name="showcase_add_loss_description">Please add some expense. This can be any purchase you\'ve made today.</string>
 </resources>

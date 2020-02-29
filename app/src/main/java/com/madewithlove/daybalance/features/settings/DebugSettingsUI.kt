@@ -27,6 +27,7 @@ class DebugSettingsUI : AnkoComponent<DebugSettingsFragment> {
     lateinit var showPushBackground: View
     lateinit var enableLogsBackground: View
     lateinit var enableLogsSwitch: Switch
+    lateinit var repeatShowcaseBackground: View
 
 
     override fun createView(ui: AnkoContext<DebugSettingsFragment>): View = with(ui) {
@@ -134,6 +135,43 @@ class DebugSettingsUI : AnkoComponent<DebugSettingsFragment> {
                     val enableLogsSeparator = view {
                         id = View.generateViewId()
                         backgroundColorResource = R.color.palladium_80
+                    }.lparams(matchConstraint, dip(1)) {
+                        topMargin = dip(12)
+                        leftMargin = dip(24)
+                    }
+
+                    repeatShowcaseBackground = view {
+                        id = View.generateViewId()
+
+                        setSelectableBackground()
+                    }.lparams(matchConstraint, matchConstraint)
+
+                    val repeatShowcaseTitle = textView {
+                        id = View.generateViewId()
+                        textColorResource = R.color.white
+                        textSize = 16f
+                        backgroundColor = Color.TRANSPARENT
+                        textResource = R.string.debug_settings_repeat_showcase_title
+                    }.lparams(matchConstraint, wrapContent) {
+                        topMargin = dip(12)
+                        leftMargin = dip(24)
+                        rightMargin = dip(24)
+                    }
+
+                    val repeatShowcaseSubtitle = textView {
+                        id = View.generateViewId()
+                        textColorResource = R.color.smoke
+                        textSize = 12f
+                        backgroundColor = Color.TRANSPARENT
+                        textResource = R.string.debug_settings_repeat_showcase_subtitle
+                    }.lparams(matchConstraint, wrapContent) {
+                        leftMargin = dip(24)
+                        rightMargin = dip(24)
+                    }
+
+                    val repeatShowcaseSeparator = view {
+                        id = View.generateViewId()
+                        backgroundColorResource = R.color.palladium_80
                         isInvisible = true
                     }.lparams(matchConstraint, dip(1)) {
                         topMargin = dip(12)
@@ -195,6 +233,31 @@ class DebugSettingsUI : AnkoComponent<DebugSettingsFragment> {
                             END of enableLogsBackground to END of PARENT_ID,
                             TOP of enableLogsBackground to BOTTOM of showPushSeparator,
                             BOTTOM of enableLogsBackground to BOTTOM of enableLogsSeparator
+                        )
+
+                        connect(
+                            START of repeatShowcaseTitle to START of PARENT_ID,
+                            END of repeatShowcaseTitle to END of PARENT_ID,
+                            TOP of repeatShowcaseTitle to BOTTOM of enableLogsSeparator
+                        )
+
+                        connect(
+                            START of repeatShowcaseSubtitle to START of PARENT_ID,
+                            END of repeatShowcaseSubtitle to END of PARENT_ID,
+                            TOP of repeatShowcaseSubtitle to BOTTOM of repeatShowcaseTitle
+                        )
+
+                        connect(
+                            START of repeatShowcaseSeparator to START of PARENT_ID,
+                            END of repeatShowcaseSeparator to END of PARENT_ID,
+                            TOP of repeatShowcaseSeparator to BOTTOM of repeatShowcaseSubtitle
+                        )
+
+                        connect(
+                            START of repeatShowcaseBackground to START of PARENT_ID,
+                            END of repeatShowcaseBackground to END of PARENT_ID,
+                            TOP of repeatShowcaseBackground to BOTTOM of enableLogsSeparator,
+                            BOTTOM of repeatShowcaseBackground to BOTTOM of repeatShowcaseSeparator
                         )
                     }
                 }.lparams(matchParent, matchParent)

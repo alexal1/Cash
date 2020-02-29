@@ -85,3 +85,27 @@ interface Navigator : BackPressHandler {
     }
 
 }
+
+fun Fragment.isOnTop(): Boolean {
+    var topFragment: Fragment?
+    var navigator = activity as Navigator
+
+    while (true) {
+        topFragment = navigator.getNavigatorFragmentManager().fragments.lastOrNull()
+
+        if (topFragment != null && topFragment is Navigator) {
+            navigator = topFragment
+        } else if (topFragment == null) {
+            topFragment = navigator as Fragment
+            break
+        } else {
+            break
+        }
+    }
+
+    if (topFragment == null) {
+        throw RuntimeException("Cannot find top fragment")
+    }
+
+    return this == topFragment
+}

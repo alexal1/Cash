@@ -6,6 +6,7 @@ package com.madewithlove.daybalance.helpers
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.madewithlove.daybalance.CashApp.Companion.PREFS_SAVINGS_PREFIX
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -13,7 +14,6 @@ class SavingsManager(private val sharedPreferences: SharedPreferences) {
 
     companion object {
 
-        private const val PREFS_SAVINGS_PREFIX = "savings_for_"
         private const val DEFAULT_SAVINGS_RATIO = 0.15f
 
     }

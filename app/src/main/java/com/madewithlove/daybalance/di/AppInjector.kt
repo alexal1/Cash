@@ -13,9 +13,7 @@ import com.madewithlove.daybalance.features.main.MainViewModel
 import com.madewithlove.daybalance.features.moneybox.MoneyboxViewModel
 import com.madewithlove.daybalance.features.plan.PlanViewModel
 import com.madewithlove.daybalance.features.settings.SettingsViewModel
-import com.madewithlove.daybalance.helpers.Analytics
-import com.madewithlove.daybalance.helpers.DatesManager
-import com.madewithlove.daybalance.helpers.SavingsManager
+import com.madewithlove.daybalance.helpers.*
 import com.madewithlove.daybalance.helpers.push.PushManager
 import com.madewithlove.daybalance.model.Cache
 import com.madewithlove.daybalance.model.CacheDatesMapper
@@ -33,7 +31,7 @@ val viewModelsModule = module {
     viewModel { (type: CreateViewModel.Type, chosenMonth: Int?) -> CreateViewModel(androidApplication(), get(), get(), get(), get(), type, chosenMonth) }
     viewModel { PlanViewModel(androidApplication(), get(), get(), get(), get()) }
     viewModel { MoneyboxViewModel(androidApplication(), get(), get(), get()) }
-    viewModel { SettingsViewModel(androidApplication(), get(), get()) }
+    viewModel { SettingsViewModel(androidApplication(), get(), get(), get()) }
 }
 
 val sharedPreferencesModule = module {
@@ -45,6 +43,7 @@ val helpersModule = module {
     single { PushManager(androidContext(), get(), get()) }
     single { Analytics(androidContext()) }
     single { SavingsManager(get()) }
+    single { ShowcaseManager(androidContext(), get(), get(), get()) }
 }
 
 val repositoryModule = module {

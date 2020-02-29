@@ -61,4 +61,12 @@
     <string name="moneybox_total_money_description">Столько вы накопили за всё время до этого месяца. Эти деньги стоит инвестировать или положить на вклады.</string>
     <string name="moneybox_month_money_title">Добавится за %s</string>
     <string name="moneybox_month_money_description">Столько денег добавится в Копилку в конце месяца. Изначально это {percent} от дохода, но может быть и меньше, если вы переборщите с расходами.</string>
+    <string name="showcase_we_need_a_plan_title">Нам нужен план!</string>
+    <string name="showcase_we_need_a_plan_description">Привет!\nЧтобы рассчитать баланс на день, нужно кое-что знать. А именно, сколько у нас денег на %s и сколько из этой суммы мы хотим отложить.</string>
+    <string name="showcase_add_gain_title">Деньги на %s</string>
+    <string name="showcase_add_gain_description">Введите сумму на %s. Обычно это зарплата за прошлый месяц. Если зарплаты нет, то ваш среднемесячный доход. Если дохода нет, то просто сколько вы можете себе позволить.</string>
+    <string name="showcase_how_much_to_save_title">Сколько откладываем?</string>
+    <string name="showcase_how_much_to_save_description">Решите, какую часть денег мы постараемся не трогать. Это станет вашей чистой прибылью за %s, при условии, что вы будете укладываться в баланс на день.</string>
+    <string name="showcase_add_loss_title">И последнее…</string>
+    <string name="showcase_add_loss_description">Внесите какой-нибудь расход. Это может быть любая трата за сегодняшний день.</string>
 </resources>

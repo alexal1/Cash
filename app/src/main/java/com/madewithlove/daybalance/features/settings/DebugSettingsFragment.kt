@@ -64,6 +64,12 @@ class DebugSettingsFragment : Fragment() {
                 }
             }
         }
+
+        ui.repeatShowcaseBackground.apply {
+            setOnClickListener {
+                viewModel.repeatShowcase()
+            }
+        }
     }
 
     override fun onDestroyView() {

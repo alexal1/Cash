@@ -19,6 +19,7 @@ import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.create.CreateFragment
 import com.madewithlove.daybalance.features.create.CreateViewModel
 import com.madewithlove.daybalance.features.main.MainViewModel
+import com.madewithlove.daybalance.helpers.ShowcaseManager
 import com.madewithlove.daybalance.utils.*
 import com.madewithlove.daybalance.utils.anko.percentagePicker
 import com.madewithlove.daybalance.utils.navigation.BackStackListener
@@ -27,6 +28,7 @@ import io.reactivex.disposables.Disposable
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
@@ -44,6 +46,7 @@ class PlanFragment : Fragment(), BackStackListener {
 
     private val mainViewModel by sharedViewModel<MainViewModel>(from = { requireParentFragment() })
     private val viewModel by viewModel<PlanViewModel>()
+    private val showcaseManager: ShowcaseManager by inject()
     private val navigator by lazy { parentFragment as Navigator }
     private val monthFormatter by lazy { SimpleDateFormat("LLLL", ctx.currentLocale()) }
     private val ui: PlanUI get() = planUI ?: PlanUI().also { planUI = it }
@@ -51,6 +54,11 @@ class PlanFragment : Fragment(), BackStackListener {
 
     private var planUI: PlanUI? = null
     private var percentagePickerDialog: AlertDialog? = null
+
+
+    fun scrollTo(section: PlanViewModel.Section) {
+        ui.viewPager.currentItem = section.ordinal
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -155,6 +163,7 @@ class PlanFragment : Fragment(), BackStackListener {
                     PlanViewModel.Section.MONEYBOX -> {
                         val currentPercent = viewModel.planState.savingsRatio ?: return@setOnClickListenerWithThrottle
                         openPercentagePickerDialog(currentPercent)
+                        showcaseManager.dispose()
                     }
                 }
             }.cache(dc)
@@ -170,15 +179,28 @@ class PlanFragment : Fragment(), BackStackListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        showcaseManager.show(this)
+    }
+
     override fun onResumedFromBackStack() {
         viewModel.requestData()
         mainViewModel.notifyPlanOpened(viewModel.planState.currentSection)
+        showcaseManager.show(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        showcaseManager.dispose()
     }
 
     override fun onDestroyView() {
         ui.viewPager.clearOnPageChangeListeners()
         dc.drain()
         planUI = null
+        percentagePickerDialog?.dismiss()
+        percentagePickerDialog = null
         super.onDestroyView()
 
         mainViewModel.notifyPlanClosed()

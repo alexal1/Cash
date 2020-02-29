@@ -132,7 +132,7 @@ class MainUI : AnkoComponent<MainFragment> {
             }.lparams(dimen(R.dimen.side_button_width), matchConstraint)
 
             val monthPlanLabel = textView {
-                id = View.generateViewId()
+                id = R.id.month_plan_label
                 textSize = 14f
                 textColorResource = R.color.blue
                 textResource = R.string.month_plan
