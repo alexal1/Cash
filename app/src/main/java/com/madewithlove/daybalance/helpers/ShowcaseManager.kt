@@ -179,11 +179,11 @@ class ShowcaseManager(
             val description: String
             when (step) {
                 Step.WE_NEED_A_PLAN -> {
-                    val month = monthFormatter.format(datesManager.todayDate)
+                    val month = monthFormatter.format(datesManager.currentDate)
 
                     shape = RoundedRectangle(
                         targetView.height + context.dip(32).toFloat(),
-                        targetView.width + context.dip(16).toFloat(),
+                        targetView.width + context.dip(32).toFloat(),
                         context.dip(8).toFloat()
                     )
                     title = context.getString(R.string.showcase_we_need_a_plan_title)
@@ -191,15 +191,15 @@ class ShowcaseManager(
                 }
 
                 Step.ADD_GAIN -> {
-                    val month = monthFormatter.format(datesManager.todayDate)
+                    val month = monthFormatter.format(datesManager.currentDate)
 
                     shape = Circle(context.dimen(R.dimen.floating_action_button_size) / 2f + context.dip(16))
                     title = context.getString(R.string.showcase_add_gain_title, month)
-                    description = context.getString(R.string.showcase_add_gain_description)
+                    description = context.getString(R.string.showcase_add_gain_description, month)
                 }
 
                 Step.HOW_MUCH_TO_SAVE -> {
-                    val month = monthFormatter.format(datesManager.todayDate)
+                    val month = monthFormatter.format(datesManager.currentDate)
 
                     shape = Circle(context.dimen(R.dimen.floating_action_button_size) / 2f + context.dip(16))
                     title = context.getString(R.string.showcase_how_much_to_save_title)
