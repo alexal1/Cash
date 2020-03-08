@@ -24,7 +24,9 @@
     <string name="connection_error">Нет соединения</string>
     <string name="circle_text">на этот день</string>
     <string name="circle_text_past">потрачено</string>
-    <string name="month_plan">План на этот месяц</string>
+    <string name="top_buttons_settings">Настройки</string>
+    <string name="top_buttons_plan">План</string>
+    <string name="top_buttons_moneybox">Копилка</string>
     <string name="large_button_history">История</string>
     <string name="large_button_keyboard">Добавить комментарий</string>
     <string name="large_button_plan_gain">Откуда эта сумма?</string>

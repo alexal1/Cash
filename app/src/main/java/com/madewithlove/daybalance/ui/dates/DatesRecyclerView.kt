@@ -28,7 +28,7 @@ class DatesRecyclerView(context: Context) : RecyclerView(context) {
     private var nextPressed = false
 
     val dateObservable: Observable<Date> = dateSubject.distinctUntilChanged().skip(1)
-    val centerItemClickObservable: Observable<Unit> = centerItemClickSubject.throttleFirst(1, TimeUnit.SECONDS)
+    val centerItemClickObservable: Observable<Unit> = centerItemClickSubject
     val goPrevSubject = PublishSubject.create<Int>()
     val goNextSubject = PublishSubject.create<Int>()
 

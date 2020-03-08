@@ -31,6 +31,14 @@ fun Context.statusBarHeight(): Int {
     return 0
 }
 
+fun Context.navigationBarHeight(): Int {
+    val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+    if (resourceId > 0) {
+        return resources.getDimensionPixelSize(resourceId)
+    }
+    return 0
+}
+
 fun Context.currentLocale(): Locale =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         resources.configuration.locales[0]

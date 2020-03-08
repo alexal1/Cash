@@ -160,7 +160,7 @@ class MainFragment : FragmentNavigator(), BackStackListener {
                 .cache(dc)
         }
 
-        ui.monthPlanButton.apply {
+        ui.planButton.apply {
             setOnClickListener {
                 val fragment = PlanFragment.create()
                 addFragment(fragment)
@@ -266,7 +266,7 @@ class MainFragment : FragmentNavigator(), BackStackListener {
 
                         MainViewModel.LargeButtonType.PLAN_MONEYBOX -> {
                             textResource = R.string.large_button_plan_moneybox
-                            setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_keyhole_small, 0)
+                            setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_moneybox_small, 0)
                         }
 
                         MainViewModel.LargeButtonType.MONEYBOX -> {

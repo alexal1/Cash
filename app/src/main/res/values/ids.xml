@@ -7,8 +7,7 @@
     <item name="circle_view" type="id" />
     <item name="prev_button" type="id" />
     <item name="next_button" type="id" />
-    <item name="month_plan_label" type="id" />
-    <item name="month_plan_button" type="id" />
+    <item name="top_button_plan" type="id" />
     <item name="large_button_background" type="id" />
     <item name="large_button_text" type="id" />
     <item name="text_date" type="id" />

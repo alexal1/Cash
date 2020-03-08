@@ -9,6 +9,7 @@ import android.content.SharedPreferences
 import android.graphics.Rect
 import android.os.Handler
 import android.os.Looper
+import android.view.Gravity
 import android.view.View
 import androidx.core.content.edit
 import androidx.core.view.doOnPreDraw
@@ -150,7 +151,7 @@ class ShowcaseManager(
 
         val targetViewId: Int = when (step) {
             Step.WE_NEED_A_PLAN -> {
-                R.id.month_plan_label
+                R.id.top_button_plan
             }
 
             Step.ADD_GAIN -> {
@@ -177,17 +178,19 @@ class ShowcaseManager(
             val shape: Shape
             val title: String
             val description: String
+            val overlayGravity: Int
             when (step) {
                 Step.WE_NEED_A_PLAN -> {
                     val month = monthFormatter.format(datesManager.currentDate)
 
                     shape = RoundedRectangle(
-                        targetView.height + context.dip(32).toFloat(),
-                        targetView.width + context.dip(32).toFloat(),
+                        targetView.height.toFloat(),
+                        targetView.width - context.dip(8).toFloat(),
                         context.dip(8).toFloat()
                     )
                     title = context.getString(R.string.showcase_we_need_a_plan_title)
                     description = context.getString(R.string.showcase_we_need_a_plan_description, month)
+                    overlayGravity = Gravity.BOTTOM
                 }
 
                 Step.ADD_GAIN -> {
@@ -196,6 +199,7 @@ class ShowcaseManager(
                     shape = Circle(context.dimen(R.dimen.floating_action_button_size) / 2f + context.dip(16))
                     title = context.getString(R.string.showcase_add_gain_title, month)
                     description = context.getString(R.string.showcase_add_gain_description, month)
+                    overlayGravity = Gravity.TOP
                 }
 
                 Step.HOW_MUCH_TO_SAVE -> {
@@ -204,6 +208,7 @@ class ShowcaseManager(
                     shape = Circle(context.dimen(R.dimen.floating_action_button_size) / 2f + context.dip(16))
                     title = context.getString(R.string.showcase_how_much_to_save_title)
                     description = context.getString(R.string.showcase_how_much_to_save_description, month)
+                    overlayGravity = Gravity.TOP
                 }
 
                 Step.ADD_LOSS -> {
@@ -214,6 +219,7 @@ class ShowcaseManager(
                     )
                     title = context.getString(R.string.showcase_add_loss_title)
                     description = context.getString(R.string.showcase_add_loss_description)
+                    overlayGravity = Gravity.TOP
                 }
 
                 Step.FINISHED -> throw IllegalStateException("Why show() was invoked while step is FINISHED?")
@@ -221,7 +227,7 @@ class ShowcaseManager(
 
             val viewRect = Rect().also { targetView.getGlobalVisibleRect(it) }
 
-            val overlay = ShowcaseOverlayView(fragment.ctx).apply {
+            val overlay = ShowcaseOverlayView(fragment.ctx).init(overlayGravity).apply {
                 holeRect = viewRect
                 onCrossClick = { dispose() }
 

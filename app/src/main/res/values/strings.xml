@@ -31,7 +31,9 @@
     <string name="connection_error">No connection</string>
     <string name="circle_text">for this day</string>
     <string name="circle_text_past">spent</string>
-    <string name="month_plan">The plan for this month</string>
+    <string name="top_buttons_settings">Settings</string>
+    <string name="top_buttons_plan">Plan</string>
+    <string name="top_buttons_moneybox">Moneybox</string>
     <string name="large_button_history">History</string>
     <string name="large_button_keyboard">Add comment</string>
     <string name="large_button_plan_gain">Where did this amount come from?</string>

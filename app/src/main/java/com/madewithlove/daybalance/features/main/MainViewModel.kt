@@ -23,7 +23,6 @@ import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.math.pow
 
 @SuppressLint("DefaultLocale")
@@ -50,7 +49,7 @@ class MainViewModel(
             .replay(1)
             .autoConnect()
 
-        showCalendarObservable = showCalendarSubject.throttleFirst(1, TimeUnit.SECONDS)
+        showCalendarObservable = showCalendarSubject
 
         cache.balanceObservable
             .map(this::getCircleState)

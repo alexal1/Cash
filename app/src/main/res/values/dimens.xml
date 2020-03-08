@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="glow_size">8dp</dimen>
-    <dimen name="date_height">128dp</dimen>
-    <dimen name="date_height_visual">96dp</dimen>
+    <dimen name="date_height">112dp</dimen>
     <dimen name="side_button_width">72dp</dimen>
     <dimen name="toolbar_height">54dp</dimen>
     <dimen name="percentage_picker_item_size">56dp</dimen>
@@ -16,4 +15,5 @@
     <dimen name="plan_annotation_height">32dp</dimen>
     <dimen name="moneybox_amount_height">64dp</dimen>
     <dimen name="floating_action_button_size">56dp</dimen>
+    <dimen name="top_buttons_height">@dimen/toolbar_height</dimen>
 </resources>
