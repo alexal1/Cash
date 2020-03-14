@@ -14,6 +14,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.madewithlove.daybalance.di.*
 import com.madewithlove.daybalance.helpers.CashRealmMigration
+import com.madewithlove.daybalance.helpers.RxErrorHandler
 import com.madewithlove.daybalance.helpers.push.PushManager
 import com.madewithlove.daybalance.helpers.timber.CashDebugTree
 import com.madewithlove.daybalance.helpers.timber.CashReleaseTree
@@ -23,7 +24,6 @@ import com.madewithlove.daybalance.repository.TransactionsRepository
 import io.reactivex.plugins.RxJavaPlugins
 import io.realm.Realm
 import io.realm.RealmConfiguration
-import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -50,16 +50,9 @@ class CashApp : Application(), LifecycleObserver {
     private val pushManager: PushManager by inject()
     private val transactionsRepository: TransactionsRepository by inject()
     private val cache: Cache by inject()
+    private val errorHandler: RxErrorHandler by inject()
 
     var isInForeground = false; private set
-
-
-    init {
-        RxJavaPlugins.setErrorHandler { throwable ->
-            Timber.e(throwable.cause)
-            toast(throwable.cause?.message ?: "Unknown exception")
-        }
-    }
 
 
     override fun onCreate() {
@@ -85,6 +78,9 @@ class CashApp : Application(), LifecycleObserver {
                 modelModule
             )
         }
+
+
+        RxJavaPlugins.setErrorHandler(errorHandler)
 
 
         Realm.init(this)

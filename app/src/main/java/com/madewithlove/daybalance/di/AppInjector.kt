@@ -44,6 +44,7 @@ val helpersModule = module {
     single { Analytics(androidContext()) }
     single { SavingsManager(get()) }
     single { ShowcaseManager(androidContext(), get(), get(), get()) }
+    single { RxErrorHandler() }
 }
 
 val repositoryModule = module {

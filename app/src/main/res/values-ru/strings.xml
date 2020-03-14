@@ -71,4 +71,5 @@
     <string name="showcase_how_much_to_save_description">Решите, какую часть денег мы постараемся не трогать. Это станет вашей чистой прибылью за %s, при условии, что вы будете укладываться в баланс на день.</string>
     <string name="showcase_add_loss_title">И последнее…</string>
     <string name="showcase_add_loss_description">Внесите какой-нибудь расход. Это может быть любая трата за сегодняшний день.</string>
+    <string name="error_title">Что-то пошло не так</string>
 </resources>

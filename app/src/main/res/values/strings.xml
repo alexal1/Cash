@@ -78,4 +78,5 @@
     <string name="showcase_how_much_to_save_description">Please decide what part of the money we will try to keep. This will be your net profit for %s, provided that you will fit into the day balance.</string>
     <string name="showcase_add_loss_title">And the final step…</string>
     <string name="showcase_add_loss_description">Please add some expense. This can be any purchase you\'ve made today.</string>
+    <string name="error_title">Something went wrong</string>
 </resources>
