@@ -8,6 +8,7 @@ import android.content.Context
 import android.view.MotionEvent
 import android.view.MotionEvent.*
 import androidx.recyclerview.widget.RecyclerView
+import com.madewithlove.daybalance.utils.ZeroInterpolator
 import com.madewithlove.daybalance.utils.onNextConsumer
 import com.madewithlove.daybalance.utils.screenSize
 import io.reactivex.Observable
@@ -17,15 +18,23 @@ import java.util.concurrent.TimeUnit
 
 class DatesRecyclerView(context: Context) : RecyclerView(context) {
 
+    companion object {
+
+        private const val SCROLL_ANIMATION_DEBOUNCE = 400L
+
+    }
+
     private val dateSubject = PublishSubject.create<Date>()
     private val centerItemClickSubject = PublishSubject.create<Unit>()
     private val datesLayoutManager = DatesLayoutManager(context)
     private val datesSnapHelper = DatesSnapHelper()
     private val prevGuidelineX = context.screenSize().x * 0.25f
     private val nextGuidelineX = context.screenSize().x * 0.75f
+    private val offset = context.screenSize().x / 4
 
     private var prevPressed = false
     private var nextPressed = false
+    private var lastSwipeTime = 0L
 
     val dateObservable: Observable<Date> = dateSubject.distinctUntilChanged().skip(1)
     val centerItemClickObservable: Observable<Unit> = centerItemClickSubject
@@ -49,7 +58,6 @@ class DatesRecyclerView(context: Context) : RecyclerView(context) {
 
     fun setDate(date: Date) = post {
         val newPos = (date.time / TimeUnit.DAYS.toMillis(1)).toInt()
-        val offset = context.screenSize().x / 4
         datesLayoutManager.scrollToPositionWithOffset(newPos, offset)
         datesSnapHelper.lastPos = newPos
 
@@ -71,8 +79,16 @@ class DatesRecyclerView(context: Context) : RecyclerView(context) {
         val view = datesLayoutManager.findViewByPosition(position)!!
         val snapDistance = datesSnapHelper.calculateDistanceToFinalSnap(datesLayoutManager, view)!!
         if (snapDistance[0] != 0 || snapDistance[1] != 0) {
-            smoothScrollBy(snapDistance[0], snapDistance[1])
+            if (System.currentTimeMillis() - lastSwipeTime < SCROLL_ANIMATION_DEBOUNCE) {
+                smoothScrollBy(snapDistance[0], snapDistance[1],
+                    ZeroInterpolator()
+                )
+                requestLayout()
+            } else {
+                smoothScrollBy(snapDistance[0], snapDistance[1])
+            }
         }
+        lastSwipeTime = System.currentTimeMillis()
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
