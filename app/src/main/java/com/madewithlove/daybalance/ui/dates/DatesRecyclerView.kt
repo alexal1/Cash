@@ -5,22 +5,28 @@
 package com.madewithlove.daybalance.ui.dates
 
 import android.content.Context
+import android.graphics.PointF
 import android.view.MotionEvent
 import android.view.MotionEvent.*
+import androidx.core.util.rangeTo
 import androidx.recyclerview.widget.RecyclerView
 import com.madewithlove.daybalance.utils.ZeroInterpolator
 import com.madewithlove.daybalance.utils.onNextConsumer
 import com.madewithlove.daybalance.utils.screenSize
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import org.jetbrains.anko.dip
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 class DatesRecyclerView(context: Context) : RecyclerView(context) {
 
     companion object {
 
         private const val SCROLL_ANIMATION_DEBOUNCE = 400L
+        private const val TOUCH_RADIUS_DP = 8
 
     }
 
@@ -31,9 +37,11 @@ class DatesRecyclerView(context: Context) : RecyclerView(context) {
     private val prevGuidelineX = context.screenSize().x * 0.25f
     private val nextGuidelineX = context.screenSize().x * 0.75f
     private val offset = context.screenSize().x / 4
+    private val touchRadius = context.dip(TOUCH_RADIUS_DP).toFloat()
+    private val touchRange = 0f.rangeTo(touchRadius)
 
-    private var prevPressed = false
-    private var nextPressed = false
+    private var prevDownPoint: PointF? = null
+    private var nextDownPoint: PointF? = null
     private var lastSwipeTime = 0L
 
     val dateObservable: Observable<Date> = dateSubject.distinctUntilChanged().skip(1)
@@ -88,44 +96,57 @@ class DatesRecyclerView(context: Context) : RecyclerView(context) {
                 smoothScrollBy(snapDistance[0], snapDistance[1])
             }
         }
+
+        datesSnapHelper.lastPos = position
         lastSwipeTime = System.currentTimeMillis()
+    }
+
+    private fun MotionEvent.distanceTo(point: PointF?): Float {
+        point ?: return -1f
+        return sqrt((x - point.x).pow(2) + (y - point.y).pow(2))
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         when (ev.action) {
             ACTION_DOWN -> {
                 if (ev.x < prevGuidelineX) {
-                    prevPressed = true
+                    prevDownPoint = PointF(ev.x, ev.y)
                     goPrevSubject.onNext(ACTION_DOWN)
+                    return super.dispatchTouchEvent(ev)
                 }
 
                 if (ev.x > nextGuidelineX) {
-                    nextPressed = true
+                    nextDownPoint = PointF(ev.x, ev.y)
                     goNextSubject.onNext(ACTION_DOWN)
+                    return super.dispatchTouchEvent(ev)
                 }
             }
 
             ACTION_MOVE -> {
-                if (prevPressed && ev.x > prevGuidelineX) {
-                    prevPressed = false
+                if (ev.distanceTo(prevDownPoint) > touchRadius) {
+                    prevDownPoint = null
                     goPrevSubject.onNext(ACTION_CANCEL)
+                    return super.dispatchTouchEvent(ev)
                 }
 
-                if (nextPressed && ev.x < nextGuidelineX) {
-                    nextPressed = false
+                if (ev.distanceTo(nextDownPoint) > touchRadius) {
+                    nextDownPoint = null
                     goNextSubject.onNext(ACTION_CANCEL)
+                    return super.dispatchTouchEvent(ev)
                 }
             }
 
             ACTION_UP -> {
-                if (prevPressed && ev.x < prevGuidelineX) {
-                    prevPressed = false
+                if (touchRange.contains(ev.distanceTo(prevDownPoint))) {
+                    prevDownPoint = null
                     goPrevSubject.onNext(ACTION_UP)
+                    return super.dispatchTouchEvent(ev)
                 }
 
-                if (nextPressed && ev.x > nextGuidelineX) {
-                    nextPressed = false
+                if (touchRange.contains(ev.distanceTo(nextDownPoint))) {
+                    nextDownPoint = null
                     goNextSubject.onNext(ACTION_UP)
+                    return super.dispatchTouchEvent(ev)
                 }
             }
         }
