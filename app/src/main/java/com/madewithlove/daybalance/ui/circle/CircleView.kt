@@ -28,7 +28,7 @@ class CircleView(context: Context) : ViewGroup(context) {
 
     companion object {
 
-        private const val FULL_CIRCLE_ANIMATION_DURATION = 2000
+        private const val FULL_CIRCLE_ANIMATION_DURATION = 500
         private const val AMOUNT_TEXT_HEIGHT_RELATIVE_TO_RADIUS = 0.5f
         private const val LABEL_TEXT_HEIGHT_RELATIVE_TO_RADIUS = 0.25f
         private const val VERTICAL_OFFSET_RELATIVE_TO_RADIUS = 0.08f // hack to improve visual experience
@@ -104,7 +104,7 @@ class CircleView(context: Context) : ViewGroup(context) {
                 val amount = prevAmount + k * (newAmount - prevAmount)
 
                 circleDrawable.progress = progress
-                amountTextView.text = TextFormatter.formatMoney(amount, withGrouping = false)
+                amountTextView.text = TextFormatter.formatMoney(amount, withGrouping = false, withSpaceAfterSign = false)
             }
 
             addListener(object : Animator.AnimatorListener {
@@ -112,7 +112,7 @@ class CircleView(context: Context) : ViewGroup(context) {
                 }
 
                 override fun onAnimationEnd(animation: Animator?) {
-                    amountTextView.text = TextFormatter.formatMoney(newMoney, withGrouping = false)
+                    amountTextView.text = TextFormatter.formatMoney(newMoney, withGrouping = false, withSpaceAfterSign = false)
                 }
 
                 override fun onAnimationCancel(animation: Animator?) {
@@ -122,7 +122,8 @@ class CircleView(context: Context) : ViewGroup(context) {
                 }
             })
 
-            duration = (FULL_CIRCLE_ANIMATION_DURATION * abs(newProgress - prevProgress)).toLong()
+            val diff = abs(newProgress - prevProgress)
+            duration = (((diff - 1).pow(7) + 1) * FULL_CIRCLE_ANIMATION_DURATION).toLong()
             interpolator = AccelerateDecelerateInterpolator()
             start()
         }
