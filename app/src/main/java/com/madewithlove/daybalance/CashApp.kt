@@ -114,10 +114,6 @@ class CashApp : Application(), LifecycleObserver {
             Timber.plant(CashDebugTree())
             Timber.i("Not a debug build, but logs are enabled in debug settings")
         }
-
-
-        // Night mode always enabled
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
     }
 
     @Suppress("unused")

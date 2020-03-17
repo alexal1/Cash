@@ -5,6 +5,7 @@
 package com.madewithlove.daybalance
 
 import android.content.pm.ActivityInfo
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import com.madewithlove.daybalance.features.history.HistoryFragment
@@ -39,6 +40,10 @@ class BaseActivity : FragmentActivity(), Navigator {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.decorView.isForceDarkAllowed = false
         }
 
         val isOpenedByPush = intent.getBooleanExtra(OPENED_BY_PUSH, false)
