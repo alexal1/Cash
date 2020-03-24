@@ -24,7 +24,8 @@ class DatesSnapHelper : LinearSnapHelper(), KoinComponent {
 
     private val analytics: Analytics by inject()
 
-    var lastPos = -1
+    var lastPos = NO_POSITION
+    var isSwipeEnabled = false // swipes are disabled for too short touches
 
 
     override fun findTargetSnapPosition(
@@ -32,6 +33,8 @@ class DatesSnapHelper : LinearSnapHelper(), KoinComponent {
         velocityX: Int,
         velocityY: Int
     ): Int {
+        if (!isSwipeEnabled) return lastPos
+
         val currentView = findSnapView(layoutManager)
         return if (currentView != null) {
             val actualPos = layoutManager.getPosition(currentView)

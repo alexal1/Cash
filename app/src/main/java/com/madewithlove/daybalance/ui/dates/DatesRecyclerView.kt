@@ -26,7 +26,7 @@ class DatesRecyclerView(context: Context) : RecyclerView(context) {
     companion object {
 
         private const val SCROLL_ANIMATION_DEBOUNCE = 400L
-        private const val TOUCH_RADIUS_DP = 8
+        private const val TOUCH_RADIUS_DP = 16
 
     }
 
@@ -42,6 +42,7 @@ class DatesRecyclerView(context: Context) : RecyclerView(context) {
 
     private var prevDownPoint: PointF? = null
     private var nextDownPoint: PointF? = null
+    private var swipeDownPoint: PointF? = null
     private var lastSwipeTime = 0L
 
     val dateObservable: Observable<Date> = dateSubject.distinctUntilChanged().skip(1)
@@ -109,6 +110,9 @@ class DatesRecyclerView(context: Context) : RecyclerView(context) {
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         when (ev.action) {
             ACTION_DOWN -> {
+                datesSnapHelper.isSwipeEnabled = false
+                swipeDownPoint = PointF(ev.x, ev.y)
+
                 if (ev.x < prevGuidelineX) {
                     prevDownPoint = PointF(ev.x, ev.y)
                     goPrevSubject.onNext(ACTION_DOWN)
@@ -123,6 +127,10 @@ class DatesRecyclerView(context: Context) : RecyclerView(context) {
             }
 
             ACTION_MOVE -> {
+                if (!datesSnapHelper.isSwipeEnabled && ev.distanceTo(swipeDownPoint) > touchRadius) {
+                    datesSnapHelper.isSwipeEnabled = true
+                }
+
                 if (ev.distanceTo(prevDownPoint) > touchRadius) {
                     prevDownPoint = null
                     goPrevSubject.onNext(ACTION_CANCEL)
