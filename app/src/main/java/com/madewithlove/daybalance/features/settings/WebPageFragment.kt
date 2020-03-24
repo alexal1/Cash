@@ -97,6 +97,7 @@ class WebPageFragment : Fragment() {
 
     override fun onDestroyView() {
         dc.drain()
+        ui.webView.webViewClient = null
         webPageUI = null
         super.onDestroyView()
     }
