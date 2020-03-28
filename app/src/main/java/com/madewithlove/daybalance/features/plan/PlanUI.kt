@@ -67,8 +67,8 @@ class PlanUI : AnkoComponent<PlanFragment> {
             floatingActionButton = floatingActionButton {
                 id = R.id.floating_action_button
             }.lparams(wrapContent, wrapContent) {
-                rightMargin = dip(16)
-                bottomMargin = dip(16)
+                rightMargin = dimen(R.dimen.floating_action_button_margin)
+                bottomMargin = dimen(R.dimen.floating_action_button_margin)
             }
 
 

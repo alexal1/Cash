@@ -20,6 +20,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.Function3
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
 import java.util.*
 
@@ -33,6 +34,7 @@ class PlanViewModel(
 
     val planStateObservable: Observable<PlanState>
     val planState: PlanState get() = planStateSubject.value!!
+    val amountClickSubject = PublishSubject.create<Unit>()
 
     private val planStateSubject = BehaviorSubject.createDefault(getDefaultPlanState())
     private val dc = DisposableCache()

@@ -20,11 +20,11 @@ import com.madewithlove.daybalance.features.create.CreateFragment
 import com.madewithlove.daybalance.features.create.CreateViewModel
 import com.madewithlove.daybalance.features.main.MainViewModel
 import com.madewithlove.daybalance.helpers.ShowcaseManager
+import com.madewithlove.daybalance.ui.PercentagePicker
 import com.madewithlove.daybalance.utils.*
 import com.madewithlove.daybalance.utils.anko.percentagePicker
 import com.madewithlove.daybalance.utils.navigation.BackStackListener
 import com.madewithlove.daybalance.utils.navigation.Navigator
-import io.reactivex.disposables.Disposable
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
@@ -161,11 +161,14 @@ class PlanFragment : Fragment(), BackStackListener {
                     }
 
                     PlanViewModel.Section.MONEYBOX -> {
-                        val currentPercent = viewModel.planState.savingsRatio ?: return@setOnClickListenerWithThrottle
-                        openPercentagePickerDialog(currentPercent)
+                        openPercentagePickerDialog()
                         showcaseManager.dispose()
                     }
                 }
+            }.cache(dc)
+
+            viewModel.amountClickSubject.subscribeOnUi {
+                performClick()
             }.cache(dc)
         }
 
@@ -211,11 +214,9 @@ class PlanFragment : Fragment(), BackStackListener {
         return monthFormatter.format(this)
     }
 
-    private fun openPercentagePickerDialog(currentPercent: Float) {
-        percentagePickerDialog?.dismiss()
-
-        var itemPickedSubscription: Disposable? = null
+    private fun createPercentagePickerDialog(): AlertDialog {
         var currentItemPos = -1
+        var percentagePicker: PercentagePicker? = null
 
         val customTitle = ctx.linearLayout {
             orientation = VERTICAL
@@ -228,10 +229,15 @@ class PlanFragment : Fragment(), BackStackListener {
                 bottomMargin = dip(32)
             }
 
-            percentagePicker {
-                setData(currentPercent)
+            percentagePicker = percentagePicker {
+                viewModel.planStateObservable
+                    .mapNotNull { it.savingsRatio }
+                    .subscribeOnUi { savingsRatio ->
+                        setData(savingsRatio)
+                    }
+                    .cache(dc)
 
-                itemPickedSubscription = itemPickedObservable.subscribeOnUi { itemPos ->
+                itemPickedObservable.subscribeOnUi { itemPos ->
                     currentItemPos = itemPos
                 }.cache(dc)
             }.lparams(matchParent, wrapContent)
@@ -239,7 +245,7 @@ class PlanFragment : Fragment(), BackStackListener {
             setPadding(dip(16), dip(16), dip(16), dip(16))
         }
 
-        percentagePickerDialog = AlertDialog.Builder(ctx)
+        return AlertDialog.Builder(ctx)
             .setCustomTitle(customTitle)
             .setPositiveButton(R.string.ok) { dialog, _ ->
                 val ratio = (currentItemPos * 5) * 0.01f
@@ -247,9 +253,18 @@ class PlanFragment : Fragment(), BackStackListener {
                 dialog.dismiss()
             }
             .setOnDismissListener {
-                itemPickedSubscription?.dispose()
+                val ratio = viewModel.planState.savingsRatio ?: return@setOnDismissListener
+                percentagePicker?.setData(ratio)
             }
-            .show()
+            .create()
+    }
+
+    private fun openPercentagePickerDialog() {
+        val percentagePickerDialog = percentagePickerDialog ?: createPercentagePickerDialog().also {
+            this.percentagePickerDialog = it
+        }
+
+        percentagePickerDialog.show()
     }
 
 

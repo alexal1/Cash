@@ -36,3 +36,6 @@ fun Completable.subscribeOnUi(c: () -> Unit): Disposable = observeOn(AndroidSche
 
 
 fun <T> Subject<T>.onNextConsumer(): Consumer<T> = Consumer { onNext(it) }
+
+
+fun <T, R> Observable<T>.mapNotNull(mapper: (T) -> R?): Observable<R> = filter { mapper(it) != null }.map { mapper(it)!! }

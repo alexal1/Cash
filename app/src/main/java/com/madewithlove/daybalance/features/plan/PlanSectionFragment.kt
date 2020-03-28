@@ -112,6 +112,10 @@ class PlanSectionFragment : Fragment() {
                         .cache(dc)
                 }
             }
+
+            setOnClickListener {
+                viewModel.amountClickSubject.onNext(Unit)
+            }
         }
 
         ui.annotationText.apply {
