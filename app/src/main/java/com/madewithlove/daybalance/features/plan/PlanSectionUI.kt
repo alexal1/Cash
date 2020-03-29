@@ -29,14 +29,23 @@ class PlanSectionUI : AnkoComponent<PlanSectionFragment> {
 
     override fun createView(ui: AnkoContext<PlanSectionFragment>): View = with(ui) {
         constraintLayout {
-            descriptionText = textView {
+            descriptionText = appCompatTextView {
                 id = View.generateViewId()
                 gravity = CENTER_VERTICAL
                 textSize = 14f
                 textColorResource = R.color.white_80
                 backgroundResource = R.drawable.bg_plan_section_description
                 letterSpacing = 0.02f
-                setPadding(dip(16), 0, dip(16), 0)
+
+                setPadding(dip(16), dip(2), dip(16), dip(2))
+
+                TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                    this,
+                    1,
+                    14,
+                    1,
+                    TypedValue.COMPLEX_UNIT_SP
+                )
             }.lparams(matchConstraint, dimen(R.dimen.plan_description_height)) {
                 marginStart = dip(16)
                 marginEnd = dip(16)
