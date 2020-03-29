@@ -203,6 +203,7 @@ class PlanFragment : Fragment(), BackStackListener {
         dc.drain()
         planUI = null
         percentagePickerDialog?.dismiss()
+        percentagePickerDialog?.setOnDismissListener(null)
         percentagePickerDialog = null
         super.onDestroyView()
 
