@@ -52,6 +52,9 @@
     <string name="history_empty">Nothing\nhere yet</string>
     <string name="history_loading">Loading…</string>
     <string name="history_date_template" translatable="false">{weekday}"    "{medium_date}</string>
+    <string name="history_type_moneybox">into the Moneybox</string>
+    <string name="history_type_gain">for %s</string>
+    <string name="history_type_mandatory_expense">mandatory for %s</string>
     <plurals name="history_delete_confirm">
         <item quantity="one">Delete %d transaction?</item>
         <item quantity="other">Delete %d transactions?</item>

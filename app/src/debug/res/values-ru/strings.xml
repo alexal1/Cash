@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Day Balance DEBUG</string>
+	<string name="history_type_moneybox">в Копилку</string>
+	<string name="history_type_gain">на %s</string>
+	<string name="history_type_mandatory_expense">обязательный на %s</string>
 </resources>

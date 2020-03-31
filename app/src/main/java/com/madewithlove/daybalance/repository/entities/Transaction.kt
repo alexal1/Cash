@@ -41,6 +41,10 @@ open class Transaction : RealmObject(), Serializable {
         typeName = type.name
     }
 
+    fun getType(): Type {
+        return Type.valueOf(typeName)
+    }
+
     fun getMoney() = Money.by(value)
 
 

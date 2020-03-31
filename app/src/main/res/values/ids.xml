@@ -34,8 +34,9 @@
     <item name="day_transactions_view_pager" type="id" />
     <item name="day_transactions_fragment_container" type="id" />
     <item name="transactions_list" type="id" />
+    <item name="transaction_background" type="id" />
     <item name="transaction_text_amount" type="id" />
-    <item name="transaction_icon_comment" type="id" />
+    <item name="transaction_text_type" type="id" />
     <item name="transaction_text_comment" type="id" />
     <item name="transaction_separator" type="id" />
     <item name="transaction_checkbox" type="id" />

@@ -5,7 +5,7 @@
 package com.madewithlove.daybalance.ui
 
 import android.content.Context
-import android.graphics.Typeface
+import android.graphics.Typeface.*
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.util.TypedValue
@@ -13,7 +13,6 @@ import android.view.Gravity.CENTER_VERTICAL
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
 import androidx.core.view.isInvisible
@@ -102,7 +101,7 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
         private val onUnchecked: (Item.TransactionItem) -> Unit
     ) : RecyclerView.Adapter<ViewHolder>() {
 
-
+        private val monthFormatter by lazy { SimpleDateFormat("LLLL", locale) }
         private val weekdayFormatter by lazy { SimpleDateFormat("E", locale) }
         private val mediumDateFormatter by lazy {
             DateFormat.getDateInstance(
@@ -167,12 +166,36 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                         itemView.tag = transactionItem
 
                         amountText.text = TextFormatter.formatMoney(transaction.getMoney(), withPositivePrefix = true)
-                        amountText.textColorResource = if (transaction.getMoney().isGain()) R.color.green_80 else R.color.red_80
                         amountText.updateLayoutParams<MarginLayoutParams> { leftMargin = if (deleteModeOn) 0 else itemView.dip(24) }
-                        commentIcon.isInvisible = transaction.comment.isEmpty()
                         commentText.text = transaction.comment
                         checkBox.isVisible = deleteModeOn
                         checkBox.isChecked = transactionItem.isChecked
+
+                        when (transaction.getType()) {
+                            Transaction.Type.INSTANT -> {
+                                typeText.isVisible = false
+                                backgroundView.backgroundColorResource = R.color.transparent
+                            }
+
+                            Transaction.Type.MONTH -> {
+                                typeText.isVisible = true
+                                if (transaction.getMoney().isGain()) {
+                                    val month = Date(transaction.actionTimestamp).toMonth()
+                                    typeText.text = itemView.context.getString(R.string.history_type_gain, month)
+                                    backgroundView.backgroundColorResource = R.color.green
+                                } else {
+                                    val month = Date(transaction.actionTimestamp).toMonth()
+                                    typeText.text = itemView.context.getString(R.string.history_type_mandatory_expense, month)
+                                    backgroundView.backgroundColorResource = R.color.red
+                                }
+                            }
+
+                            Transaction.Type.INTO_MONEYBOX -> {
+                                typeText.isVisible = true
+                                typeText.textResource = R.string.history_type_moneybox
+                                backgroundView.backgroundColorResource = R.color.blue
+                            }
+                        }
 
                         separator.isInvisible = (position == data.size - 1) || (data[position + 1].type == Item.DATE_TYPE)
                     }
@@ -190,7 +213,7 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                                 .replace(
                                     "{weekday}",
                                     weekday,
-                                    StyleSpan(Typeface.BOLD)
+                                    StyleSpan(BOLD)
                                 )
                                 .replace(
                                     "{medium_date}",
@@ -201,13 +224,18 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
             }
         }
 
+        private fun Date.toMonth(): String {
+            return monthFormatter.format(this)
+        }
+
     }
 
 
     private class TransactionViewHolder(itemView: View) : ViewHolder(itemView) {
 
+        val backgroundView: View = itemView.findViewById(R.id.transaction_background)
         val amountText: TextView = itemView.findViewById(R.id.transaction_text_amount)
-        val commentIcon: ImageView = itemView.findViewById(R.id.transaction_icon_comment)
+        val typeText: TextView = itemView.findViewById(R.id.transaction_text_type)
         val commentText: TextView = itemView.findViewById(R.id.transaction_text_comment)
         val separator: View = itemView.findViewById(R.id.transaction_separator)
         val checkBox: CheckBox = itemView.findViewById(R.id.transaction_checkbox)
@@ -222,6 +250,11 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                 layoutParams = LayoutParams(matchParent, wrapContent)
                 setSelectableBackground()
 
+                val backgroundView = view {
+                    id = R.id.transaction_background
+                    alpha = 0.3f
+                }.lparams(matchConstraint, matchConstraint)
+
                 val checkBox = checkBox {
                     id = R.id.transaction_checkbox
 
@@ -234,32 +267,38 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
                     id = R.id.transaction_text_amount
                     gravity = CENTER_VERTICAL
                     maxLines = 1
-                    typeface = Typeface.DEFAULT_BOLD
+                    typeface = DEFAULT_BOLD
+                    textColorResource = R.color.white
 
                     TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
                         this,
                         1,
-                        18,
+                        16,
                         1,
                         TypedValue.COMPLEX_UNIT_SP
                     )
                 }.lparams(matchConstraint, dip(32)) {
                     topMargin = dip(8)
+                    rightMargin = dip(16)
                 }
 
-                val commentIcon = imageView {
-                    id = R.id.transaction_icon_comment
-
-                    setImageResource(R.drawable.ic_quote)
-                }.lparams(wrapContent, wrapContent)
+                val typeText = textView {
+                    id = R.id.transaction_text_type
+                    textSize = 12f
+                    typeface = DEFAULT_BOLD
+                    textColorResource = R.color.white
+                }.lparams(wrapContent, wrapContent) {
+                    rightMargin = dip(16)
+                }
 
                 val commentText = textView {
                     id = R.id.transaction_text_comment
-                    textColorResource = R.color.white
+                    textColorResource = R.color.white_80
                     textSize = 14f
                     gravity = CENTER_VERTICAL
                     minHeight = dip(16)
 
+                    setTypeface(DEFAULT, ITALIC)
                     setLineSpacing(0f, 1.2f)
                 }.lparams(matchConstraint, wrapContent) {
                     topMargin = dip(4)
@@ -276,6 +315,13 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
 
                 applyConstraintSet {
                     connect(
+                        START of backgroundView to START of PARENT_ID,
+                        END of backgroundView to END of PARENT_ID,
+                        TOP of backgroundView to TOP of PARENT_ID,
+                        BOTTOM of backgroundView to BOTTOM of PARENT_ID
+                    )
+
+                    connect(
                         START of checkBox to START of PARENT_ID,
                         TOP of checkBox to TOP of PARENT_ID,
                         BOTTOM of checkBox to BOTTOM of PARENT_ID
@@ -283,17 +329,18 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
 
                     connect(
                         START of amountText to END of checkBox,
-                        END of amountText to END of PARENT_ID,
+                        END of amountText to START of typeText,
                         TOP of amountText to TOP of PARENT_ID
                     )
 
                     connect(
-                        START of commentIcon to START of amountText,
-                        TOP of commentIcon to BOTTOM of amountText
+                        TOP of typeText to TOP of amountText,
+                        BOTTOM of typeText to BOTTOM of amountText,
+                        END of typeText to END of PARENT_ID
                     )
 
                     connect(
-                        START of commentText to END of commentIcon,
+                        START of commentText to START of amountText,
                         END of commentText to END of separator,
                         TOP of commentText to BOTTOM of amountText
                     )

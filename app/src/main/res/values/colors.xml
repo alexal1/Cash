@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="transparent">#00000000</color>
     <color name="nightBlack">#0D0D13</color>
     <color name="deepDark">#12121E</color>
     <color name="dark">#151523</color>
