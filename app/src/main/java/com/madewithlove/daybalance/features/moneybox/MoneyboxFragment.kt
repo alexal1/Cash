@@ -4,6 +4,7 @@
 
 package com.madewithlove.daybalance.features.moneybox
 
+import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.style.StyleSpan
@@ -19,7 +20,6 @@ import com.madewithlove.daybalance.utils.navigation.Navigator
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
-import org.jetbrains.anko.textColorResource
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
@@ -89,17 +89,29 @@ class MoneyboxFragment : Fragment(), BackStackListener {
                 .cache(dc)
         }
 
+        ui.totalMoneyDescription.apply {
+            val daysCountSinceInstall = viewModel.getDaysCountSinceInstall()
+            text = resources.getQuantityString(R.plurals.moneybox_total_money_description, daysCountSinceInstall, daysCountSinceInstall)
+        }
+
         ui.totalMoneyAmount.apply {
             viewModel.moneyboxStateObservable
                 .filter { !it.isLoading }
                 .map { it.totalMoney!! }
                 .distinctUntilChanged()
                 .subscribeOnUi { money ->
-                    textColorResource = when {
-                        money.isGain() -> R.color.white
-                        money.isZero() -> R.color.smoke
-                        else -> R.color.venous_blood
-                    }
+                    @SuppressLint("SetTextI18n")
+                    text = "${TextFormatter.formatMoney(money)} ="
+                }
+                .cache(dc)
+        }
+
+        ui.previousMoneyAmount.apply {
+            viewModel.moneyboxStateObservable
+                .filter { !it.isLoading }
+                .map { it.previousMoney!! }
+                .distinctUntilChanged()
+                .subscribeOnUi { money ->
                     text = TextFormatter.formatMoney(money)
                 }
                 .cache(dc)
@@ -111,12 +123,7 @@ class MoneyboxFragment : Fragment(), BackStackListener {
                 .map { it.monthMoney!! }
                 .distinctUntilChanged()
                 .subscribeOnUi { money ->
-                    textColorResource = when {
-                        money.isGain() -> R.color.white
-                        money.isZero() -> R.color.smoke
-                        else -> R.color.venous_blood
-                    }
-                    text = TextFormatter.formatMoney(money)
+                    text = TextFormatter.formatMoney(money, withPositivePrefix = true, withSpaceAfterSign = true)
                 }
                 .cache(dc)
         }

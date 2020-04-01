@@ -59,10 +59,16 @@
     <string name="plan_section_moneybox_percentage_picker_title">Сколько откладываем?</string>
     <string name="plan_section_moneybox_annotation">это %s за %s</string>
     <string name="moneybox_title">Копилка</string>
-    <string name="moneybox_total_money_title">У вас в Копилке</string>
-    <string name="moneybox_total_money_description">Столько вы накопили за всё время до этого месяца. Эти деньги стоит инвестировать или положить на вклады.</string>
+    <string name="moneybox_total_money_title">Здесь лежит</string>
+    <plurals name="moneybox_total_money_description">
+        <item quantity="one">И греет вам душу, ведь столько вы накопили за %d день</item>
+        <item quantity="few">И греет вам душу, ведь столько вы накопили за %d дня</item>
+        <item quantity="many">И греет вам душу, ведь столько вы накопили за %d дней</item>
+    </plurals>
+    <string name="moneybox_previous_money_title">За предыдущие месяцы</string>
+    <string name="moneybox_previous_money_description">Эти деньги стоит инвестировать или положить на вклады</string>
     <string name="moneybox_month_money_title">Добавится за %s</string>
-    <string name="moneybox_month_money_description">Столько денег добавится в Копилку в конце месяца. Изначально это {percent} от дохода, но может быть и меньше, если вы переборщите с расходами.</string>
+    <string name="moneybox_month_money_description">{percent} от дохода, но может стать меньше. Следите за расходами!</string>
     <string name="showcase_we_need_a_plan_title">Нам нужен план!</string>
     <string name="showcase_we_need_a_plan_description">Привет!\nЧтобы рассчитать баланс на день, нужно кое-что знать. А именно, сколько у нас денег на %s и сколько из этой суммы мы хотим отложить.</string>
     <string name="showcase_add_gain_title">Деньги на %s</string>

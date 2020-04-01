@@ -13,7 +13,7 @@
     <dimen name="plan_description_height">128dp</dimen>
     <dimen name="plan_amount_height">64dp</dimen>
     <dimen name="plan_annotation_height">32dp</dimen>
-    <dimen name="moneybox_amount_height">64dp</dimen>
+    <dimen name="moneybox_amount_height">48dp</dimen>
     <dimen name="floating_action_button_size">56dp</dimen>
     <dimen name="floating_action_button_margin">16dp</dimen>
     <dimen name="top_buttons_height">@dimen/toolbar_height</dimen>

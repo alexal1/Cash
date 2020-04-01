@@ -23,6 +23,7 @@ import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 import java.math.BigDecimal
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class MoneyboxViewModel(
     application: Application,
@@ -34,6 +35,7 @@ class MoneyboxViewModel(
     val moneyboxStateObservable: Observable<MoneyboxState>
     val moneyboxState: MoneyboxState get() = moneyboxStateSubject.value!!
 
+    private val ctx = application.applicationContext
     private val calendar = CalendarFactory.getInstance()
     private val moneyboxStateSubject = BehaviorSubject.createDefault(getDefaultMoneyboxState())
     private val dc = DisposableCache()
@@ -90,11 +92,14 @@ class MoneyboxViewModel(
                         monthGainMoney.amount.multiply(savingsRatio),
                         monthDiffMoney.amount
                     )
+                    val previousMoneyAmount = totalMoney.amount - monthMoneyAmount
 
                     val monthMoney = Money.by(monthMoneyAmount)
+                    val previousMoney = Money.by(previousMoneyAmount)
 
                     val newState = moneyboxState.copy(
                         totalMoney = totalMoney,
+                        previousMoney = previousMoney,
                         monthMoney = monthMoney
                     )
                     moneyboxStateSubject.onNext(newState)
@@ -102,6 +107,12 @@ class MoneyboxViewModel(
             )
             .subscribe()
             .cache(dc)
+    }
+
+    fun getDaysCountSinceInstall(): Int {
+        val installTime = ctx.packageManager.getPackageInfo(ctx.packageName, 0).firstInstallTime
+        val timeSinceInstall = System.currentTimeMillis() - installTime
+        return (timeSinceInstall / TimeUnit.DAYS.toMillis(1) + 1).toInt()
     }
 
     override fun onCleared() {
@@ -113,6 +124,7 @@ class MoneyboxViewModel(
         monthFirstDay = datesManager.getThisMonthFirstDay(),
         savingsRatio = savingsManager.getSavingsForMonth(datesManager.getThisMonthFirstDay()),
         totalMoney = null,
+        previousMoney = null,
         monthMoney = null
     )
 
@@ -121,6 +133,7 @@ class MoneyboxViewModel(
         val monthFirstDay: Date,
         val savingsRatio: Float,
         val totalMoney: Money?,
+        val previousMoney: Money?,
         val monthMoney: Money?
     ) {
 

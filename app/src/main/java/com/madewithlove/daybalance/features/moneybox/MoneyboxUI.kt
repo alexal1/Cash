@@ -27,6 +27,8 @@ class MoneyboxUI : AnkoComponent<MoneyboxFragment> {
     lateinit var toolbar: _Toolbar
     lateinit var titleText: TextView
     lateinit var totalMoneyAmount: TextView
+    lateinit var totalMoneyDescription: TextView
+    lateinit var previousMoneyAmount: TextView
     lateinit var monthMoneyTitle: TextView
     lateinit var monthMoneyDescription: TextView
     lateinit var monthMoneyAmount: TextView
@@ -59,7 +61,7 @@ class MoneyboxUI : AnkoComponent<MoneyboxFragment> {
             val totalMoneyTitle = textView {
                 id = View.generateViewId()
                 textResource = R.string.moneybox_total_money_title
-                textColorResource = R.color.smoke
+                textColorResource = R.color.white
                 textSize = 14f
                 letterSpacing = 0.08f
                 allCaps = true
@@ -69,10 +71,9 @@ class MoneyboxUI : AnkoComponent<MoneyboxFragment> {
                 verticalChainStyle = CHAIN_PACKED
             }
 
-            val totalMoneyDescription = textView {
+            totalMoneyDescription = textView {
                 id = View.generateViewId()
-                textResource = R.string.moneybox_total_money_description
-                textColorResource = R.color.white_80
+                textColorResource = R.color.fog_white
                 textSize = 14f
                 letterSpacing = 0.02f
             }.lparams(matchConstraint, wrapContent) {
@@ -87,6 +88,7 @@ class MoneyboxUI : AnkoComponent<MoneyboxFragment> {
                 gravity = Gravity.CENTER
                 letterSpacing = 0.02f
                 textColorResource = R.color.white
+                gravity = Gravity.START
 
                 TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
                     this,
@@ -95,7 +97,60 @@ class MoneyboxUI : AnkoComponent<MoneyboxFragment> {
                     1,
                     TypedValue.COMPLEX_UNIT_SP
                 )
-            }.lparams(matchParent, dimen(R.dimen.moneybox_amount_height)) {
+            }.lparams(matchConstraint, dimen(R.dimen.moneybox_amount_height)) {
+                marginStart = dip(16)
+                marginEnd = dip(16)
+                topMargin = dip(8)
+                verticalChainStyle = CHAIN_PACKED
+            }
+
+            val previousMoneySpace = space {
+                id = View.generateViewId()
+            }.lparams(matchConstraint, matchConstraint) {
+                leftMargin = dip(32)
+            }
+
+            val previousMoneyTitle = textView {
+                id = View.generateViewId()
+                textResource = R.string.moneybox_previous_money_title
+                textColorResource = R.color.white
+                textSize = 14f
+                letterSpacing = 0.08f
+                allCaps = true
+            }.lparams(matchConstraint, wrapContent) {
+                marginStart = dip(16)
+                marginEnd = dip(16)
+                verticalChainStyle = CHAIN_PACKED
+            }
+
+            val previousMoneyDescription = textView {
+                id = View.generateViewId()
+                textResource = R.string.moneybox_previous_money_description
+                textColorResource = R.color.fog_white
+                textSize = 14f
+                letterSpacing = 0.02f
+            }.lparams(matchConstraint, wrapContent) {
+                marginStart = dip(16)
+                marginEnd = dip(16)
+                topMargin = dip(8)
+                verticalChainStyle = CHAIN_PACKED
+            }
+
+            previousMoneyAmount = appCompatTextView {
+                id = View.generateViewId()
+                gravity = Gravity.CENTER
+                letterSpacing = 0.02f
+                textColorResource = R.color.white
+                gravity = Gravity.START
+
+                TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                    this,
+                    1,
+                    128,
+                    1,
+                    TypedValue.COMPLEX_UNIT_SP
+                )
+            }.lparams(matchConstraint, dimen(R.dimen.moneybox_amount_height)) {
                 marginStart = dip(16)
                 marginEnd = dip(16)
                 topMargin = dip(8)
@@ -104,11 +159,13 @@ class MoneyboxUI : AnkoComponent<MoneyboxFragment> {
 
             val monthMoneySpace = space {
                 id = View.generateViewId()
-            }.lparams(matchConstraint, matchConstraint)
+            }.lparams(matchConstraint, matchConstraint) {
+                leftMargin = dip(32)
+            }
 
             monthMoneyTitle = textView {
                 id = View.generateViewId()
-                textColorResource = R.color.smoke
+                textColorResource = R.color.white
                 textSize = 14f
                 letterSpacing = 0.08f
                 allCaps = true
@@ -120,7 +177,7 @@ class MoneyboxUI : AnkoComponent<MoneyboxFragment> {
 
             monthMoneyDescription = textView {
                 id = View.generateViewId()
-                textColorResource = R.color.white_80
+                textColorResource = R.color.fog_white
                 textSize = 14f
                 letterSpacing = 0.02f
             }.lparams(matchConstraint, wrapContent) {
@@ -135,6 +192,7 @@ class MoneyboxUI : AnkoComponent<MoneyboxFragment> {
                 gravity = Gravity.CENTER
                 letterSpacing = 0.02f
                 textColorResource = R.color.white
+                gravity = Gravity.START
 
                 TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
                     this,
@@ -143,7 +201,7 @@ class MoneyboxUI : AnkoComponent<MoneyboxFragment> {
                     1,
                     TypedValue.COMPLEX_UNIT_SP
                 )
-            }.lparams(matchParent, dimen(R.dimen.moneybox_amount_height)) {
+            }.lparams(matchConstraint, dimen(R.dimen.moneybox_amount_height)) {
                 marginStart = dip(16)
                 marginEnd = dip(16)
                 topMargin = dip(8)
@@ -161,54 +219,82 @@ class MoneyboxUI : AnkoComponent<MoneyboxFragment> {
                     START of totalMoneySpace to START of PARENT_ID,
                     END of totalMoneySpace to END of PARENT_ID,
                     TOP of totalMoneySpace to BOTTOM of toolbar,
-                    BOTTOM of totalMoneySpace to TOP of monthMoneySpace
+                    BOTTOM of totalMoneySpace to TOP of previousMoneySpace
+                )
+
+                connect(
+                    START of previousMoneySpace to START of PARENT_ID,
+                    END of previousMoneySpace to END of PARENT_ID,
+                    TOP of previousMoneySpace to BOTTOM of totalMoneySpace,
+                    BOTTOM of previousMoneySpace to TOP of monthMoneySpace
                 )
 
                 connect(
                     START of monthMoneySpace to START of PARENT_ID,
                     END of monthMoneySpace to END of PARENT_ID,
-                    TOP of monthMoneySpace to BOTTOM of totalMoneySpace,
+                    TOP of monthMoneySpace to BOTTOM of previousMoneySpace,
                     BOTTOM of monthMoneySpace to BOTTOM of PARENT_ID
                 )
 
                 connect(
-                    START of totalMoneyTitle to START of PARENT_ID,
-                    END of totalMoneyTitle to END of PARENT_ID,
+                    START of totalMoneyTitle to START of totalMoneySpace,
+                    END of totalMoneyTitle to END of totalMoneySpace,
                     TOP of totalMoneyTitle to TOP of totalMoneySpace,
                     BOTTOM of totalMoneyTitle to TOP of totalMoneyDescription
                 )
                 
                 connect(
-                    START of totalMoneyDescription to START of PARENT_ID,
-                    END of totalMoneyDescription to END of PARENT_ID,
+                    START of totalMoneyDescription to START of totalMoneySpace,
+                    END of totalMoneyDescription to END of totalMoneySpace,
                     TOP of totalMoneyDescription to BOTTOM of totalMoneyTitle,
                     BOTTOM of totalMoneyDescription to TOP of totalMoneyAmount
                 )
                 
                 connect(
-                    START of totalMoneyAmount to START of PARENT_ID,
-                    END of totalMoneyAmount to END of PARENT_ID,
+                    START of totalMoneyAmount to START of totalMoneySpace,
+                    END of totalMoneyAmount to END of totalMoneySpace,
                     TOP of totalMoneyAmount to BOTTOM of totalMoneyDescription,
                     BOTTOM of totalMoneyAmount to BOTTOM of totalMoneySpace
                 )
 
                 connect(
-                    START of monthMoneyTitle to START of PARENT_ID,
-                    END of monthMoneyTitle to END of PARENT_ID,
+                    START of previousMoneyTitle to START of previousMoneySpace,
+                    END of previousMoneyTitle to END of previousMoneySpace,
+                    TOP of previousMoneyTitle to TOP of previousMoneySpace,
+                    BOTTOM of previousMoneyTitle to TOP of previousMoneyDescription
+                )
+
+                connect(
+                    START of previousMoneyDescription to START of previousMoneySpace,
+                    END of previousMoneyDescription to END of previousMoneySpace,
+                    TOP of previousMoneyDescription to BOTTOM of previousMoneyTitle,
+                    BOTTOM of previousMoneyDescription to TOP of previousMoneyAmount
+                )
+
+                connect(
+                    START of previousMoneyAmount to START of previousMoneySpace,
+                    END of previousMoneyAmount to END of previousMoneySpace,
+                    TOP of previousMoneyAmount to BOTTOM of previousMoneyDescription,
+                    BOTTOM of previousMoneyAmount to BOTTOM of previousMoneySpace
+                )
+
+                connect(
+                    START of monthMoneyTitle to START of monthMoneySpace,
+                    END of monthMoneyTitle to END of monthMoneySpace,
                     TOP of monthMoneyTitle to TOP of monthMoneySpace,
                     BOTTOM of monthMoneyTitle to TOP of monthMoneyDescription
                 )
 
                 connect(
-                    START of monthMoneyDescription to START of PARENT_ID,
-                    END of monthMoneyDescription to END of PARENT_ID,
+                    START of monthMoneyDescription to START of monthMoneySpace,
+                    END of monthMoneyDescription to END of monthMoneySpace,
                     TOP of monthMoneyDescription to BOTTOM of monthMoneyTitle,
                     BOTTOM of monthMoneyDescription to TOP of monthMoneyAmount
                 )
 
                 connect(
-                    START of monthMoneyAmount to START of PARENT_ID,
-                    END of monthMoneyAmount to END of PARENT_ID,
+                    START of monthMoneyAmount to START of monthMoneySpace,
+                    END of monthMoneyAmount to END of monthMoneySpace,
                     TOP of monthMoneyAmount to BOTTOM of monthMoneyDescription,
                     BOTTOM of monthMoneyAmount to BOTTOM of monthMoneySpace
                 )
