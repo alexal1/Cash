@@ -85,17 +85,17 @@ class MoneyboxViewModel(
                     .query(MonthDiffSpecification(thisMonthFirstDay, nextMonthFirstDay))
                     .map { Money.by(it.toLong()) },
 
-                Function3 { totalMoney, monthGainMoney, monthDiffMoney ->
+                Function3 { previousMoney, monthGainMoney, monthDiffMoney ->
                     val savingsRatio = BigDecimal(savingsManager.getSavingsForMonth(thisMonthFirstDay).toDouble())
 
                     val monthMoneyAmount = minOf(
                         monthGainMoney.amount.multiply(savingsRatio),
                         monthDiffMoney.amount
                     )
-                    val previousMoneyAmount = totalMoney.amount - monthMoneyAmount
-
                     val monthMoney = Money.by(monthMoneyAmount)
-                    val previousMoney = Money.by(previousMoneyAmount)
+
+                    val totalMoneyAmount = previousMoney.amount + monthMoneyAmount
+                    val totalMoney = Money.by(totalMoneyAmount)
 
                     val newState = moneyboxState.copy(
                         totalMoney = totalMoney,
