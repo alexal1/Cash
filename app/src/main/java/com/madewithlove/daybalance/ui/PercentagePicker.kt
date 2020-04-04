@@ -18,8 +18,7 @@ import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
-import timber.log.Timber
-import kotlin.math.ceil
+import kotlin.math.truncate
 
 class PercentagePicker(context: Context) : _FrameLayout(context) {
 
@@ -65,8 +64,7 @@ class PercentagePicker(context: Context) : _FrameLayout(context) {
 
 
     fun setData(initialValue: Float) = post {
-        val startPos = ceil(initialValue * 100 / 5).toInt()
-        Timber.i("p = $startPos")
+        val startPos = truncate(initialValue * 100 / 5).toInt()
         val layoutManager = recyclerView.layoutManager as LinearLayoutManager
         layoutManager.scrollToPositionWithOffset(startPos, dimen(R.dimen.percentage_picker_item_size))
         itemPickedSubject.onNext(startPos)
