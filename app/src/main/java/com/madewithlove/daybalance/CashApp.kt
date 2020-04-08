@@ -6,13 +6,13 @@ package com.madewithlove.daybalance
 
 import android.app.Application
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.madewithlove.daybalance.di.*
+import com.madewithlove.daybalance.helpers.CashInstallReferrer
 import com.madewithlove.daybalance.helpers.CashRealmMigration
 import com.madewithlove.daybalance.helpers.RxErrorHandler
 import com.madewithlove.daybalance.helpers.push.PushManager
@@ -51,6 +51,7 @@ class CashApp : Application(), LifecycleObserver {
     private val transactionsRepository: TransactionsRepository by inject()
     private val cache: Cache by inject()
     private val errorHandler: RxErrorHandler by inject()
+    private val installReferrer: CashInstallReferrer by inject()
 
     var isInForeground = false; private set
 
@@ -114,6 +115,8 @@ class CashApp : Application(), LifecycleObserver {
             Timber.plant(CashDebugTree())
             Timber.i("Not a debug build, but logs are enabled in debug settings")
         }
+
+        installReferrer.logInstallationSource()
     }
 
     @Suppress("unused")
@@ -137,6 +140,7 @@ class CashApp : Application(), LifecycleObserver {
         Timber.i("App destroyed")
         pushManager.dispose()
         cache.dispose()
+        installReferrer.dispose()
     }
 
 }
