@@ -44,4 +44,9 @@ class Analytics(context: Context) {
         firebaseAnalytics.logEvent("splash_screen_time", bundle)
     }
 
+    fun installReferrer(source: String, medium: String) {
+        val bundle = bundleOf("source" to source, "medium" to medium)
+        firebaseAnalytics.logEvent("install_referrer", bundle)
+    }
+
 }

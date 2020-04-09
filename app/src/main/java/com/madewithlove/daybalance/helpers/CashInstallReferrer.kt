@@ -14,6 +14,20 @@ class CashInstallReferrer(
     private val analytics: Analytics
 ) {
 
+    companion object {
+
+        private const val SOURCE_DEFAULT = "unknown_source"
+        private const val SOURCE_NOT_GOOGLE_PLAY = "not_google_play"
+        private const val SOURCE_NO_CONNECTION_TO_GOOGLE_PLAY = "no_connection_to_google_play"
+        private const val MEDIUM_DEFAULT = "unknown_medium"
+        private const val MEDIUM_NOT_GOOGLE_PLAY = "not_google_play"
+        private const val MEDIUM_NO_CONNECTION_TO_GOOGLE_PLAY = "no_connection_to_google_play"
+
+    }
+
+    private val sourceRegex = Regex("utm_source=([^\\s&]+)")
+    private val mediumRegex = Regex("utm_medium=([^\\s&]+)")
+
     private val listener = object : InstallReferrerStateListener {
 
         override fun onInstallReferrerSetupFinished(responseCode: Int) {
@@ -24,10 +38,14 @@ class CashInstallReferrer(
 
                 InstallReferrerClient.InstallReferrerResponse.FEATURE_NOT_SUPPORTED -> {
                     Timber.e("API not available on the current Play Store app")
+                    analytics.installReferrer(SOURCE_NOT_GOOGLE_PLAY, MEDIUM_NOT_GOOGLE_PLAY)
+                    dispose()
                 }
 
                 InstallReferrerClient.InstallReferrerResponse.SERVICE_UNAVAILABLE -> {
                     Timber.e("Connection couldn't be established")
+                    analytics.installReferrer(SOURCE_NO_CONNECTION_TO_GOOGLE_PLAY, MEDIUM_NO_CONNECTION_TO_GOOGLE_PLAY)
+                    dispose()
                 }
             }
         }
@@ -58,7 +76,12 @@ class CashInstallReferrer(
     private fun doLogInstallationSource() {
         val referrerClient = referrerClient ?: return
         val referrerUrl = referrerClient.installReferrer.installReferrer
-        Timber.i("Install Referrer URL: $referrerUrl")
+        val source = sourceRegex.find(referrerUrl)?.groups?.toList()?.getOrNull(1)?.value ?: SOURCE_DEFAULT
+        val medium = mediumRegex.find(referrerUrl)?.groups?.toList()?.getOrNull(1)?.value ?: MEDIUM_DEFAULT
+
+        Timber.i("source = $source, medium = $medium")
+        analytics.installReferrer(source, medium)
+
         dispose()
     }
 
