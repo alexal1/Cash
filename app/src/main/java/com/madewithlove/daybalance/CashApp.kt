@@ -106,6 +106,7 @@ class CashApp : Application(), LifecycleObserver {
                 putBoolean(PREFS_IS_FIRST_LAUNCH, false)
             }
             pushManager.schedulePushNotifications()
+            installReferrer.logInstallationSource()
         }
 
 
@@ -115,8 +116,6 @@ class CashApp : Application(), LifecycleObserver {
             Timber.plant(CashDebugTree())
             Timber.i("Not a debug build, but logs are enabled in debug settings")
         }
-
-        installReferrer.logInstallationSource()
     }
 
     @Suppress("unused")
