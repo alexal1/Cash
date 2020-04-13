@@ -44,6 +44,9 @@
     <string name="create_gain_chosen_month_description">Выбор влияет на бюджет в том или ином месяце</string>
     <string name="history_empty">Здесь пока\nничего нет</string>
     <string name="history_loading">Загружаем…</string>
+    <string name="history_type_moneybox">в Копилку</string>
+    <string name="history_type_gain">на %s</string>
+    <string name="history_type_mandatory_expense">обязательный на %s</string>
     <plurals name="history_delete_confirm">
         <item quantity="one">Удалить %d транзакцию?</item>
         <item quantity="few">Удалить %d транзакции?</item>
