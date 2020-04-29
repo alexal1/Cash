@@ -11,7 +11,7 @@ import com.madewithlove.daybalance.dto.Balance
 import com.madewithlove.daybalance.dto.Money
 import com.madewithlove.daybalance.features.plan.PlanViewModel
 import com.madewithlove.daybalance.helpers.DatesManager
-import com.madewithlove.daybalance.model.Cache
+import com.madewithlove.daybalance.model.BalanceLogic
 import com.madewithlove.daybalance.ui.circle.CircleView
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
@@ -29,7 +29,7 @@ import kotlin.math.pow
 class MainViewModel(
     application: Application,
     datesManager: DatesManager,
-    cache: Cache
+    balanceLogic: BalanceLogic
 ) : AndroidViewModel(application) {
 
     val mainStateObservable: Observable<MainState>
@@ -51,7 +51,7 @@ class MainViewModel(
 
         showCalendarObservable = showCalendarSubject
 
-        cache.balanceObservable
+        balanceLogic.balanceObservable
             .map(this::getCircleState)
             .map {
                 mainState.copy(circleState = it)

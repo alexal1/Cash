@@ -53,15 +53,19 @@ class DatesManager {
     }
 
     fun getCurrentMonthFirstDay(): Date {
-        calendar.time = extendedDate.date
-        calendar.set(Calendar.DAY_OF_MONTH, 1)
-        return calendar.time
+        synchronized(calendar) {
+            calendar.time = extendedDate.date
+            calendar.set(Calendar.DAY_OF_MONTH, 1)
+            return calendar.time
+        }
     }
 
     fun getThisMonthFirstDay(): Date {
-        calendar.time = now
-        calendar.set(Calendar.DAY_OF_MONTH, 1)
-        return calendar.time
+        synchronized(calendar) {
+            calendar.time = now
+            calendar.set(Calendar.DAY_OF_MONTH, 1)
+            return calendar.time
+        }
     }
 
 

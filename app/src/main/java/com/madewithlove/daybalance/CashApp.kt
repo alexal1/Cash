@@ -19,7 +19,7 @@ import com.madewithlove.daybalance.helpers.push.PushManager
 import com.madewithlove.daybalance.helpers.timber.CashDebugTree
 import com.madewithlove.daybalance.helpers.timber.CashReleaseTree
 import com.madewithlove.daybalance.helpers.timber.KoinLogger
-import com.madewithlove.daybalance.model.Cache
+import com.madewithlove.daybalance.model.BalanceLogic
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import io.reactivex.plugins.RxJavaPlugins
 import io.realm.Realm
@@ -49,7 +49,7 @@ class CashApp : Application(), LifecycleObserver {
     private val sharedPreferences: SharedPreferences by inject()
     private val pushManager: PushManager by inject()
     private val transactionsRepository: TransactionsRepository by inject()
-    private val cache: Cache by inject()
+    private val balanceLogic: BalanceLogic by inject()
     private val errorHandler: RxErrorHandler by inject()
     private val installReferrer: CashInstallReferrer by inject()
 
@@ -138,7 +138,7 @@ class CashApp : Application(), LifecycleObserver {
     private fun onAppDestroyed() {
         Timber.i("App destroyed")
         pushManager.dispose()
-        cache.dispose()
+        balanceLogic.dispose()
         installReferrer.dispose()
     }
 

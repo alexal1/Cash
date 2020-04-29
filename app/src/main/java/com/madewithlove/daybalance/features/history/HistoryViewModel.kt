@@ -7,7 +7,7 @@ package com.madewithlove.daybalance.features.history
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.helpers.Analytics
-import com.madewithlove.daybalance.model.Cache
+import com.madewithlove.daybalance.model.BalanceLogic
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.repository.specifications.HistorySpecification
@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit
 class HistoryViewModel(
     application: Application,
     private val repository: TransactionsRepository,
-    private val cache: Cache,
+    private val balanceLogic: BalanceLogic,
     private val analytics: Analytics,
     filter: HistorySpecification.Filter
 ) : AndroidViewModel(application) {
@@ -62,7 +62,7 @@ class HistoryViewModel(
 
         repository
             .removeAllTransactions(historyState.checkedTransactions.map { it.id })
-            .andThen(cache.invalidate(affectedDates))
+            .andThen(balanceLogic.invalidate(affectedDates))
             .subscribe {
                 val newState = historyState.copy(
                     items = historyState.items.removeChecked(),

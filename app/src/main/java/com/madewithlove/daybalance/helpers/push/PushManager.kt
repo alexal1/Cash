@@ -16,13 +16,13 @@ import com.madewithlove.daybalance.CashApp
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.dto.Money
 import com.madewithlove.daybalance.helpers.DatesManager
-import com.madewithlove.daybalance.model.Cache
+import com.madewithlove.daybalance.model.BalanceLogic
 import com.madewithlove.daybalance.utils.*
 import java.util.*
 
 class PushManager(
     private val context: Context,
-    private val cache: Cache,
+    private val balanceLogic: BalanceLogic,
     private val datesManager: DatesManager
 ) {
 
@@ -92,7 +92,7 @@ class PushManager(
             return
         }
 
-        cache.balanceObservable
+        balanceLogic.balanceObservable
             .take(1)
             .map { balance ->
                 val dayLimit = balance.dayLimit ?: throw IllegalArgumentException("dayLimit is null in the balance for push notification")

@@ -9,7 +9,7 @@ import androidx.lifecycle.AndroidViewModel
 import com.madewithlove.daybalance.dto.Money
 import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.helpers.DatesManager
-import com.madewithlove.daybalance.model.Cache
+import com.madewithlove.daybalance.model.BalanceLogic
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.ui.KeypadView
@@ -29,7 +29,7 @@ import kotlin.collections.ArrayList
 class CreateViewModel(
     application: Application,
     private val datesManager: DatesManager,
-    private val cache: Cache,
+    private val balanceLogic: BalanceLogic,
     private val repository: TransactionsRepository,
     private val analytics: Analytics,
     private val initialType: Type,
@@ -270,7 +270,7 @@ class CreateViewModel(
     private fun saveTransaction(transaction: Transaction): Completable {
         return repository
             .addTransaction(transaction)
-            .andThen(cache.invalidate())
+            .andThen(balanceLogic.invalidate())
     }
 
 

@@ -15,8 +15,7 @@ import com.madewithlove.daybalance.features.plan.PlanViewModel
 import com.madewithlove.daybalance.features.settings.SettingsViewModel
 import com.madewithlove.daybalance.helpers.*
 import com.madewithlove.daybalance.helpers.push.PushManager
-import com.madewithlove.daybalance.model.Cache
-import com.madewithlove.daybalance.model.CacheDatesMapper
+import com.madewithlove.daybalance.model.BalanceLogic
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.specifications.HistorySpecification
 import org.koin.android.ext.koin.androidApplication
@@ -53,5 +52,5 @@ val repositoryModule = module {
 }
 
 val modelModule = module {
-    single { Cache(get(), get(), get(), CacheDatesMapper()) }
+    single { BalanceLogic(get(), get(), get()) }
 }
