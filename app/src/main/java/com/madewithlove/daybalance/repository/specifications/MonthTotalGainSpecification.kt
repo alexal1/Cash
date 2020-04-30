@@ -8,7 +8,7 @@ import com.madewithlove.daybalance.repository.entities.Transaction
 import io.realm.Realm
 import java.util.*
 
-class MonthTotalGainSpecification(private val monthFirstDay: Date) : NumberSpecification {
+data class MonthTotalGainSpecification(val monthFirstDay: Date) : NumberSpecification {
 
     override fun toNumber(realm: Realm): Number = realm
         .where(Transaction::class.java)

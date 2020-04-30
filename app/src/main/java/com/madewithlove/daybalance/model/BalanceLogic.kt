@@ -8,12 +8,12 @@ import com.madewithlove.daybalance.CashApp
 import com.madewithlove.daybalance.dto.Balance
 import com.madewithlove.daybalance.dto.Money
 import com.madewithlove.daybalance.helpers.DatesManager
+import com.madewithlove.daybalance.helpers.PeriodsManager
 import com.madewithlove.daybalance.helpers.SavingsManager
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.specifications.DayLossSpecification
 import com.madewithlove.daybalance.repository.specifications.MonthRestSpecification
 import com.madewithlove.daybalance.repository.specifications.MonthTotalGainSpecification
-import com.madewithlove.daybalance.utils.CalendarFactory
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.cache
 import com.madewithlove.daybalance.utils.onNextConsumer
@@ -25,7 +25,6 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function3
 import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
-import java.lang.IllegalArgumentException
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.*
@@ -34,15 +33,16 @@ import kotlin.collections.ArrayList
 
 class BalanceLogic(
     private val repository: TransactionsRepository,
+    private val cache: Cache,
     private val savingsManager: SavingsManager,
-    private val datesManager: DatesManager
+    private val datesManager: DatesManager,
+    private val periodsManager: PeriodsManager
 ) {
 
     val balanceObservable: Observable<Balance>
 
     private val balanceSubject = PublishSubject.create<Balance>()
     private val millisInDay = TimeUnit.DAYS.toMillis(1)
-    private val calendar = CalendarFactory.getInstance()
     private val dc = DisposableCache()
 
 
@@ -61,10 +61,11 @@ class BalanceLogic(
 
 
     /**
-     * Invalidate cached value for the current date and (optionally) cached values for all given
-     * dates.
+     * Invalidate cache and recalculate Balance.
      */
     fun invalidate(dates: Set<Date> = emptySet()): Completable {
+        cache.invalidate(dates)
+
         return Single
             .just(datesManager.currentDate)
             .flatMap(this::getBalance)
@@ -78,7 +79,7 @@ class BalanceLogic(
 
 
     private fun getBalance(day: Date): Single<Balance> {
-        val (monthFirstDay, nextMonthFirstDay) = getMonthBoundaries(day)
+        val (monthFirstDay, nextMonthFirstDay) = periodsManager.getMonthBoundaries(day)
         val today = datesManager.todayDate
 
         return Single.zip(
@@ -106,7 +107,7 @@ class BalanceLogic(
             return Single.just(Maybe.empty())
         }
 
-        val (monthFirstDay, nextMonthFirstDay) = getMonthBoundaries(day)
+        val (monthFirstDay, nextMonthFirstDay) = periodsManager.getMonthBoundaries(day)
         val startDay = maxOf(monthFirstDay, today)
         val remainingMonthDaysCount = ((nextMonthFirstDay.time - startDay.time) / millisInDay).toInt()
 
@@ -163,7 +164,7 @@ class BalanceLogic(
             throw IllegalArgumentException("Overspent cannot be checked for past days")
         }
 
-        val (monthFirstDay, nextMonthFirstDay) = getMonthBoundaries(day)
+        val (monthFirstDay, nextMonthFirstDay) = periodsManager.getMonthBoundaries(day)
         val remainingMonthDaysCount = ((nextMonthFirstDay.time - maxOf(monthFirstDay, today).time) / millisInDay).toBigDecimal()
 
         return Single.zip(
@@ -218,19 +219,6 @@ class BalanceLogic(
         return repository
             .query(DayLossSpecification(day))
             .map { value -> Money.by(-value.toLong()) }
-    }
-
-    private fun getMonthBoundaries(day: Date): Pair<Date, Date> {
-        synchronized(calendar) {
-            calendar.time = day
-            calendar.set(Calendar.DAY_OF_MONTH, 1)
-            val monthFirstDay = calendar.time
-
-            calendar.add(Calendar.MONTH, 1)
-            val nextMonthFirstDay = calendar.time
-
-            return monthFirstDay to nextMonthFirstDay
-        }
     }
 
     private fun validateDates(vararg dates: Date) {

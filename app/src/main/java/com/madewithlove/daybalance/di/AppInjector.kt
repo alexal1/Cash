@@ -16,11 +16,15 @@ import com.madewithlove.daybalance.features.settings.SettingsViewModel
 import com.madewithlove.daybalance.helpers.*
 import com.madewithlove.daybalance.helpers.push.PushManager
 import com.madewithlove.daybalance.model.BalanceLogic
+import com.madewithlove.daybalance.model.Cache
+import com.madewithlove.daybalance.model.CacheImpl
 import com.madewithlove.daybalance.repository.TransactionsRepository
+import com.madewithlove.daybalance.repository.TransactionsRepositoryImpl
 import com.madewithlove.daybalance.repository.specifications.HistorySpecification
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val viewModelsModule = module {
@@ -45,12 +49,14 @@ val helpersModule = module {
     single { ShowcaseManager(androidContext(), get(), get(), get()) }
     single { RxErrorHandler() }
     single { CashInstallReferrer(androidContext(), get()) }
+    single { PeriodsManager() }
 }
 
 val repositoryModule = module {
-    single { TransactionsRepository() }
+    single { TransactionsRepositoryImpl() } bind TransactionsRepository::class
 }
 
 val modelModule = module {
-    single { BalanceLogic(get(), get(), get()) }
+    single { BalanceLogic(get<Cache>(), get(), get(), get(), get()) }
+    single { CacheImpl(get(), get(), get()) } bind Cache::class
 }
