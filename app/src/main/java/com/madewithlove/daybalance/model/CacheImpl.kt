@@ -50,7 +50,7 @@ class CacheImpl(
                     synchronized(cache) {
                         cache[specification] = value
                     }
-                    Timber.d("Made request and updated cache for $specification")
+                    Timber.i("Made request and updated cache for $specification")
                 }
             }
         }
@@ -111,7 +111,7 @@ class CacheImpl(
                 }
 
                 if (cachedValue != null) {
-                    Timber.i("Found cached value for $specification")
+                    Timber.d("Found cached value for $specification")
                     Maybe.just(cachedValue)
                 } else {
                    Maybe.empty()

@@ -4,6 +4,7 @@
 
 package com.madewithlove.daybalance.helpers.timber
 
+import android.util.Log
 import com.crashlytics.android.Crashlytics
 import timber.log.Timber
 
@@ -30,6 +31,10 @@ class CashReleaseTree : Timber.Tree() {
 
 
     override fun log(priority: Int, tag: String?, message: String, throwable: Throwable?) {
+        if (priority < Log.INFO) {
+            return
+        }
+
         Crashlytics.log(message)
 
         throwable?.let {
