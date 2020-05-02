@@ -6,10 +6,10 @@ package com.madewithlove.daybalance.utils.navigation
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.madewithlove.daybalance.ScreenFragment
 
-abstract class FragmentNavigator : Fragment(), Navigator {
+abstract class FragmentNavigator(screenName: String) : ScreenFragment(screenName), Navigator {
 
     private var backStackChangedListener: FragmentManager.OnBackStackChangedListener? = null
 

@@ -12,7 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
+import com.madewithlove.daybalance.ScreenFragment
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.main.MainViewModel
 import com.madewithlove.daybalance.utils.DisposableCache
@@ -23,7 +23,7 @@ import org.jetbrains.anko.support.v4.ctx
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsFragment : Fragment() {
+class SettingsFragment : ScreenFragment("settings") {
 
     companion object {
 
@@ -54,6 +54,8 @@ class SettingsFragment : Fragment() {
     ): View = ui.createView(AnkoContext.create(ctx, this))
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         ui.toolbar.apply {
             setNavigationOnClickListener {
                 act.onBackPressed()

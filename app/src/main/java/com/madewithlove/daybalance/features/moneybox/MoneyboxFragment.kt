@@ -11,7 +11,7 @@ import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import com.madewithlove.daybalance.ScreenFragment
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.main.MainViewModel
 import com.madewithlove.daybalance.utils.*
@@ -25,7 +25,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MoneyboxFragment : Fragment(), BackStackListener {
+class MoneyboxFragment : ScreenFragment("moneybox"), BackStackListener {
 
     companion object {
 

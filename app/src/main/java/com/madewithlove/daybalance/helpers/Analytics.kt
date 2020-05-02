@@ -4,14 +4,21 @@
 
 package com.madewithlove.daybalance.helpers
 
+import android.app.Activity
 import android.content.Context
 import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
+import timber.log.Timber
 
 class Analytics(context: Context) {
 
     private val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
 
+
+    fun setCurrentScreen(activity: Activity, screenName: String) {
+        Timber.d("setCurrentScreen: $screenName")
+        firebaseAnalytics.setCurrentScreen(activity, screenName, null)
+    }
 
     fun dateSwipeNext() {
         val bundle = bundleOf("direction" to "next")

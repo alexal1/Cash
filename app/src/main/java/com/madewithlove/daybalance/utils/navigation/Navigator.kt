@@ -6,11 +6,12 @@ package com.madewithlove.daybalance.utils.navigation
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.madewithlove.daybalance.ScreenFragment
 import com.madewithlove.daybalance.R
 
 interface Navigator : BackPressHandler {
 
-    fun setFragment(fragment: Fragment) {
+    fun setFragment(fragment: ScreenFragment) {
         if (fragment.isAddedToNavigator()) {
             return
         }
@@ -21,9 +22,11 @@ interface Navigator : BackPressHandler {
             .setCustomAnimations(R.anim.fade_in, 0)
             .add(getFragmentContainerId(), fragment, fragment.getNavigatorTag())
             .commit()
+
+        fragment.sendScreenNameToAnalytics()
     }
 
-    fun replaceFragment(fragment: Fragment) {
+    fun replaceFragment(fragment: ScreenFragment) {
         if (fragment.isAddedToNavigator()) {
             return
         }
@@ -35,9 +38,11 @@ interface Navigator : BackPressHandler {
             .replace(getFragmentContainerId(), fragment, fragment.getNavigatorTag())
             .addToBackStack(fragment.getNavigatorName())
             .commit()
+
+        fragment.sendScreenNameToAnalytics()
     }
 
-    fun addFragment(fragment: Fragment) {
+    fun addFragment(fragment: ScreenFragment) {
         if (fragment.isAddedToNavigator()) {
             return
         }
@@ -49,19 +54,26 @@ interface Navigator : BackPressHandler {
             .add(getFragmentContainerId(), fragment, fragment.getNavigatorTag())
             .addToBackStack(fragment.getNavigatorName())
             .commit()
+
+        fragment.sendScreenNameToAnalytics()
     }
 
     override fun handleBackPress(): Boolean {
         val topFragment = getNavigatorFragmentManager().fragments.lastOrNull() ?: return false
 
         if (topFragment !is BackPressHandler || !topFragment.handleBackPress()) {
-            return getNavigatorFragmentManager().popBackStackImmediate()
+            val isPopped = getNavigatorFragmentManager().popBackStackImmediate()
+            if (isPopped) {
+                val newTopFragment = (getNavigatorFragmentManager().fragments.lastOrNull() ?: this) as? ScreenFragment
+                newTopFragment?.sendScreenNameToAnalytics()
+            }
+            return isPopped
         }
 
         return true
     }
 
-    fun isFragmentOnTop(fragment: Fragment): Boolean {
+    fun isFragmentOnTop(fragment: ScreenFragment): Boolean {
         val topEntryIndex = getNavigatorFragmentManager().backStackEntryCount - 1
         val topEntry = getNavigatorFragmentManager().getBackStackEntryAt(topEntryIndex)
         return topEntry.name == fragment.getNavigatorName()
@@ -72,15 +84,15 @@ interface Navigator : BackPressHandler {
     fun getFragmentContainerId(): Int
 
 
-    private fun Fragment.getNavigatorTag(): String {
-        return this.javaClass.name
+    private fun ScreenFragment.getNavigatorTag(): String {
+        return this.screenName
     }
 
-    private fun Fragment.getNavigatorName(): String {
-        return this.javaClass.name
+    private fun ScreenFragment.getNavigatorName(): String {
+        return this.screenName
     }
 
-    private fun Fragment.isAddedToNavigator(): Boolean {
+    private fun ScreenFragment.isAddedToNavigator(): Boolean {
         return getNavigatorFragmentManager().findFragmentByTag(this.getNavigatorTag()) != null
     }
 

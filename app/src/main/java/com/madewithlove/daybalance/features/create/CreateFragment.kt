@@ -17,8 +17,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.marginTop
-import androidx.fragment.app.Fragment
 import com.jakewharton.rxbinding3.widget.textChanges
+import com.madewithlove.daybalance.ScreenFragment
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.main.MainFragment
 import com.madewithlove.daybalance.features.main.MainViewModel
@@ -35,7 +35,7 @@ import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CreateFragment : Fragment() {
+class CreateFragment : ScreenFragment("create") {
 
     companion object {
 

@@ -40,7 +40,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 
-class MainFragment : FragmentNavigator(), BackStackListener {
+class MainFragment : FragmentNavigator("main"), BackStackListener {
 
     companion object {
 

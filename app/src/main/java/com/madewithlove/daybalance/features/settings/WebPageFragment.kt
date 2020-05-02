@@ -18,15 +18,15 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import com.madewithlove.daybalance.R
+import com.madewithlove.daybalance.ScreenFragment
 import com.madewithlove.daybalance.utils.DisposableCache
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
 import timber.log.Timber
 
-class WebPageFragment : Fragment() {
+class WebPageFragment : ScreenFragment("web_page") {
 
     companion object {
 
@@ -65,6 +65,8 @@ class WebPageFragment : Fragment() {
     ): View = ui.createView(AnkoContext.create(ctx, this))
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         ui.toolbar.apply {
             setNavigationOnClickListener {
                 act.onBackPressed()

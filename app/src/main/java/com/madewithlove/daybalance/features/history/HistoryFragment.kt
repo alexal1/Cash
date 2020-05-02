@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
+import com.madewithlove.daybalance.ScreenFragment
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.repository.specifications.HistorySpecification
 import com.madewithlove.daybalance.utils.*
@@ -23,7 +23,7 @@ import org.jetbrains.anko.support.v4.ctx
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class HistoryFragment : Fragment(), BackPressHandler {
+class HistoryFragment : ScreenFragment("history"), BackPressHandler {
 
     companion object {
 

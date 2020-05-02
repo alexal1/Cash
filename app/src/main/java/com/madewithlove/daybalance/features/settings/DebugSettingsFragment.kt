@@ -8,14 +8,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import com.madewithlove.daybalance.ScreenFragment
 import com.madewithlove.daybalance.CashApp
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class DebugSettingsFragment : Fragment() {
+class DebugSettingsFragment : ScreenFragment("debug_settings") {
 
     companion object {
 
@@ -37,6 +37,8 @@ class DebugSettingsFragment : Fragment() {
     ): View = ui.createView(AnkoContext.create(ctx, this))
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         ui.toolbar.apply {
             setNavigationOnClickListener {
                 act.onBackPressed()
