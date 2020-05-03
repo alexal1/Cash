@@ -341,11 +341,15 @@ class MainFragment : FragmentNavigator("main"), BackStackListener {
         val listener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
             calendar.set(year, month, day)
             val date = calendar.time
-            analytics.pickCalendarDate()
+            analytics.openCalendar(true)
             datesManager.updateCurrentDate(date)
         }
 
-        return DatePickerDialog(ctx, listener, 1970, 0, 1)
+        return DatePickerDialog(ctx, listener, 1970, 0, 1).apply {
+            setOnCancelListener {
+                analytics.openCalendar(false)
+            }
+        }
     }
 
     private fun openCalendarDialog() {

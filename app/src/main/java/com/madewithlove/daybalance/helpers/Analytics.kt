@@ -30,8 +30,10 @@ class Analytics(context: Context) {
         firebaseAnalytics.logEvent("date_swipe", bundle)
     }
 
-    fun pickCalendarDate() {
-        firebaseAnalytics.logEvent("pick_calendar_date", null)
+    fun openCalendar(isDatePicked: Boolean) {
+        Timber.d("openCalendar, isDatePicked: $isDatePicked")
+        val bundle = bundleOf("is_date_picked" to isDatePicked)
+        firebaseAnalytics.logEvent("open_calendar", bundle)
     }
 
     fun createTransaction() {
