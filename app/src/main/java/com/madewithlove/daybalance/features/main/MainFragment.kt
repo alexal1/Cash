@@ -57,6 +57,7 @@ class MainFragment : FragmentNavigator("main"), BackStackListener {
     private val datesManager: DatesManager by inject()
     private val analytics: Analytics by inject()
     private val showcaseManager: ShowcaseManager by inject()
+    private val app: CashApp by lazy { requireContext().applicationContext as CashApp }
     private val calendarDialog by lazy { createCalendarDialog() }
     private val calendar = GregorianCalendar.getInstance()
     private val ui: MainUI get() = mainUI ?: MainUI().also { mainUI = it }
@@ -298,8 +299,9 @@ class MainFragment : FragmentNavigator("main"), BackStackListener {
         view.post {
             startPostponedEnterTransition()
 
-            if (savedInstanceState == null) {
-                val splashScreenTime = System.currentTimeMillis() - CashApp.initializationTime
+            app.initializationTime?.let { initializationTime ->
+                app.initializationTime = null
+                val splashScreenTime = System.currentTimeMillis() - initializationTime
                 analytics.splashScreenTime(splashScreenTime)
             }
         }

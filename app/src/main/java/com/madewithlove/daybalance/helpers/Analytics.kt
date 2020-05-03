@@ -47,6 +47,7 @@ class Analytics(context: Context) {
     }
 
     fun splashScreenTime(millis: Long) {
+        Timber.d("splashScreenTime: $millis")
         val bundle = bundleOf("millis" to millis)
         firebaseAnalytics.logEvent("splash_screen_time", bundle)
     }

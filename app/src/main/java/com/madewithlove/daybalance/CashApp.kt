@@ -20,6 +20,7 @@ import com.madewithlove.daybalance.helpers.timber.CashDebugTree
 import com.madewithlove.daybalance.helpers.timber.CashReleaseTree
 import com.madewithlove.daybalance.helpers.timber.KoinLogger
 import com.madewithlove.daybalance.model.BalanceLogic
+import com.madewithlove.daybalance.model.Cache
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import io.reactivex.plugins.RxJavaPlugins
 import io.realm.Realm
@@ -40,7 +41,6 @@ class CashApp : Application(), LifecycleObserver {
         const val PREFS_SAVINGS_PREFIX = "savings_for_"
         const val PREFS_SHOWCASE_STEP = "showcase_step"
 
-        val initializationTime = System.currentTimeMillis()
         val isDebugBuild get() = BuildConfig.BUILD_TYPE == "debug"
 
     }
@@ -50,13 +50,16 @@ class CashApp : Application(), LifecycleObserver {
     private val pushManager: PushManager by inject()
     private val transactionsRepository: TransactionsRepository by inject()
     private val balanceLogic: BalanceLogic by inject()
+    private val cache: Cache by inject()
     private val errorHandler: RxErrorHandler by inject()
     private val installReferrer: CashInstallReferrer by inject()
 
     var isInForeground = false; private set
+    var initializationTime: Long? = null
 
 
     override fun onCreate() {
+        initializationTime = System.currentTimeMillis()
         super.onCreate()
 
         val tree = if (isDebugBuild) {
@@ -139,6 +142,7 @@ class CashApp : Application(), LifecycleObserver {
         Timber.i("App destroyed")
         pushManager.dispose()
         balanceLogic.dispose()
+        cache.dispose()
         installReferrer.dispose()
     }
 
