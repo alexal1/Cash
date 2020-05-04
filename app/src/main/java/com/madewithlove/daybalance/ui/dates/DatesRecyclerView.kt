@@ -10,18 +10,21 @@ import android.view.MotionEvent
 import android.view.MotionEvent.*
 import androidx.core.util.rangeTo
 import androidx.recyclerview.widget.RecyclerView
+import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.utils.ZeroInterpolator
 import com.madewithlove.daybalance.utils.onNextConsumer
 import com.madewithlove.daybalance.utils.screenSize
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import org.jetbrains.anko.dip
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class DatesRecyclerView(context: Context) : RecyclerView(context) {
+class DatesRecyclerView(context: Context) : RecyclerView(context), KoinComponent {
 
     companion object {
 
@@ -30,6 +33,7 @@ class DatesRecyclerView(context: Context) : RecyclerView(context) {
 
     }
 
+    private val analytics: Analytics by inject()
     private val dateSubject = PublishSubject.create<Date>()
     private val centerItemClickSubject = PublishSubject.create<Unit>()
     private val datesLayoutManager = DatesLayoutManager(context)
@@ -74,11 +78,13 @@ class DatesRecyclerView(context: Context) : RecyclerView(context) {
     }
 
     fun swipeNext() {
+        analytics.dateSwipeNext(isByButton = true)
         val position = datesLayoutManager.findLastVisibleItemPosition()
         swipeToPos(position)
     }
 
     fun swipePrev() {
+        analytics.dateSwipePrev(isByButton = true)
         val position = datesLayoutManager.findFirstVisibleItemPosition()
         swipeToPos(position)
     }

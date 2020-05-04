@@ -20,12 +20,14 @@ class Analytics(context: Context) {
         firebaseAnalytics.setCurrentScreen(activity, screenName, null)
     }
 
-    fun dateSwipeNext() {
+    fun dateSwipeNext(isByButton: Boolean) {
+        Timber.d("dateSwipeNext, isByButton: $isByButton")
         val bundle = bundleOf("direction" to "next")
         firebaseAnalytics.logEvent("date_swipe", bundle)
     }
 
-    fun dateSwipePrev() {
+    fun dateSwipePrev(isByButton: Boolean) {
+        Timber.d("dateSwipePrev, isByButton: $isByButton")
         val bundle = bundleOf("direction" to "prev")
         firebaseAnalytics.logEvent("date_swipe", bundle)
     }
@@ -36,15 +38,20 @@ class Analytics(context: Context) {
         firebaseAnalytics.logEvent("open_calendar", bundle)
     }
 
-    fun createTransaction() {
-        firebaseAnalytics.logEvent("create_transaction", null)
+    fun createTransaction(isWithComment: Boolean) {
+        Timber.d("createTransaction, isWithComment: $isWithComment")
+        val bundle = bundleOf("is_with_comment" to isWithComment)
+        firebaseAnalytics.logEvent("create_transaction", bundle)
     }
 
-    fun deleteTransaction() {
-        firebaseAnalytics.logEvent("delete_transaction", null)
+    fun deleteTransactions(count: Int) {
+        Timber.d("deleteTransactions, count: $count")
+        val bundle = bundleOf("count" to count)
+        firebaseAnalytics.logEvent("delete_transaction", bundle)
     }
 
     fun clickOnPush() {
+        Timber.d("clickOnPush")
         firebaseAnalytics.logEvent("click_on_push", null)
     }
 
@@ -55,6 +62,7 @@ class Analytics(context: Context) {
     }
 
     fun installReferrer(source: String, medium: String) {
+        Timber.d("installReferrer, source: $source, medium: $medium")
         val bundle = bundleOf("source" to source, "medium" to medium)
         firebaseAnalytics.logEvent("install_referrer", bundle)
     }

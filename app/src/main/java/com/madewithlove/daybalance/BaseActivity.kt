@@ -48,7 +48,6 @@ class BaseActivity : FragmentActivity(), Navigator {
 
         val isOpenedByPush = intent.getBooleanExtra(OPENED_BY_PUSH, false)
         if (isOpenedByPush) {
-            Timber.i("BaseActivity is opened by push")
             analytics.clickOnPush()
         }
 

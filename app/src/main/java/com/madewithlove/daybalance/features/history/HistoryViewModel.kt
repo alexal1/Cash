@@ -64,13 +64,14 @@ class HistoryViewModel(
             .removeAllTransactions(historyState.checkedTransactions.map { it.id })
             .andThen(balanceLogic.invalidate(affectedDates))
             .subscribe {
+                val transactionsCount = historyState.checkedTransactions.size
                 val newState = historyState.copy(
                     items = historyState.items.removeChecked(),
                     checkedTransactions = emptySet()
                 )
                 historyStateSubject.onNext(newState)
 
-                analytics.deleteTransaction()
+                analytics.deleteTransactions(count = transactionsCount)
             }
             .cache(dc)
     }

@@ -78,8 +78,6 @@ class CashInstallReferrer(
         val referrerUrl = referrerClient.installReferrer.installReferrer
         val source = sourceRegex.find(referrerUrl)?.groups?.toList()?.getOrNull(1)?.value ?: SOURCE_DEFAULT
         val medium = mediumRegex.find(referrerUrl)?.groups?.toList()?.getOrNull(1)?.value ?: MEDIUM_DEFAULT
-
-        Timber.i("source = $source, medium = $medium")
         analytics.installReferrer(source, medium)
 
         dispose()

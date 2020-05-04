@@ -158,7 +158,7 @@ class CreateViewModel(
                         val newState = createState.copy(inputValidation = InputValidation.OK)
                         createStateSubject.onNext(newState)
 
-                        analytics.createTransaction()
+                        analytics.createTransaction(isWithComment = transaction.comment.isNotEmpty())
                     }.cache(dc)
                 }
             }

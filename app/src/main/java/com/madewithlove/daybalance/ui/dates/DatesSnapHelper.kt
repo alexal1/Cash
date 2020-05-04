@@ -50,9 +50,9 @@ class DatesSnapHelper : LinearSnapHelper(), KoinComponent {
 
             // Log analytics events
             if (targetPos > lastPos) {
-                analytics.dateSwipeNext()
+                analytics.dateSwipeNext(isByButton = false)
             } else if (targetPos < lastPos) {
-                analytics.dateSwipePrev()
+                analytics.dateSwipePrev(isByButton = false)
             }
 
             lastPos = targetPos
