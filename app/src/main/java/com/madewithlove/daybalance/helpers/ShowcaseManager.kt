@@ -43,7 +43,8 @@ class ShowcaseManager(
     private val context: Context,
     private val datesManager: DatesManager,
     private val sharedPreferences: SharedPreferences,
-    private val repository: TransactionsRepository
+    private val repository: TransactionsRepository,
+    private val analytics: Analytics
 ) {
 
     companion object {
@@ -86,6 +87,7 @@ class ShowcaseManager(
             Step.ADD_LOSS -> {
                 show(fragment, step) {
                     step = Step.FINISHED
+                    analytics.completeShowcase()
                 }
             }
 

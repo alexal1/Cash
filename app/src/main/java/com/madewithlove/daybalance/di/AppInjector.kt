@@ -34,7 +34,7 @@ val viewModelsModule = module {
     viewModel { (type: CreateViewModel.Type, chosenMonth: Int?) -> CreateViewModel(androidApplication(), get(), get(), get(), get(), type, chosenMonth) }
     viewModel { PlanViewModel(androidApplication(), get(), get(), get(), get()) }
     viewModel { MoneyboxViewModel(androidApplication(), get(), get(), get()) }
-    viewModel { SettingsViewModel(androidApplication(), get(), get(), get()) }
+    viewModel { SettingsViewModel(androidApplication(), get(), get(), get(), get()) }
 }
 
 val sharedPreferencesModule = module {
@@ -44,9 +44,9 @@ val sharedPreferencesModule = module {
 val helpersModule = module {
     single { DatesManager() }
     single { PushManager(androidContext(), get(), get()) }
-    single { Analytics(androidContext()) }
+    single { Analytics(androidContext(), get()) }
     single { SavingsManager(get()) }
-    single { ShowcaseManager(androidContext(), get(), get(), get()) }
+    single { ShowcaseManager(androidContext(), get(), get(), get(), get()) }
     single { RxErrorHandler() }
     single { CashInstallReferrer(androidContext(), get()) }
     single { PeriodsManager() }
