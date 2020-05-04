@@ -33,13 +33,13 @@ class Analytics(
 
     fun dateSwipeNext(isByButton: Boolean) {
         Timber.d("dateSwipeNext, isByButton: $isByButton")
-        val bundle = bundleOf("direction" to "next")
+        val bundle = bundleOf("direction" to "next", "is_by_button" to isByButton)
         firebaseAnalytics.logEvent("date_swipe", bundle)
     }
 
     fun dateSwipePrev(isByButton: Boolean) {
         Timber.d("dateSwipePrev, isByButton: $isByButton")
-        val bundle = bundleOf("direction" to "prev")
+        val bundle = bundleOf("direction" to "prev", "is_by_button" to isByButton)
         firebaseAnalytics.logEvent("date_swipe", bundle)
     }
 
