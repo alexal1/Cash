@@ -234,6 +234,8 @@ class MainFragment : FragmentNavigator("main"), BackStackListener {
                         if (intent.resolveActivity(ctx.packageManager) != null) {
                             startActivity(intent)
                         }
+
+                        analytics.rateButtonClick()
                     }
                 }
             }

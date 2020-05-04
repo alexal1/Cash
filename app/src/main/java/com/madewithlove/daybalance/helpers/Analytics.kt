@@ -106,6 +106,11 @@ class Analytics(
         firebaseAnalytics.setUserProperty("showcase_completed", "Y")
     }
 
+    fun rateButtonClick() {
+        Timber.d("rateButtonClick")
+        firebaseAnalytics.logEvent("rate_button_click", null)
+    }
+
     fun setInitialProperties(locale: String, startVersion: String) {
         Timber.d("setStaticProperties, locale: $locale, startVersion: $startVersion")
         firebaseAnalytics.setUserProperty("locale", locale)
