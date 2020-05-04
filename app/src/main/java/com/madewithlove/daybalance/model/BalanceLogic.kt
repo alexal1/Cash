@@ -23,7 +23,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function3
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -41,7 +41,7 @@ class BalanceLogic(
 
     val balanceObservable: Observable<Balance>
 
-    private val balanceSubject = PublishSubject.create<Balance>()
+    private val balanceSubject = BehaviorSubject.create<Balance>()
     private val millisInDay = TimeUnit.DAYS.toMillis(1)
     private val dc = DisposableCache()
 
@@ -53,7 +53,8 @@ class BalanceLogic(
             .replay(1)
             .autoConnect()
 
-        datesManager.currentDateObservable
+        datesManager.extendedDateObservable
+            .map { it.date }
             .concatMapSingle(this::getBalance)
             .subscribe(balanceSubject.onNextConsumer())
             .cache(dc)
