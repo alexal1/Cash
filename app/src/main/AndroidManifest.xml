@@ -15,11 +15,17 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
 
-        <!-- Disable Advertising ID collection -->
+        <!-- Disable Advertiser ID collection by Google -->
         <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false"/>
 
         <!-- Disable SSAID collection -->
         <meta-data android:name="google_analytics_ssaid_collection_enabled" android:value="false"/>
+
+        <!-- Facebook SDK -->
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+
+        <!-- Disable Advertiser ID collection by Facebook -->
+        <meta-data android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled" android:value="false"/>
 
         <activity android:name="com.madewithlove.daybalance.BaseActivity" android:launchMode="singleTask">
             <intent-filter>

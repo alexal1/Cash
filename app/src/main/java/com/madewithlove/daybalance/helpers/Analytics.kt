@@ -9,6 +9,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.core.os.bundleOf
+import com.facebook.appevents.AppEventsConstants
+import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.madewithlove.daybalance.CashApp.Companion.PREFS_ANALYTICS_CREATE_COUNT
 import com.madewithlove.daybalance.CashApp.Companion.PREFS_ANALYTICS_DELETE_COUNT
@@ -22,6 +24,7 @@ class Analytics(
 ) {
 
     private val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
+    private val facebookAnalytics = AppEventsLogger.newLogger(context)
 
     private var startSessionTime: Long? = null
 
@@ -104,6 +107,7 @@ class Analytics(
         Timber.d("completeShowcase")
         firebaseAnalytics.logEvent("showcase_completed", null)
         firebaseAnalytics.setUserProperty("showcase_completed", "Y")
+        facebookAnalytics.logEvent(AppEventsConstants.EVENT_NAME_COMPLETED_TUTORIAL)
     }
 
     fun rateButtonClick() {

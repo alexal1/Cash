@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Day Balance</string>
+    <string name="facebook_app_id" translatable="false">930276017413211</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb930276017413211</string>
     <string name="loss">+ Expense</string>
     <string name="gain">+ Income</string>
     <string name="today">today</string>

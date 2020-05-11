@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Day Balance DEBUG</string>
+	<string name="facebook_app_id" translatable="false">299018654431901</string>
+	<string name="fb_login_protocol_scheme" translatable="false">fb299018654431901</string>
 </resources>
