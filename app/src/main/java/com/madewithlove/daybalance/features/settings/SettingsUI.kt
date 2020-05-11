@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout.VERTICAL
 import android.widget.Switch
 import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
+import androidx.core.view.isInvisible
 import com.madewithlove.daybalance.BuildConfig
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.utils.anko._Toolbar
@@ -30,6 +31,7 @@ class SettingsUI : AnkoComponent<SettingsFragment> {
     lateinit var logoBackground: View
     lateinit var pushBackground: View
     lateinit var pushSwitch: Switch
+    lateinit var policyBackground: View
 
 
     override fun createView(ui: AnkoContext<SettingsFragment>): View = with(ui) {
@@ -138,6 +140,44 @@ class SettingsUI : AnkoComponent<SettingsFragment> {
                         leftMargin = dip(24)
                     }
 
+                    policyBackground = view {
+                        id = View.generateViewId()
+
+                        setSelectableBackground()
+                    }.lparams(matchConstraint, matchConstraint)
+
+                    val policyTitle = textView {
+                        id = View.generateViewId()
+                        textColorResource = R.color.white
+                        textSize = 16f
+                        backgroundColor = Color.TRANSPARENT
+                        textResource = R.string.settings_privacy_policy_title
+                    }.lparams(matchConstraint, wrapContent) {
+                        topMargin = dip(12)
+                        leftMargin = dip(24)
+                        rightMargin = dip(24)
+                    }
+
+                    val policySubtitle = textView {
+                        id = View.generateViewId()
+                        textColorResource = R.color.smoke
+                        textSize = 12f
+                        backgroundColor = Color.TRANSPARENT
+                        textResource = R.string.settings_privacy_policy_subtitle
+                    }.lparams(matchConstraint, wrapContent) {
+                        leftMargin = dip(24)
+                        rightMargin = dip(24)
+                    }
+
+                    val policySeparator = view {
+                        id = View.generateViewId()
+                        backgroundColorResource = R.color.palladium_80
+                        isInvisible = true
+                    }.lparams(matchConstraint, dip(1)) {
+                        topMargin = dip(12)
+                        leftMargin = dip(24)
+                    }
+
                     applyConstraintSet {
                         connect(
                             START of logoBackground to START of PARENT_ID,
@@ -192,6 +232,31 @@ class SettingsUI : AnkoComponent<SettingsFragment> {
                             START of pushSeparator to START of PARENT_ID,
                             END of pushSeparator to END of PARENT_ID,
                             TOP of pushSeparator to BOTTOM of pushSubtitle
+                        )
+
+                        connect(
+                            TOP of policyBackground to BOTTOM of pushBackground,
+                            BOTTOM of policyBackground to BOTTOM of policySeparator,
+                            START of policyBackground to START of PARENT_ID,
+                            END of policyBackground to END of PARENT_ID
+                        )
+
+                        connect(
+                            START of policyTitle to START of PARENT_ID,
+                            END of policyTitle to END of PARENT_ID,
+                            TOP of policyTitle to BOTTOM of pushBackground
+                        )
+
+                        connect(
+                            START of policySubtitle to START of PARENT_ID,
+                            END of policySubtitle to END of PARENT_ID,
+                            TOP of policySubtitle to BOTTOM of policyTitle
+                        )
+
+                        connect(
+                            START of policySeparator to START of PARENT_ID,
+                            END of policySeparator to END of PARENT_ID,
+                            TOP of policySeparator to BOTTOM of policySubtitle
                         )
                     }
                 }.lparams(matchParent, matchParent)

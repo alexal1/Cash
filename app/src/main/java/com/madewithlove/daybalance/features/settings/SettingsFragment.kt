@@ -97,6 +97,18 @@ class SettingsFragment : ScreenFragment("settings") {
             }
         }
 
+        ui.policyBackground.apply {
+            setOnClickListener {
+                val policyTitle = getString(R.string.privacy_policy)
+                val fragment = WebPageFragment.create(
+                    "https://daybalance.github.io/privacy_policy.html",
+                    policyTitle
+                )
+
+                (act as? Navigator)?.addFragment(fragment)
+            }
+        }
+
         view.post {
             startPostponedEnterTransition()
             mainViewModel.notifySettingsOpened()
