@@ -22,8 +22,8 @@ android {
         applicationId "com.madewithlove.daybalance"
         minSdkVersion rootProject.minSdk
         targetSdkVersion rootProject.targetSdk
-        versionCode 19
-        versionName "1.2.5"
+        versionCode 20
+        versionName "1.2.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
