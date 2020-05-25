@@ -15,18 +15,17 @@ import android.view.MotionEvent.*
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.marginTop
-import com.madewithlove.daybalance.BaseViewModel
 import com.madewithlove.daybalance.CashApp
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.create.CreateFragment
 import com.madewithlove.daybalance.features.create.CreateViewModel
+import com.madewithlove.daybalance.features.history.HistoryViewModel
 import com.madewithlove.daybalance.features.moneybox.MoneyboxFragment
 import com.madewithlove.daybalance.features.plan.PlanFragment
 import com.madewithlove.daybalance.features.settings.SettingsFragment
 import com.madewithlove.daybalance.helpers.Analytics
 import com.madewithlove.daybalance.helpers.DatesManager
 import com.madewithlove.daybalance.helpers.ShowcaseManager
-import com.madewithlove.daybalance.repository.specifications.HistorySpecification
 import com.madewithlove.daybalance.utils.*
 import com.madewithlove.daybalance.utils.navigation.BackStackListener
 import com.madewithlove.daybalance.utils.navigation.FragmentNavigator
@@ -52,7 +51,7 @@ class MainFragment : FragmentNavigator("main"), BackStackListener {
     }
 
 
-    private val baseViewModel: BaseViewModel by sharedViewModel()
+    private val historyViewModel: HistoryViewModel by sharedViewModel()
     private val viewModel: MainViewModel by viewModel()
     private val datesManager: DatesManager by inject()
     private val analytics: Analytics by inject()
@@ -198,7 +197,7 @@ class MainFragment : FragmentNavigator("main"), BackStackListener {
             setOnClickListener {
                 when (viewModel.mainState.largeButtonType) {
                     MainViewModel.LargeButtonType.HISTORY -> {
-                        baseViewModel.openHistorySubject.onNext(HistorySpecification.Empty)
+                        historyViewModel.openHistorySubject.onNext(Unit)
                     }
 
                     MainViewModel.LargeButtonType.KEYBOARD -> {
@@ -206,13 +205,11 @@ class MainFragment : FragmentNavigator("main"), BackStackListener {
                     }
 
                     MainViewModel.LargeButtonType.PLAN_GAIN -> {
-                        val currentMonthFirstDay = datesManager.getCurrentMonthFirstDay()
-                        baseViewModel.openHistorySubject.onNext(HistorySpecification.MonthTotalGainFilter(currentMonthFirstDay))
+                        historyViewModel.openHistorySubject.onNext(Unit)
                     }
 
                     MainViewModel.LargeButtonType.PLAN_LOSS -> {
-                        val currentMonthFirstDay = datesManager.getCurrentMonthFirstDay()
-                        baseViewModel.openHistorySubject.onNext(HistorySpecification.MonthMandatoryLossFilter(currentMonthFirstDay))
+                        historyViewModel.openHistorySubject.onNext(Unit)
                     }
 
                     MainViewModel.LargeButtonType.PLAN_MONEYBOX -> {

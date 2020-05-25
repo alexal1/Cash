@@ -17,6 +17,7 @@ import com.madewithlove.daybalance.utils.cache
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -25,14 +26,14 @@ class HistoryViewModel(
     application: Application,
     private val repository: TransactionsRepository,
     private val balanceLogic: BalanceLogic,
-    private val analytics: Analytics,
-    filter: HistorySpecification.Filter
+    private val analytics: Analytics
 ) : AndroidViewModel(application) {
 
     val historyStateObservable: Observable<HistoryState>
     val historyState: HistoryState get() = historyStateSubject.value!!
     val checkConsumer: Consumer<TransactionsList.Item.TransactionItem> = Consumer(this::handleCheck)
     val uncheckConsumer: Consumer<TransactionsList.Item.TransactionItem> = Consumer(this::handleUncheck)
+    val openHistorySubject = PublishSubject.create<Unit>()
 
     private val historyStateSubject = BehaviorSubject.createDefault(getDefaultHistoryState())
     private val dc = DisposableCache()
@@ -45,15 +46,34 @@ class HistoryViewModel(
             .replay(1)
             .autoConnect()
 
-        repository.query(HistorySpecification(filter))
+        repository.realmChangedObservable
+            .mergeWith(Observable.just(Unit))
+            .flatMapSingle {
+                val specification = HistorySpecification(historyState.filter)
+                repository.query(specification)
+            }
             .map(this::toItems)
             .subscribe { items ->
-                val newState = historyState.copy(items = items, showLoading = false)
+                val newState = historyState.copy(items = items)
                 historyStateSubject.onNext(newState)
             }
             .cache(dc)
     }
 
+
+    fun setFilter(filter: HistorySpecification.Filter) {
+        if (filter == historyState.filter) {
+            return
+        }
+
+        repository.query(HistorySpecification(filter))
+            .map(this::toItems)
+            .subscribe { items ->
+                val newState = historyState.copy(items = items, filter = filter)
+                historyStateSubject.onNext(newState)
+            }
+            .cache(dc)
+    }
 
     fun deleteCheckedItems() {
         val affectedDates = historyState.checkedTransactions
@@ -77,6 +97,10 @@ class HistoryViewModel(
     }
 
     fun dismissDeleteMode() {
+        if (!historyState.deleteModeOn) {
+            return
+        }
+
         val newState = historyState.copy(
             items = historyState.items.map { item ->
                 if (item is TransactionsList.Item.TransactionItem) {
@@ -98,9 +122,9 @@ class HistoryViewModel(
 
 
     private fun getDefaultHistoryState() = HistoryState(
-        showLoading = true,
         items = emptyList(),
-        checkedTransactions = emptySet()
+        checkedTransactions = emptySet(),
+        filter = HistorySpecification.Empty
     )
 
     private fun toItems(transactions: List<Transaction>): List<TransactionsList.Item> {
@@ -120,7 +144,11 @@ class HistoryViewModel(
                 prevTimestamp = timestamp
             }
 
-            val transactionItem = TransactionsList.Item.TransactionItem(transaction)
+            val transactionItem = historyState.items
+                .find {
+                    it is TransactionsList.Item.TransactionItem && it.transaction == transaction
+                }
+                ?: TransactionsList.Item.TransactionItem(transaction)
             result.add(transactionItem)
         }
 
@@ -177,9 +205,9 @@ class HistoryViewModel(
 
 
     data class HistoryState(
-        val showLoading: Boolean,
         val items: List<TransactionsList.Item>,
-        val checkedTransactions: Set<Transaction>
+        val checkedTransactions: Set<Transaction>,
+        val filter: HistorySpecification.Filter
     ) {
         val showEmpty: Boolean get() = items.isEmpty()
         val deleteModeOn: Boolean get() = checkedTransactions.isNotEmpty()

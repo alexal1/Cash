@@ -8,6 +8,7 @@ import android.content.Context
 import android.graphics.Typeface.*
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
+import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity.CENTER_VERTICAL
 import android.view.View
@@ -38,10 +39,12 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TransactionsList(context: Context) : RecyclerView(context), KoinComponent {
+class TransactionsList(context: Context, attributeSet: AttributeSet) : RecyclerView(context, attributeSet), KoinComponent {
 
     val checkSubject = PublishSubject.create<Item.TransactionItem>()
     val uncheckSubject = PublishSubject.create<Item.TransactionItem>()
+
+    var onScrollPositionChanged: ((isTop: Boolean) -> Unit)? = null
 
 
     init {
@@ -74,6 +77,17 @@ class TransactionsList(context: Context) : RecyclerView(context), KoinComponent 
         val transactionsDiff = TransactionsDiff(oldData, oldDeleteModeOn, data, deleteModeOn)
         val diffResult = DiffUtil.calculateDiff(transactionsDiff)
         diffResult.dispatchUpdatesTo(transactionsAdapter)
+    }
+
+    override fun onScrolled(dx: Int, dy: Int) {
+        val offset = computeVerticalScrollOffset()
+        if (offset == 0) {
+            stopScroll()
+            onScrollPositionChanged?.invoke(true)
+            return
+        }
+
+        onScrollPositionChanged?.invoke(false)
     }
 
 

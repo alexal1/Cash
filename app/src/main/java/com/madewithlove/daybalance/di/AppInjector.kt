@@ -5,7 +5,6 @@
 package com.madewithlove.daybalance.di
 
 import android.content.Context
-import com.madewithlove.daybalance.BaseViewModel
 import com.madewithlove.daybalance.CashApp.Companion.CASH_APP_PREFERENCES
 import com.madewithlove.daybalance.features.create.CreateViewModel
 import com.madewithlove.daybalance.features.history.HistoryViewModel
@@ -20,7 +19,6 @@ import com.madewithlove.daybalance.model.Cache
 import com.madewithlove.daybalance.model.CacheImpl
 import com.madewithlove.daybalance.repository.TransactionsRepository
 import com.madewithlove.daybalance.repository.TransactionsRepositoryImpl
-import com.madewithlove.daybalance.repository.specifications.HistorySpecification
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -28,9 +26,8 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val viewModelsModule = module {
-    viewModel { BaseViewModel(androidApplication()) }
     viewModel { MainViewModel(androidApplication(), get(), get()) }
-    viewModel { (filter: HistorySpecification.Filter) -> HistoryViewModel(androidApplication(), get(), get(), get(), filter) }
+    viewModel { HistoryViewModel(androidApplication(), get(), get(), get()) }
     viewModel { (type: CreateViewModel.Type, chosenMonth: Int?) -> CreateViewModel(androidApplication(), get(), get(), get(), get(), type, chosenMonth) }
     viewModel { PlanViewModel(androidApplication(), get(), get(), get(), get()) }
     viewModel { MoneyboxViewModel(androidApplication(), get(), get(), get()) }

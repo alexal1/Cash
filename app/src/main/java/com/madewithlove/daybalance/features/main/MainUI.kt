@@ -9,6 +9,8 @@ import android.view.Gravity
 import android.view.Gravity.CENTER_HORIZONTAL
 import android.view.Gravity.CENTER_VERTICAL
 import android.view.View
+import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -21,6 +23,7 @@ import com.madewithlove.daybalance.ui.dates.DatesRecyclerView
 import com.madewithlove.daybalance.utils.anko.circleView
 import com.madewithlove.daybalance.utils.anko.datesRecyclerView
 import com.madewithlove.daybalance.utils.anko.fancyButton
+import com.madewithlove.daybalance.utils.screenSize
 import com.madewithlove.daybalance.utils.setSelectableBackground
 import org.jetbrains.anko.*
 import org.jetbrains.anko.constraint.layout.ConstraintSetBuilder.Side.*
@@ -49,6 +52,7 @@ class MainUI : AnkoComponent<MainFragment> {
     override fun createView(ui: AnkoContext<MainFragment>): View = with (ui) {
         constraintLayout {
             backgroundColorResource = R.color.deepDark
+            layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, ctx.screenSize().y)
 
             val separator1 = view {
                 id = View.generateViewId()

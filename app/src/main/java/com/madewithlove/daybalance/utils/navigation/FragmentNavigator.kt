@@ -7,7 +7,7 @@ package com.madewithlove.daybalance.utils.navigation
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.FragmentManager
-import com.madewithlove.daybalance.ScreenFragment
+import com.madewithlove.daybalance.ui.ScreenFragment
 
 abstract class FragmentNavigator(screenName: String) : ScreenFragment(screenName), Navigator {
 

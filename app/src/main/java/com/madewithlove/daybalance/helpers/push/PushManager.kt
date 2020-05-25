@@ -11,10 +11,10 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.madewithlove.daybalance.BaseActivity
 import com.madewithlove.daybalance.CashApp
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.dto.Money
+import com.madewithlove.daybalance.features.history.HistoryActivity
 import com.madewithlove.daybalance.helpers.DatesManager
 import com.madewithlove.daybalance.model.BalanceLogic
 import com.madewithlove.daybalance.utils.*
@@ -46,7 +46,7 @@ class PushManager(
     }
 
     private val pushPendingIntent by lazy {
-        val intent = Intent(context, BaseActivity::class.java).apply {
+        val intent = Intent(context, HistoryActivity::class.java).apply {
             putExtra(OPENED_BY_PUSH, true)
         }
         PendingIntent.getActivity(context, 0, intent, 0)

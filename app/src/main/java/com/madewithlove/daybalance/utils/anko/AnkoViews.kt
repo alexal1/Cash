@@ -11,7 +11,6 @@ import com.google.android.material.tabs.TabLayout
 import com.madewithlove.daybalance.ui.FancyButton
 import com.madewithlove.daybalance.ui.KeypadView
 import com.madewithlove.daybalance.ui.PercentagePicker
-import com.madewithlove.daybalance.ui.TransactionsList
 import com.madewithlove.daybalance.ui.circle.CircleView
 import com.madewithlove.daybalance.ui.dates.DatesRecyclerView
 import org.jetbrains.anko.custom.ankoView
@@ -22,10 +21,6 @@ inline fun ViewManager.fancyButton(init: FancyButton.() -> Unit = {}): FancyButt
 
 inline fun ViewManager.appCompatTextView(init: AppCompatTextView.() -> Unit = {}): AppCompatTextView {
     return ankoView({ AppCompatTextView(it) }, theme = 0, init = init)
-}
-
-inline fun ViewManager.transactionsList(init: TransactionsList.() -> Unit = {}): TransactionsList {
-    return ankoView({ TransactionsList(it) }, theme = 0, init = init)
 }
 
 inline fun ViewManager.appCompatToolbar(init: _Toolbar.() -> Unit = {}): _Toolbar {

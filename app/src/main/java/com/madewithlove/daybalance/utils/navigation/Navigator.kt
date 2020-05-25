@@ -6,12 +6,12 @@ package com.madewithlove.daybalance.utils.navigation
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.madewithlove.daybalance.ScreenFragment
+import com.madewithlove.daybalance.ui.ScreenFragment
 import com.madewithlove.daybalance.R
 
 interface Navigator : BackPressHandler {
 
-    fun setFragment(fragment: ScreenFragment) {
+    fun setFragment(fragment: ScreenFragment, callback: () -> Unit = {}) {
         if (fragment.isAddedToNavigator()) {
             return
         }
@@ -21,22 +21,7 @@ interface Navigator : BackPressHandler {
             .setReorderingAllowed(true)
             .setCustomAnimations(R.anim.fade_in, 0)
             .add(getFragmentContainerId(), fragment, fragment.getNavigatorTag())
-            .commit()
-
-        fragment.sendScreenNameToAnalytics()
-    }
-
-    fun replaceFragment(fragment: ScreenFragment) {
-        if (fragment.isAddedToNavigator()) {
-            return
-        }
-
-        getNavigatorFragmentManager()
-            .beginTransaction()
-            .setReorderingAllowed(true)
-            .setCustomAnimations(R.anim.go_in_up, R.anim.go_out_up, R.anim.go_in_down, R.anim.go_out_down)
-            .replace(getFragmentContainerId(), fragment, fragment.getNavigatorTag())
-            .addToBackStack(fragment.getNavigatorName())
+            .runOnCommit(callback)
             .commit()
 
         fragment.sendScreenNameToAnalytics()

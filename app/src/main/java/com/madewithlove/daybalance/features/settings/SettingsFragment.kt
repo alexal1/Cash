@@ -12,7 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import com.madewithlove.daybalance.ScreenFragment
+import com.madewithlove.daybalance.ui.ScreenFragment
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.main.MainViewModel
 import com.madewithlove.daybalance.utils.DisposableCache

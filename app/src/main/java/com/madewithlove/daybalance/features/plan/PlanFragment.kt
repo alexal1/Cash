@@ -14,13 +14,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.madewithlove.daybalance.ScreenFragment
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.create.CreateFragment
 import com.madewithlove.daybalance.features.create.CreateViewModel
+import com.madewithlove.daybalance.features.history.HistoryViewModel
 import com.madewithlove.daybalance.features.main.MainViewModel
 import com.madewithlove.daybalance.helpers.ShowcaseManager
+import com.madewithlove.daybalance.repository.specifications.HistorySpecification
 import com.madewithlove.daybalance.ui.PercentagePicker
+import com.madewithlove.daybalance.ui.ScreenFragment
 import com.madewithlove.daybalance.utils.*
 import com.madewithlove.daybalance.utils.anko.percentagePicker
 import com.madewithlove.daybalance.utils.navigation.BackStackListener
@@ -44,6 +46,7 @@ class PlanFragment : ScreenFragment("plan"), BackStackListener {
     }
 
 
+    private val historyViewModel by sharedViewModel<HistoryViewModel>()
     private val mainViewModel by sharedViewModel<MainViewModel>(from = { requireParentFragment() })
     private val viewModel by viewModel<PlanViewModel>()
     private val showcaseManager: ShowcaseManager by inject()
@@ -118,6 +121,7 @@ class PlanFragment : ScreenFragment("plan"), BackStackListener {
 
                     if (navigator.isFragmentOnTop(this@PlanFragment)) {
                         mainViewModel.notifyPlanOpened(PlanViewModel.Section.values()[position])
+                        historyViewModel.setFilter(viewModel.planState.historyFilter)
                     }
                 }
 
@@ -178,6 +182,7 @@ class PlanFragment : ScreenFragment("plan"), BackStackListener {
 
             if (navigator.isFragmentOnTop(this@PlanFragment)) {
                 mainViewModel.notifyPlanOpened(viewModel.planState.currentSection)
+                historyViewModel.setFilter(viewModel.planState.historyFilter)
             }
         }
     }
@@ -190,6 +195,7 @@ class PlanFragment : ScreenFragment("plan"), BackStackListener {
     override fun onResumedFromBackStack() {
         viewModel.requestData()
         mainViewModel.notifyPlanOpened(viewModel.planState.currentSection)
+        historyViewModel.setFilter(viewModel.planState.historyFilter)
         showcaseManager.show(this)
     }
 
@@ -208,6 +214,7 @@ class PlanFragment : ScreenFragment("plan"), BackStackListener {
         super.onDestroyView()
 
         mainViewModel.notifyPlanClosed()
+        historyViewModel.setFilter(HistorySpecification.Empty)
     }
 
 

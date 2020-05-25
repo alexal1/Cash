@@ -10,26 +10,20 @@ import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.repository.specifications.NumberSpecification
 import com.madewithlove.daybalance.repository.specifications.RealmSpecification
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.subjects.PublishSubject
 import io.realm.Realm
-import timber.log.Timber
 
 class TransactionsRepositoryImpl : TransactionsRepository {
 
-    init {
-        Timber.i("Starting RealmThread...")
-    }
-
+    private val realmChangedSubject = PublishSubject.create<Unit>()
     private val realmThread = HandlerThread("RealmThread").apply { start() }
     private val realmScheduler = AndroidSchedulers.from(realmThread.looper)
     private var realmInstance: Realm? = null
 
-    init {
-        Handler(realmThread.looper).post {
-            Timber.i("RealmThread has been started successfully")
-        }
-    }
+    override val realmChangedObservable: Observable<Unit> = realmChangedSubject
 
 
     override fun addTransaction(transaction: Transaction): Completable = Completable
@@ -44,6 +38,9 @@ class TransactionsRepositoryImpl : TransactionsRepository {
             }
         }
         .subscribeOn(realmScheduler)
+        .doOnComplete {
+            realmChangedSubject.onNext(Unit)
+        }
 
     fun addAllTransactions(iterator: Iterator<Transaction>): Completable = Completable
         .create { emitter ->
@@ -61,6 +58,9 @@ class TransactionsRepositoryImpl : TransactionsRepository {
             }
         }
         .subscribeOn(realmScheduler)
+        .doOnComplete {
+            realmChangedSubject.onNext(Unit)
+        }
 
     fun removeTransaction(transactionId: String): Completable = Completable
         .create { emitter ->
@@ -79,6 +79,9 @@ class TransactionsRepositoryImpl : TransactionsRepository {
             }
         }
         .subscribeOn(realmScheduler)
+        .doOnComplete {
+            realmChangedSubject.onNext(Unit)
+        }
 
     override fun removeAllTransactions(transactionIds: List<String>): Completable = Completable
         .create { emitter ->
@@ -102,6 +105,9 @@ class TransactionsRepositoryImpl : TransactionsRepository {
             }
         }
         .subscribeOn(realmScheduler)
+        .doOnComplete {
+            realmChangedSubject.onNext(Unit)
+        }
 
     override fun query(specification: RealmSpecification): Single<List<Transaction>> = Single
         .create<List<Transaction>> { emitter ->

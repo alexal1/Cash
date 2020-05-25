@@ -11,6 +11,7 @@ import com.madewithlove.daybalance.helpers.DatesManager
 import com.madewithlove.daybalance.helpers.SavingsManager
 import com.madewithlove.daybalance.model.BalanceLogic
 import com.madewithlove.daybalance.repository.TransactionsRepository
+import com.madewithlove.daybalance.repository.specifications.HistorySpecification
 import com.madewithlove.daybalance.repository.specifications.MonthMandatoryLossSpecification
 import com.madewithlove.daybalance.repository.specifications.MonthTotalGainSpecification
 import com.madewithlove.daybalance.utils.DisposableCache
@@ -54,11 +55,20 @@ class PlanViewModel(
             }
             .subscribe(planStateSubject.onNextConsumer())
             .cache(dc)
+
+        repository.realmChangedObservable.subscribe {
+            requestData()
+        }.cache(dc)
     }
 
 
     fun setSection(section: Section) {
-        val newState = planState.copy(currentSection = section)
+        val newHistoryFilter = when (section) {
+            Section.GAIN -> HistorySpecification.MonthTotalGainFilter(datesManager.getCurrentMonthFirstDay())
+            Section.LOSS -> HistorySpecification.MonthMandatoryLossFilter(datesManager.getThisMonthFirstDay())
+            else -> HistorySpecification.Empty
+        }
+        val newState = planState.copy(currentSection = section, historyFilter = newHistoryFilter)
         planStateSubject.onNext(newState)
     }
 
@@ -105,7 +115,8 @@ class PlanViewModel(
         currentSection = Section.GAIN,
         gain = null,
         loss = null,
-        savingsRatio = null
+        savingsRatio = null,
+        historyFilter = HistorySpecification.MonthTotalGainFilter(datesManager.getCurrentMonthFirstDay())
     )
 
 
@@ -114,7 +125,8 @@ class PlanViewModel(
         val currentSection: Section,
         val gain: Money?,
         val loss: Money?,
-        val savingsRatio: Float?
+        val savingsRatio: Float?,
+        val historyFilter: HistorySpecification.Filter
     ) {
 
         val isLoading: Boolean get() = gain == null || loss == null || savingsRatio == null

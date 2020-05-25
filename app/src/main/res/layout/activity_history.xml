@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.madewithlove.daybalance.ui.SwitchableMotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/motionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutDescription="@xml/scene_history">
+
+    <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+        <View
+                android:id="@+id/clicksBlockView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:clickable="true"
+                android:focusable="true"/>
+    </FrameLayout>
+
+    <com.madewithlove.daybalance.ui.TransactionsList
+            android:id="@+id/transactionsList"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/deepDark"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/container"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <FrameLayout
+            android:id="@+id/emptyViewWrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/container" >
+
+        <TextView
+                android:id="@+id/emptyView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/history_empty"
+                android:textSize="32sp"
+                android:textColor="@color/fog_white"
+                android:gravity="center"
+                android:letterSpacing="0.02"
+                android:lineSpacingMultiplier="1.2"
+                android:visibility="gone"/>
+    </FrameLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:layout_constraintBottom_toBottomOf="@id/transactionsList"
+            app:layout_constraintEnd_toEndOf="parent"/>
+</com.madewithlove.daybalance.ui.SwitchableMotionLayout>

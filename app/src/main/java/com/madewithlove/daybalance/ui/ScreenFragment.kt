@@ -2,7 +2,7 @@
  * Created by Alexander Mishchenko in 2020
  */
 
-package com.madewithlove.daybalance
+package com.madewithlove.daybalance.ui
 
 import android.os.Bundle
 import android.view.View

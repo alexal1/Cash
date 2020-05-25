@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.madewithlove.daybalance.ScreenFragment
+import com.madewithlove.daybalance.ui.ScreenFragment
 import com.madewithlove.daybalance.CashApp
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.act

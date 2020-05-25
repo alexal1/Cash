@@ -18,7 +18,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.marginTop
 import com.jakewharton.rxbinding3.widget.textChanges
-import com.madewithlove.daybalance.ScreenFragment
+import com.madewithlove.daybalance.ui.ScreenFragment
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.main.MainFragment
 import com.madewithlove.daybalance.features.main.MainViewModel

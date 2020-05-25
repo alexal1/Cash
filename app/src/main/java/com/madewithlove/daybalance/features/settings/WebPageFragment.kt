@@ -19,7 +19,7 @@ import android.webkit.WebViewClient
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.madewithlove.daybalance.R
-import com.madewithlove.daybalance.ScreenFragment
+import com.madewithlove.daybalance.ui.ScreenFragment
 import com.madewithlove.daybalance.utils.DisposableCache
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.support.v4.act

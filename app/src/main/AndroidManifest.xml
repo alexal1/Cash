@@ -27,7 +27,7 @@
         <!-- Disable Advertiser ID collection by Facebook -->
         <meta-data android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled" android:value="false"/>
 
-        <activity android:name="com.madewithlove.daybalance.BaseActivity" android:launchMode="singleTask">
+        <activity android:name=".features.history.HistoryActivity" android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

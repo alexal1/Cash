@@ -13,6 +13,7 @@ import com.madewithlove.daybalance.repository.entities.Transaction
 import com.madewithlove.daybalance.repository.specifications.*
 import io.reactivex.Completable
 import io.reactivex.Maybe
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import timber.log.Timber
@@ -31,6 +32,8 @@ class CacheImpl(
     private val dayLossSpecifications = HashMap<NumberSpecification, Number>()
     private val monthRestSpecifications = HashMap<NumberSpecification, Number>()
     private val monthTotalGainSpecifications = HashMap<NumberSpecification, Number>()
+
+    override val realmChangedObservable: Observable<Unit> = Observable.empty()
 
 
     override fun query(specification: NumberSpecification): Single<Number> {
