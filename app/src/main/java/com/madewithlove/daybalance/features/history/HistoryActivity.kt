@@ -147,7 +147,7 @@ class HistoryActivity : FragmentActivity(), Navigator {
 
             setOnClickListenerWithThrottle {
                 if (viewModel.historyState.deleteModeOn) {
-                    openAreYouSureDialog(viewModel.historyState.checkedTransactions.count())
+                    openConfirmDeleteDialog(viewModel.historyState.checkedTransactions.count())
                 } else {
                     onBackPressed()
                 }
@@ -184,14 +184,24 @@ class HistoryActivity : FragmentActivity(), Navigator {
         super.onDestroy()
         viewModel.dismissDeleteMode()
         dc.drain()
+        confirmDeleteDialog?.dismiss()
+        confirmDeleteDialog = null
     }
 
 
-    private fun openAreYouSureDialog(checkedItemsCount: Int) {
-        confirmDeleteDialog?.dismiss()
+    private fun openConfirmDeleteDialog(checkedItemsCount: Int) {
+        val confirmDeleteDialog = confirmDeleteDialog ?: createConfirmDeleteDialog().also {
+            this.confirmDeleteDialog = it
+        }
 
-        confirmDeleteDialog = AlertDialog.Builder(this)
-            .setMessage(resources.getQuantityString(R.plurals.history_delete_confirm, checkedItemsCount, checkedItemsCount))
+        confirmDeleteDialog.apply {
+            setMessage(resources.getQuantityString(R.plurals.history_delete_confirm, checkedItemsCount, checkedItemsCount))
+            show()
+        }
+    }
+
+    private fun createConfirmDeleteDialog(): AlertDialog {
+        return AlertDialog.Builder(this)
             .setNegativeButton(R.string.no) { dialog, _ ->
                 dialog.dismiss()
             }
@@ -199,7 +209,7 @@ class HistoryActivity : FragmentActivity(), Navigator {
                 viewModel.deleteCheckedItems()
                 dialog.dismiss()
             }
-            .show()
+            .create()
     }
 
 }
