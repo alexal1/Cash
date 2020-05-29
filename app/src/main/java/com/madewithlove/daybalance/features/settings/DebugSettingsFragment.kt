@@ -45,18 +45,18 @@ class DebugSettingsFragment : ScreenFragment("debug_settings") {
             }
         }
 
-        ui.showPushBackground.apply {
+        ui.showPushMenuItem.background.apply {
             setOnClickListener {
                 viewModel.showPush()
             }
         }
 
-        ui.enableLogsSwitch.apply {
+        ui.enableLogsMenuItem.requireCustomView().apply {
             isEnabled = !CashApp.isDebugBuild
         }
 
-        ui.enableLogsBackground.apply {
-            val enableLogsSwitch = ui.enableLogsSwitch
+        ui.enableLogsMenuItem.background.apply {
+            val enableLogsSwitch = ui.enableLogsMenuItem.requireCustomView()
             enableLogsSwitch.isChecked = viewModel.areLogsEnabled()
 
             setOnClickListener {
@@ -67,7 +67,7 @@ class DebugSettingsFragment : ScreenFragment("debug_settings") {
             }
         }
 
-        ui.repeatShowcaseBackground.apply {
+        ui.repeatShowcaseMenuItem.background.apply {
             setOnClickListener {
                 viewModel.repeatShowcase()
             }

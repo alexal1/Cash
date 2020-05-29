@@ -78,18 +78,18 @@ class SettingsFragment : ScreenFragment("settings") {
             }
         }
 
-        ui.pushSwitch.apply {
+        ui.pushMenuItem.requireCustomView().apply {
             isChecked = viewModel.areNotificationsEnabled()
         }
 
-        ui.pushBackground.apply {
+        ui.pushMenuItem.background.apply {
             setOnClickListener {
-                if (ui.pushSwitch.isChecked) {
+                if (ui.pushMenuItem.requireCustomView().isChecked) {
                     viewModel.disableNotifications()
-                    ui.pushSwitch.isChecked = false
+                    ui.pushMenuItem.requireCustomView().isChecked = false
                 } else {
                     if (viewModel.tryEnableNotifications()) {
-                        ui.pushSwitch.isChecked = true
+                        ui.pushMenuItem.requireCustomView().isChecked = true
                     } else {
                         showEnableNotificationsInSettingsDialog()
                     }
@@ -97,7 +97,7 @@ class SettingsFragment : ScreenFragment("settings") {
             }
         }
 
-        ui.policyBackground.apply {
+        ui.policyMenuItem.background.apply {
             setOnClickListener {
                 val policyTitle = getString(R.string.privacy_policy)
                 val fragment = WebPageFragment.create(
