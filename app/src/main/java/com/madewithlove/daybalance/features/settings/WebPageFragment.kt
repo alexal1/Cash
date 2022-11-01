@@ -81,14 +81,14 @@ class WebPageFragment : ScreenFragment("web_page") {
             webViewClient = MyWebViewClient()
 
             postDelayed({
-                loadUrl(webPageUrl)
+                webPageUrl?.let(this::loadUrl)
             }, resources.getInteger(R.integer.activity_anim_duration_horizontal).toLong())
         }
 
         ui.swipeRefreshLayout.apply {
             setOnRefreshListener {
                 ui.webView.isVisible = true
-                ui.webView.loadUrl(webPageUrl)
+                webPageUrl?.let(ui.webView::loadUrl)
             }
         }
 
@@ -99,7 +99,7 @@ class WebPageFragment : ScreenFragment("web_page") {
 
     override fun onDestroyView() {
         dc.drain()
-        ui.webView.webViewClient = null
+        ui.webView.destroy()
         webPageUI = null
         super.onDestroyView()
     }

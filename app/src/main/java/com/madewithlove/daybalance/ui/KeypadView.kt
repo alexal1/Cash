@@ -14,9 +14,7 @@ import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.MotionEvent.*
 import android.view.View
-import androidx.core.util.contains
 import androidx.core.util.containsValue
-import androidx.core.util.set
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.utils.color
 import com.madewithlove.daybalance.utils.drawable
@@ -147,7 +145,7 @@ class KeypadView(context: Context) : View(context) {
                 val y = event.getY(event.actionIndex)
                 for (button in buttons) {
                     if (x > button.bounds.left * buttonWidth && x < button.bounds.right * buttonWidth && y > button.bounds.top * buttonHeight && y < button.bounds.bottom * buttonHeight) {
-                        if (!selectedButtons.contains(id)) {
+                        if (selectedButtons.indexOfKey(id) < 0) {
                             selectedButtons[id] = button
                             actionSubject.onNext(button.action)
                             invalidate()
