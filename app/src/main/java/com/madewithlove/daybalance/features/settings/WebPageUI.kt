@@ -36,7 +36,7 @@ class WebPageUI : AnkoComponent<WebPageFragment> {
 
     override fun createView(ui: AnkoContext<WebPageFragment>): View = with(ui) {
         constraintLayout {
-            backgroundColorResource = R.color.deepDark
+            backgroundColorResource = R.color.white
             isClickable = true
             isFocusable = true
 

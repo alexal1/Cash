@@ -64,7 +64,7 @@ class PushManager(
 
 
     fun schedulePushNotifications() {
-        val calendar = GregorianCalendar.getInstance().apply {
+        val calendar = CalendarFactory.getInstance().apply {
             if (get(Calendar.HOUR_OF_DAY) >= HOUR_TO_SHOW_PUSH) {
                 add(Calendar.DAY_OF_MONTH, 1)
             }

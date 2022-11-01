@@ -58,7 +58,7 @@ class MainFragment : FragmentNavigator("main"), BackStackListener {
     private val showcaseManager: ShowcaseManager by inject()
     private val app: CashApp by lazy { requireContext().applicationContext as CashApp }
     private val calendarDialog by lazy { createCalendarDialog() }
-    private val calendar = GregorianCalendar.getInstance()
+    private val calendar = CalendarFactory.getInstance()
     private val ui: MainUI get() = mainUI ?: MainUI().also { mainUI = it }
     private val dc = DisposableCache()
 

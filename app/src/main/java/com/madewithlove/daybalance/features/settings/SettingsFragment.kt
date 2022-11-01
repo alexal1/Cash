@@ -12,9 +12,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import com.madewithlove.daybalance.ui.ScreenFragment
 import com.madewithlove.daybalance.R
 import com.madewithlove.daybalance.features.main.MainViewModel
+import com.madewithlove.daybalance.ui.ScreenFragment
 import com.madewithlove.daybalance.utils.DisposableCache
 import com.madewithlove.daybalance.utils.navigation.Navigator
 import org.jetbrains.anko.AnkoContext
@@ -101,7 +101,7 @@ class SettingsFragment : ScreenFragment("settings") {
             setOnClickListener {
                 val policyTitle = getString(R.string.privacy_policy)
                 val fragment = WebPageFragment.create(
-                    "https://daybalance.github.io/privacy_policy.html",
+                    "https://alexal1.github.io/daybalance/",
                     policyTitle
                 )
 
